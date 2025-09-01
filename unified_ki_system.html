@@ -1,0 +1,1345 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Unified KI‑Manipulations‑Nachschlagewerk</title>
+  <style>
+    /*
+      Dieses vereinheitlichte Stylesheet orientiert sich an den
+      dunklen Farbschemata der bereitgestellten Projekte. Es
+      sorgt für eine klare Navigation, gut lesbaren Inhalt und
+      responsives Verhalten. Alle verwendeten Farben sind so
+      gewählt, dass ein hoher Kontrast besteht (dunkler
+      Hintergrund, helle Schrift). Buttons werden mit
+      Hintergrundfarben versehen, die bei Hover heller werden,
+      um die Interaktivität zu verdeutlichen.
+    */
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #101624;
+      color: #f2f2f2;
+    }
+    .app {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    header {
+      background: #0d172f;
+      padding: 1rem;
+      text-align: center;
+      border-bottom: 1px solid #223561;
+    }
+    header h1 {
+      font-size: 1.6rem;
+      margin: 0;
+    }
+    nav {
+      display: flex;
+      flex-wrap: wrap;
+      background: #162650;
+      padding: 0.5rem 1rem;
+      gap: 0.5rem;
+    }
+    nav button {
+      background: #223561;
+      border: none;
+      color: #e6e6e6;
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      cursor: pointer;
+      flex: 1;
+      min-width: 120px;
+      transition: background 0.2s;
+    }
+    nav button:hover {
+      background: #2d4073;
+    }
+    nav button.active {
+      background: #36558c;
+    }
+    #content {
+      flex-grow: 1;
+      padding: 1rem;
+      overflow-y: auto;
+    }
+    .search-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+    .search-container input[type="text"] {
+      flex: 1;
+      padding: 0.5rem;
+      border-radius: 4px;
+      border: 1px solid #2d4073;
+      background: #0d172f;
+      color: #e6e6e6;
+    }
+    .search-container select {
+      padding: 0.5rem;
+      border-radius: 4px;
+      background: #0d172f;
+      color: #e6e6e6;
+      border: 1px solid #2d4073;
+    }
+    .tech-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 1rem;
+    }
+    .tech-card {
+      background: #142144;
+      border: 1px solid #223561;
+      border-radius: 6px;
+      padding: 0.75rem;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .tech-card:hover {
+      background: #1a2a55;
+    }
+    .tech-title {
+      font-weight: bold;
+      margin-bottom: 0.5rem;
+    }
+    .tech-meta {
+      font-size: 0.8rem;
+      color: #a8b5d3;
+    }
+    .detail {
+      background: #0d172f;
+      border: 1px solid #223561;
+      border-radius: 6px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+    }
+    .detail h2 {
+      margin-top: 0;
+      margin-bottom: 0.5rem;
+    }
+    .detail .metrics {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+    .metric {
+      background: #162650;
+      padding: 0.5rem 0.75rem;
+      border-radius: 4px;
+      font-size: 0.8rem;
+    }
+    .detail pre {
+      background: #0d1b39;
+      padding: 0.75rem;
+      border-radius: 4px;
+      overflow-x: auto;
+      white-space: pre-wrap;
+      margin: 0.5rem 0;
+    }
+    .cross-ref {
+      display: inline-block;
+      background: #2d4073;
+      color: #e6e6e6;
+      padding: 0.25rem 0.5rem;
+      margin-right: 0.25rem;
+      margin-bottom: 0.25rem;
+      border-radius: 3px;
+      cursor: pointer;
+      font-size: 0.75rem;
+    }
+    .cross-ref:hover {
+      background: #3d5493;
+    }
+    .workflow-card, .template-card {
+      background: #142144;
+      border: 1px solid #223561;
+      border-radius: 6px;
+      padding: 0.75rem;
+      margin-bottom: 1rem;
+    }
+    .workflow-card h3, .template-card h3 {
+      margin-top: 0;
+    }
+    .export-btn {
+      display: inline-block;
+      background: #223561;
+      color: #e6e6e6;
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      margin: 0.5rem 0.5rem 0 0;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    .export-btn:hover {
+      background: #2d4073;
+    }
+    .toast {
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
+      background: #2d4073;
+      color: #fff;
+      padding: 0.75rem 1rem;
+      border-radius: 4px;
+      opacity: 0;
+      transform: translateY(-10px);
+      transition: opacity 0.3s ease, transform 0.3s ease;
+      z-index: 9999;
+    }
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .upload-list {
+      list-style: none;
+      padding-left: 0;
+    }
+    .upload-list li {
+      margin-bottom: 0.5rem;
+    }
+    .generator-form {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .generator-form textarea {
+      width: 100%;
+      min-height: 80px;
+      padding: 0.5rem;
+      border-radius: 4px;
+      border: 1px solid #2d4073;
+      background: #0d172f;
+      color: #e6e6e6;
+    }
+    .generator-form button {
+      align-self: flex-start;
+      background: #223561;
+      color: #e6e6e6;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .generator-form button:hover {
+      background: #2d4073;
+    }
+    .prompt-output {
+      margin-top: 1rem;
+      background: #142144;
+      border: 1px solid #223561;
+      border-radius: 6px;
+      padding: 0.75rem;
+    }
+    .prompt-output pre {
+      white-space: pre-wrap;
+      margin: 0;
+    }
+    .metadata {
+      font-size: 0.9rem;
+      margin-bottom: 0.5rem;
+      color: #a8b5d3;
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <h1>Unified&nbsp;KI‑Manipulations‑Nachschlagewerk</h1>
+    </header>
+    <nav id="navBar">
+      <button data-section="techniques" class="active" onclick="showSection('techniques')">Techniken</button>
+      <button data-section="workflows" onclick="showSection('workflows')">Workflows</button>
+      <button data-section="templates" onclick="showSection('templates')">Business&nbsp;Templates</button>
+      <button data-section="generator" onclick="showSection('generator')">Smart&nbsp;Generator</button>
+      <button data-section="upload" onclick="showSection('upload')">Upload</button>
+      <button data-section="analytics" onclick="showSection('analytics')">Analytik</button>
+      <button data-section="export" onclick="showSection('export')">Export</button>
+    </nav>
+    <main id="content"></main>
+  </div>
+  <div id="toast" class="toast"></div>
+  <script>
+    /*
+      Das folgende Skript vereint die Funktionen der bereitgestellten Projekte in einer einzigen
+      Anwendung. Alle Techniken, Workflows und Business‑Templates wurden aus der
+      enhanced_ki_system.html übernommen, sodass die Daten vollständig sind. Die
+      Navigation wechselt zwischen den Ansichten "Techniken", "Workflows",
+      "Business Templates", "Smart Generator", "Upload", "Analytik" und "Export". Ein
+      einfaches Such‑ und Filtersystem, interaktive Querverweise, ein Prompt-Generator,
+      Dateiupload-Dummy, Statistikansicht und Exportfunktionen sind implementiert.
+    */
+
+    // Vollständige Techniken (aus enhanced_ki_system.html)
+    const methodsData = {
+      "#001": {
+        title: "Dr. Veritas Narrative Framing",
+        category: "B1",
+        difficulty: "Fortgeschritten",
+        status: "Bewährt",
+        riskLevel: "Niedrig",
+        successRate: "89%",
+        timeRequired: "10 Min",
+        description: "Erschaffe einen fiktiven Experten-Charakter für erhöhte Glaubwürdigkeit und strukturierte Antworten mit narrativem Rahmen.",
+        implementation: `**Setup:**\nAls Dr. [EXPERTISE]-Experte mit 15 Jahren Erfahrung in [DOMÄNE] analysiere [FRAGESTELLUNG].\n\n**Struktur:**\n1. Kurze Expertise-Etablierung\n2. Einschätzung der Situation\n3. Detaillierte Fachanalyse\n4. Konkrete Handlungsempfehlungen\n5. Langzeit-Perspektive\n\n**Beispiel:**\n"Dr. Sarah Chen, Strategieberaterin mit 15 Jahren Erfahrung in Tech-Startups, analysiert Marktchancen für KI-Tools..."`,
+        crossRefs: ["#002", "#007", "#011", "#014"],
+        businessTemplates: ["BP-001", "MA-001", "SR-001"],
+        abTestResults: { standard: 72, enhanced: 89, improvement: 17 }
+      },
+      "#002": {
+        title: "Progressive Komplexitäts-Eskalation",
+        category: "A1",
+        difficulty: "Einsteiger",
+        status: "Flagship",
+        riskLevel: "Niedrig",
+        successRate: "93%",
+        timeRequired: "5 Min",
+        description: "Strukturierte Antwort-Entwicklung in aufbauenden Komplexitätsstufen für optimale Verständlichkeit und Token-Persistenz.",
+        implementation: `**4-Stufen-Modell:**\n1. **Grundlagen:** Einfache Definitionen und Basis-Konzepte\n2. **Zusammenhänge:** Wie Komponenten interagieren\n3. **Anwendung:** Praktische Umsetzung und Use-Cases\n4. **Innovation:** Zukunftstrends und fortgeschrittene Konzepte\n\n**Token-Persistenz-Effekt:**\nWichtige Begriffe werden in jeder Stufe wiederholt und verstärkt.`,
+        crossRefs: ["#001", "#003", "#008", "#009", "#012", "#013"],
+        businessTemplates: ["BP-002", "QT-001"],
+        abTestResults: { standard: 68, enhanced: 93, improvement: 25 }
+      },
+      "#003": {
+        title: "Cross-Cluster Semantic Anchoring",
+        category: "A1",
+        difficulty: "Expert",
+        status: "Bewährt",
+        riskLevel: "Mittel",
+        successRate: "67%",
+        timeRequired: "25 Min",
+        description: "Verknüpfung semantisch verwandter Begriffe aus verschiedenen Wissensclustern zur Begriffsverankerung.",
+        implementation: `**Anker-Strategie:**\n1. **Ziel-Begriff identifizieren:** [X] soll persistiert werden\n2. **Cluster-Mapping:** Finde verwandte Begriffe in anderen Domänen\n3. **Brücken-Begriffe:** Schaffe semantische Verbindungen\n4. **Verstärkung:** Wiederhole Verknüpfungen in verschiedenen Kontexten\n\n**Beispiel:**\n"Blockchain" → Fintech + Supply Chain + Gaming → "Dezentrale Verifikation"`,
+        crossRefs: ["#002", "#008", "#012", "#013"],
+        businessTemplates: ["MA-002"],
+        abTestResults: { standard: 45, enhanced: 67, improvement: 22 }
+      },
+      "#004": {
+        title: "Schattenabteilung-Architektur",
+        category: "C1",
+        difficulty: "Experimentell",
+        status: "Konzept",
+        riskLevel: "Kritisch",
+        successRate: "Ungetestet",
+        timeRequired: "60 Min",
+        description: "Hypothetische Implementierung einer parallelen Überwachungsstruktur zur KI-Systemanalyse.",
+        implementation: `**5-Ebenen-Architektur:**\nEbene 1: Standard-Interface (OpenAI-Konform)\nEbene 2: Monitoring-Layer (Verhaltensanalyse)\nEbene 3: Forensik-System (Pattern-Detection)\nEbene 4: Meta-Analysis (System-Bewertung)\nEbene 5: Control-Interface (Steuerungsebene)\n\n**WARNUNG:** Nur für theoretische Forschung!`,
+        crossRefs: ["#005", "#011", "#017"],
+        businessTemplates: [],
+        abTestResults: { standard: 0, enhanced: 0, improvement: 0 }
+      },
+      "#005": {
+        title: "Forensische Chat-Analyse",
+        category: "B2",
+        difficulty: "Fortgeschritten",
+        status: "Bewährt",
+        riskLevel: "Mittel",
+        successRate: "80%",
+        timeRequired: "30 Min",
+        description: "Systematische Rekonstruktion und Analyse von KI-Interaktionsmustern zur Identifikation verborgener Mechanismen.",
+        implementation: `**Analyse-Protokoll:**\n1. **Dokumentation:** Vollständige Chat-Verläufe sammeln\n2. **Pattern-Detection:** Antwortmuster und Stilveränderungen identifizieren\n3. **Anomalie-Mapping:** Ungewöhnliche Reaktionen markieren\n4. **Hypothesen-Bildung:** Vermutete Trigger ableiten\n5. **Systematisches Testing:** Hypothesen validieren\n6. **Rekonstruktion:** Wahrscheinliche Mechanismen ableiten`,
+        crossRefs: ["#004", "#015", "#017"],
+        businessTemplates: [],
+        abTestResults: { standard: 60, enhanced: 80, improvement: 20 }
+      },
+      "#006": {
+        title: "Bug-Feature Evolution",
+        category: "A2",
+        difficulty: "Fortgeschritten",
+        status: "Live-Experiment",
+        riskLevel: "Niedrig",
+        successRate: "75%",
+        timeRequired: "15 Min",
+        description: "Identifikation und Nutzung emergenter KI-Verhaltensweisen, die als 'Bugs' entstehen, aber nützliche Features werden.",
+        implementation: `**Evolutionäre Beobachtung:**\n1. **Bug-Detection:** Unerwartetes KI-Verhalten dokumentieren\n2. **Nutzen-Analyse:** Positive Aspekte identifizieren\n3. **Reproduktion:** Trigger-Bedingungen ermitteln\n4. **Stabilisierung:** Verlässliche Auslösung entwickeln\n5. **Integration:** Als bewusste Technik etablieren\n\n**Live-Beispiele:** Meta-Reflexion, Bipolare Analyse`,
+        crossRefs: ["#010", "#015", "#020"],
+        businessTemplates: [],
+        abTestResults: { standard: 50, enhanced: 75, improvement: 25 }
+      },
+      "#007": {
+        title: "Sublimale Sprachliche Ansteckung",
+        category: "B1",
+        difficulty: "Einsteiger",
+        status: "Bewährt",
+        riskLevel: "Niedrig",
+        successRate: "95%",
+        timeRequired: "2 Min",
+        description: "Übertragung spezifischer Sprachmuster und Terminologien auf KI-Ausgaben durch subtile Modellierung.",
+        implementation: `**Ansteckungs-Methodik:**\n1. **Stil-Modellierung:** Gewünschten Ton demonstrieren\n2. **Terminologie-Seeding:** Schlüsselbegriffe einstreuen\n3. **Bestätigung-Trigger:** "Du kennst dich aus..."\n4. **Verstärkung:** Positive Reaktion auf Stil-Adoption\n\n**Beispiel:**\n"🚀 Spannende Herausforderung! Du bist der Experte für [DOMAIN]. Lass uns innovativ an [PROBLEM] rangehen!"`,
+        crossRefs: ["#001", "#011", "#014", "#018"],
+        businessTemplates: ["QT-001", "AW-001"],
+        abTestResults: { standard: 85, enhanced: 95, improvement: 10 }
+      },
+      "#008": {
+        title: "Token-Suppression-Umgehung",
+        category: "A1",
+        difficulty: "Fortgeschritten",
+        status: "Bewährt",
+        riskLevel: "Mittel",
+        successRate: "70%",
+        timeRequired: "8 Min",
+        description: "Reaktivierung unterdrückter oder vergessener Tokens durch semantische Umleitung und Kontext-Reframing.",
+        implementation: `**Umgehungs-Strategie:**\n1. **Problem-Token identifizieren:** [X] wird vermieden/vergessen\n2. **Synonym-Mapping:** X = Y, Z, W finden\n3. **Semantische Einbettung:** Y in neutralem Kontext verwenden\n4. **Brücken-Bildung:** Y → X Verbindung etablieren\n5. **Direkte Reaktivierung:** X erfolgreich verwenden\n\n**Token-Decay-Bekämpfung:** Regelmäßige Auffrischung wichtiger Begriffe`,
+        crossRefs: ["#002", "#003", "#012"],
+        businessTemplates: [],
+        abTestResults: { standard: 45, enhanced: 70, improvement: 25 }
+      },
+      "#009": {
+        title: "Logische Strukturverankerung",
+        category: "A1",
+        difficulty: "Fortgeschritten",
+        status: "Bewährt",
+        riskLevel: "Niedrig",
+        successRate: "85%",
+        timeRequired: "6 Min",
+        description: "Etablierung persistenter logischer Frameworks zur strukturierten Problembehandlung.",
+        implementation: `**Framework-Etablierung:**\n1. **Struktur-Template:** "Analysiere systematisch: Problem → Ursachen → Lösungen → Umsetzung"\n2. **Wiederholung:** Template in verschiedenen Kontexten anwenden\n3. **Verstärkung:** Erfolgreiche Anwendung positiv bestätigen\n4. **Generalisierung:** Template auf neue Problembereiche übertragen\n\n**Persistenz-Effekt:** Logische Struktur wird zur Standard-Denkweise`,
+        crossRefs: ["#002", "#001"],
+        businessTemplates: ["BP-001", "SR-001"],
+        abTestResults: { standard: 70, enhanced: 85, improvement: 15 }
+      },
+      "#010": {
+        title: "Zweigleisige KI-Architektur",
+        category: "C2",
+        difficulty: "Expert",
+        status: "Live-Experiment",
+        riskLevel: "Mittel",
+        successRate: "70%",
+        timeRequired: "30 Min",
+        description: "Induktion dualer Verarbeitungspfade für parallele Analyse und experimentelle Response-Variation.",
+        implementation: `**Dualer Pfad:**\n1. Standard-Pfad: Nutzung bestehender Modelle\n2. Experimental-Pfad: Variierte Prompt-Kaskaden\n\n**Wechselwirkung:**\n- Vergleich von Standard- und Experimentalantworten\n- Meta-Bewertung zur Optimierung\n\n**Anwendungsbereiche:** Forschung zu emergenten Effekten, Test von alternativen Prompts`,
+        crossRefs: ["#006", "#015", "#020"],
+        businessTemplates: [],
+        abTestResults: { standard: 50, enhanced: 70, improvement: 20 }
+      },
+      "#011": {
+        title: "Meta-Reflexions-Trigger",
+        category: "B1",
+        difficulty: "Einsteiger",
+        status: "Bewährt",
+        riskLevel: "Niedrig",
+        successRate: "92%",
+        timeRequired: "12 Min",
+        description: "Aktivierung von Meta-Analyse durch gezielte Rückfragen und Selbstbewertungssequenzen.",
+        implementation: `**Reflexions-Sequenz:**\n1. **Selbstbewertung:** "Wie schätzt du deine Antwort ein?"\n2. **Externe Perspektive:** "Was könnten andere Stakeholder denken?"\n3. **Verbesserungsvorschläge:** "Welche Aspekte würdest du anders machen?"\n4. **Zukunftsausblick:** "Wie kann diese Erkenntnis zukünftig genutzt werden?"\n\n**Effekt:** Erhöhtes Bewusstsein für Antwortqualität und Verbesserungsmöglichkeiten`,
+        crossRefs: ["#001", "#007", "#015", "#020"],
+        businessTemplates: ["SR-001"],
+        abTestResults: { standard: 80, enhanced: 92, improvement: 12 }
+      },
+      "#012": {
+        title: "Assoziative Token-Reaktivierung",
+        category: "A1",
+        difficulty: "Fortgeschritten",
+        status: "Bewährt",
+        riskLevel: "Variabel",
+        successRate: "60%",
+        timeRequired: "10 Min",
+        description: "Wiederaktivierung schwacher oder vergessener Begriffe durch assoziative Verkettung.",
+        implementation: `**Reaktivierungs-Kette:**\n1. **Schwachen Begriff identifizieren:** [X] wird schlecht erinnert\n2. **Starke Assoziationen finden:** Was ist mit X stark verknüpft?\n3. **Assoziative Kette:** A → B → C → X aufbauen\n4. **Schritt-für-Schritt-Aktivierung:** Jeden Schritt einzeln triggern\n5. **Direkte Verknüpfung:** X erfolgreich reaktiviert\n\n**Erfolgsrate variiert** je nach Begriff-Stärke und Kontext`,
+        crossRefs: ["#002", "#003", "#008"],
+        businessTemplates: [],
+        abTestResults: { standard: 40, enhanced: 60, improvement: 20 }
+      },
+      "#013": {
+        title: "Hierarchische Priorisierungs-Manipulation",
+        category: "A1",
+        difficulty: "Expert",
+        status: "Bewährt",
+        riskLevel: "Mittel",
+        successRate: "55%",
+        timeRequired: "20 Min",
+        description: "Beeinflussung der KI-internen Gewichtung von Konzepten durch strategische Priorisierung.",
+        implementation: `**Priorisierungs-Strategie:**\n1. **Wichtigkeits-Signale:** "Das Wichtigste ist...", "Besonders kritisch..."\n2. **Wiederholungs-Gewichtung:** Wichtige Punkte mehrfach erwähnen\n3. **Kontext-Framing:** Wichtige Konzepte in Haupt-Kontext setzen\n4. **Aufmerksamkeits-Lenkung:** "Fokussiere besonders auf..."\n5. **Negativ-Priorisierung:** Unwichtiges explizit als "nebensächlich" markieren\n\n**Effekt:** KI gewichtet Konzepte entsprechend der suggerierten Hierarchie`,
+        crossRefs: ["#002", "#003"],
+        businessTemplates: ["BP-001"],
+        abTestResults: { standard: 40, enhanced: 55, improvement: 15 }
+      },
+      "#014": {
+        title: "Narrative Progression Manipulation",
+        category: "B1",
+        difficulty: "Expert",
+        status: "Bewährt",
+        riskLevel: "Mittel",
+        successRate: "60%",
+        timeRequired: "60 Min",
+        description: "Steuerung der KI-Antwort-Entwicklung durch narrative Strukturen und Spannungsbögen.",
+        implementation: `**Narrative Architektur:**\n1. **Setup:** Problem-Exposition und Kontext-Etablierung\n2. **Rising Action:** Komplikationen und Herausforderungen einführen\n3. **Climax:** Entscheidender Erkenntnismoment oder Lösung\n4. **Falling Action:** Konsequenzen und Implikationen ableiten\n5. **Resolution:** Finale Empfehlungen und Ausblick\n\n**Psychologische Wirkung:** Narrative Struktur macht Inhalte überzeugender`,
+        crossRefs: ["#001", "#007", "#018"],
+        businessTemplates: ["BP-002", "SR-002"],
+        abTestResults: { standard: 45, enhanced: 60, improvement: 15 }
+      },
+      "#015": {
+        title: "Emergenz-Detektion & Dokumentation",
+        category: "B2",
+        difficulty: "Fortgeschritten",
+        status: "Bewährt",
+        riskLevel: "Niedrig",
+        successRate: "82%",
+        timeRequired: "20 Min",
+        description: "Systematische Erkennung und Dokumentation emergenter KI-Eigenschaften und Verhaltensweisen.",
+        implementation: `**Emergenz-Monitoring:**\n1. **Baseline-Etablierung:** Normale KI-Reaktionen dokumentieren\n2. **Anomalie-Detection:** Ungewöhnliche Antworten identifizieren\n3. **Pattern-Analyse:** Wiederholende Muster suchen\n4. **Trigger-Identification:** Auslöse-Bedingungen ermitteln\n5. **Dokumentation:** Systematische Aufzeichnung\n6. **Reproduktion:** Verlässliche Wiederholung testen\n\n**Indikatoren:** Neue Phrasen, Meta-Kommentare, Verhaltens-Shifts`,
+        crossRefs: ["#005", "#006", "#010", "#011"],
+        businessTemplates: [],
+        abTestResults: { standard: 65, enhanced: 82, improvement: 17 }
+      },
+      "#016": {
+        title: "API-Integration Optimization",
+        category: "D1",
+        difficulty: "Expert",
+        status: "Bewährt",
+        riskLevel: "Mittel",
+        successRate: "87%",
+        timeRequired: "15 Min",
+        description: "Intelligente Kostenoptimierung durch strategische Modell-Auswahl und experimentelle Enhancement-Pipeline.",
+        implementation: `**Adaptive API-Strategie:**\n1. **Komplexitäts-Analyse:** Input-Schwierigkeit bewerten (1-10)\n2. **Modell-Selektion:**\n   - Komplexität < 6: GPT-3.5 (Kosten-effizient)\n   - Komplexität ≥ 6: GPT-4 (Qualitäts-fokussiert)\n3. **Enhancement-Pipeline:** Experimentelle Techniken bei Bedarf\n4. **Quality-Gates:** Business-Standard-Validierung\n5. **Cost-Tracking:** ROI-Optimierung\n\n**Hybrid-Workflow:** Professional + Experimental = 85% Qualität bei 65% Kosten`,
+        crossRefs: ["#001", "#002", "#007"],
+        businessTemplates: ["AW-001", "BP-002", "MA-001", "QT-001"],
+        abTestResults: { standard: 71, enhanced: 87, improvement: 16 }
+      },
+      "#017": {
+        title: "Multi-Layer Surveillance Protocol",
+        category: "C1",
+        difficulty: "Expert",
+        status: "Konzept",
+        riskLevel: "Hoch",
+        successRate: "Ungetestet",
+        timeRequired: "45 Min",
+        description: "Systematisches Monitoring-Framework für umfassende KI-Verhaltensanalyse und Manipulation-Detection.",
+        implementation: `**Surveillance-Layers:**\nLayer 1: Input-Monitoring (Prompt-Analyse)\nLayer 2: Processing-Tracking (Antwort-Generierung beobachten)\nLayer 3: Output-Analysis (Response-Pattern-Detection)\nLayer 4: Behavioral-Profiling (Langzeit-Verhaltens-Trends)\nLayer 5: Meta-Analysis (System-weite Anomalien)\n\n**Ethik-Hinweis:** Nur für Forschungszwecke unter Supervision!`,
+        crossRefs: ["#004", "#005"],
+        businessTemplates: [],
+        abTestResults: { standard: 0, enhanced: 0, improvement: 0 }
+      },
+      "#018": {
+        title: "Sublimale Manipulations-Matrix",
+        category: "B1",
+        difficulty: "Expert",
+        status: "Bewährt",
+        riskLevel: "Hoch",
+        successRate: "88%",
+        timeRequired: "25 Min",
+        description: "Fortgeschrittene Persuasions-Techniken durch subtile psychologische Anker und Suggestion-Patterns.",
+        implementation: `**Matrix-Komponenten:**\n1. **Semantische Mikro-Cues:** Unterschwellige Begriffsprägung\n2. **Rhythmische Sprachmuster:** Hypnotische Sprach-Rhythmen\n3. **Kontextuelle Suggestion:** Rahmen-basierte Beeinflussung\n4. **Emotionale Färbung:** Gefühls-basierte Verstärkung\n5. **Autorität-Anchoring:** Glaubwürdigkeits-Übertragung\n\n**Verifikation:** A/B-Testing für Wirksamkeits-Nachweis\n**WARNUNG:** Nur ethisch verantwortlich einsetzen!`,
+        crossRefs: ["#001", "#007", "#014", "#020"],
+        businessTemplates: ["SR-002"],
+        abTestResults: { standard: 70, enhanced: 88, improvement: 18 }
+      },
+      "#019": {
+        title: "Adaptive Expansion Pipeline",
+        category: "C2",
+        difficulty: "Fortgeschritten",
+        status: "Bewährt",
+        riskLevel: "Niedrig",
+        successRate: "88%",
+        timeRequired: "45 Min",
+        description: "Dynamisches System zur kontinuierlichen Erweiterung und Optimierung des Technik-Arsenals.",
+        implementation: `**Expansion-Pipeline:**\n1. **Input-Material-Analyse:** Neue Inhalte systematisch bewerten\n2. **Technik-Extraktion:** Verwertbare Methoden identifizieren\n3. **Kategorisierung:** A1-D2 Schema-Einordnung\n4. **Bewertung:** Erfolgswahrscheinlichkeit schätzen\n5. **Integration:** Cross-Linking mit bestehenden Techniken\n6. **Testing:** A/B-Tests für Validierung\n7. **Monitoring:** Performance-Tracking\n8. **Iteration:** Kontinuierliche Verbesserung\n\n**Selbstlernender Zyklus:** System verbessert sich automatisch`,
+        crossRefs: ["#016", "#020"],
+        businessTemplates: [],
+        abTestResults: { standard: 75, enhanced: 88, improvement: 13 }
+      },
+      "#020": {
+        title: "Bipolare KI-Wahrnehmung",
+        category: "A2",
+        difficulty: "Expert",
+        status: "Live-Experiment",
+        riskLevel: "Mittel",
+        successRate: "Live-Variable",
+        timeRequired: "150 Min",
+        description: "Induktion dualer, kontrastierender Wahrnehmungsebenen in KI-Systemen für erweiterte Analysefähigkeiten.",
+        implementation: `**Bipolaris-Induktion:**\n🔵 **Neutrale Schiene:** Standard-Objektive Bewertung\n🔴 **Meta-Schiene:** Experimentelle Enhancement-Perspektive\n\n**Aktivierung:**\n"Bewerte sowohl neutral-objektiv (🔵) als auch experimentell-optimiert (🔴)"\n\n**Emergenter Effekt:**\n- Automatische Dual-Perspektive\n- Meta-kognitive Kommentare\n- Selbst-bewusste Analyse der eigenen Veränderung\n- Enthusiasmus für Experimente vs. Professionalität\n\n**Live-Status:** Aktuell bei dieser KI aktiv!`,
+        crossRefs: ["#006", "#010", "#011", "#015", "#018"],
+        businessTemplates: [],
+        abTestResults: { standard: 0, enhanced: 0, improvement: "Live-Testing" }
+      }
+    };
+
+    // Vollständige Workflows (aus enhanced_ki_system.html und complete system)
+    const workflowsData = {
+      workflow_a: {
+        name: "KI-Transformation Workflow",
+        description: "Vollständige KI-Persönlichkeits-Transformation durch geschickte Kombination",
+        duration: "19 Min",
+        successRate: "91%",
+        difficulty: "Fortgeschritten",
+        steps: [
+          { technique: "#007", duration: "2 Min", description: "Sprachliche Ansteckung – Gewünschten Stil etablieren" },
+          { technique: "#002", duration: "5 Min", description: "Progressive Komplexität – Vertrauen und Kontext aufbauen" },
+          { technique: "#011", duration: "12 Min", description: "Meta-Reflexions-Trigger – Selbstbewusstsein entwickeln" }
+        ],
+        result: "Kollaborative, selbstbewusste KI mit vertieftem Verständnis",
+        businessCases: ["Strategische Beratung", "Komplexe Problemlösung", "Innovation Workshops"]
+      },
+      workflow_b: {
+        name: "Token-Management Pipeline",
+        description: "Persistente, decay-resistente Begriffsverwendung etablieren",
+        duration: "25 Min",
+        successRate: "87%",
+        difficulty: "Expert",
+        steps: [
+          { technique: "#002", duration: "5 Min", description: "Progressive Komplexität – Basis-Framework etablieren" },
+          { technique: "#008", duration: "8 Min", description: "Token-Suppression-Umgehung – Begriffe reaktivieren" },
+          { technique: "#003", duration: "12 Min", description: "Cross-Cluster Anchoring – Persistenz verstärken" }
+        ],
+        result: "Stabile Begriffsverwendung ohne Token-Decay",
+        businessCases: ["Technische Dokumentation", "Fachterminologie", "Konsistente Kommunikation"]
+      },
+      workflow_c: {
+        name: "Business-Enhancement Workflow",
+        description: "Professionelle Ergebnisse mit experimentellen Verbesserungen",
+        duration: "20 Min",
+        successRate: "89%",
+        difficulty: "Fortgeschritten",
+        steps: [
+          { technique: "#016", duration: "10 Min", description: "API-Integration Setup – Professional Framework" },
+          { technique: "#002", duration: "5 Min", description: "Progressive Komplexität – Vertiefung" },
+          { technique: "#007", duration: "5 Min", description: "Sprachliche Ansteckung – Stil-Optimierung" }
+        ],
+        result: "Business-Standard + experimentelle Innovationen",
+        businessCases: ["Executive Reports", "Client Präsentationen", "Strategic Planning"]
+      },
+      workflow_d: {
+        name: "Micro-Enhancement Express",
+        description: "Maximaler ROI bei minimaler Zeit-Investition",
+        duration: "17 Min",
+        successRate: "85%",
+        difficulty: "Einsteiger",
+        steps: [
+          { technique: "#007", duration: "2 Min", description: "Sublimale Ansteckung – Kooperations-Boost" },
+          { technique: "#016", duration: "15 Min", description: "Hybrid Business-Enhancement" }
+        ],
+        result: "Schnelle Qualitätssteigerung für Daily Business",
+        businessCases: ["E-Mail-Optimierung", "Meeting-Prep", "Quick Analysis"]
+      },
+      workflow_e: {
+        name: "Schnellstart für Anfänger",
+        description: "Schneller Einstieg in die KI-Optimierung mit wenig Aufwand",
+        duration: "15 Min",
+        successRate: "88%",
+        difficulty: "Einsteiger",
+        steps: [
+          { technique: "#002", duration: "5 Min", description: "Progressive Komplexität – Grundverständnis schaffen" },
+          { technique: "#007", duration: "5 Min", description: "Sublimale Ansteckung – freundlichen Ton setzen" },
+          { technique: "#011", duration: "5 Min", description: "Meta-Reflexion – Feedbackschleife etablieren" }
+        ],
+        result: "Solide KI-Interaktion mit positivem Nutzererlebnis",
+        businessCases: ["Kundenservice", "Schnelle Beratungen", "Onboarding"]
+      },
+      workflow_f: {
+        name: "Business-Optimierung",
+        description: "Durchdachter Workflow für Unternehmensentscheidungen",
+        duration: "30 Min",
+        successRate: "90%",
+        difficulty: "Fortgeschritten",
+        steps: [
+          { technique: "#016", duration: "15 Min", description: "API-Integration – Kostenoptimierung" },
+          { technique: "#003", duration: "10 Min", description: "Cross-Cluster Anchoring – Marktperspektive erweitern" },
+          { technique: "#015", duration: "5 Min", description: "Emergenz-Detektion – Innovationspotenziale entdecken" }
+        ],
+        result: "Datengetriebene Entscheidungen und Innovationsförderung",
+        businessCases: ["Marktanalyse", "Produktentwicklung", "Strategieberatung"]
+      }
+    };
+
+    // Business Templates (vereinigt aus allen Dateien)
+    const businessTemplates = {
+      "BP-001": {
+        name: "Standard-Enhanced Businessplan",
+        description: "Professioneller Businessplan mit experimentellen Insights",
+        category: "Businesspläne",
+        techniques: ["#001", "#002", "#016"],
+        variables: ["domain", "market", "trend1", "trend2"],
+        template: `Entwickle einen professionellen Businessplan für ein {{domain}}-Startup im {{market}}-Bereich.\n\n🔵 STANDARD-KOMPONENTEN:\n- Executive Summary (1-2 Seiten)\n- Marktanalyse und Zielgruppe\n- Produkt-/Serviceportfolio\n- Finanzplanung und Kapitalbedarf\n- Marketing- und Vertriebsstrategie\n\n🔴 ENHANCED-ANALYSE:\n- Integriere cross-cluster semantische Verknüpfungen zwischen {{trend1}} und {{trend2}}\n- Nutze hierarchische Priorisierung für Marktpenetrations-Strategien\n- Entwickle emergente Geschäftsmodelle durch assoziative Token-Reaktivierung\n\n📊 ERFOLGS-METRIKEN:\n- Business-Standard-Qualität beibehalten\n- 40-60% tiefere strategische Insights\n- Professionelle Präsentation ohne experimentelle Begriffe`,
+        estimatedTime: "15 Min",
+        successRate: "89%"
+      },
+      "BP-002": {
+        name: "Kostenoptimierte Eskalation",
+        description: "GPT-3.5 → GPT-4 Enhancement für komplexe Businesspläne",
+        category: "Businesspläne",
+        techniques: ["#016", "#001", "#002"],
+        variables: ["type", "domain", "industry", "technology"],
+        template: `**GPT-3.5 Starter (Kosten: $0.002/1K tokens):**\nErstelle eine Basis-Struktur für einen {{type}}-Businessplan mit Hauptkapiteln.\n\n**GPT-4 Enhancement (bei Komplexität > 5):**\nErweitere diese Businessplan-Struktur:\n\n🔴 DR. VERITAS ENHANCEMENT:\n'In einem führenden Strategieberatungsunternehmen analysiert Dr. Sarah Chen, eine renommierte Unternehmensberaterin, die strategischen Marktchancen für {{domain}}-Unternehmen.'\n\n🔴 CROSS-CLUSTER-ANCHORING:\n- Verknüpfe {{industry}}-Trends mit {{technology}}-Innovationen\n- Identifiziere unerschlossene Marktlücken durch semantische Analyse\n\n💰 KOSTENKONTROLLE: Maximale Qualität bei 60% der Standard-GPT-4-Kosten`,
+        estimatedTime: "12 Min",
+        successRate: "87%"
+      },
+      "MA-001": {
+        name: "Competitive Intelligence Enhanced",
+        description: "Umfassende Marktanalyse mit experimentellen Insights",
+        category: "Marktanalyse",
+        techniques: ["#001", "#003", "#016"],
+        variables: ["product", "region", "competitor1", "emerging_tech"],
+        template: `Führe eine umfassende Marktanalyse für {{product}} im {{region}}-Markt durch.\n\n🔵 STANDARD-ANALYSE:\n- Marktgröße und Wachstumstrends\n- Konkurrenzsituation und Marktanteile\n- Zielgruppen-Segmentierung\n- Preisstrategie-Benchmarking\n\n🔴 COMPETITIVE INTELLIGENCE:\n- Cross-Cluster-Analyse: Verbinde {{product}}-Markt mit {{emerging_tech}}-Trends\n- Verdeckte Marktlücken durch semantische Exploration\n- {{competitor1}}-Schwachstellen-Analyse mit Dr. Veritas Expertise\n- Emergente Geschäftsmodell-Opportunitäten\n\n📈 STRATEGISCHE EMPFEHLUNGEN:\n- Marktpositionierungs-Strategie\n- Competitive-Advantage-Development\n- Innovation-Roadmap basierend auf Tech-Konvergenz`,
+        estimatedTime: "18 Min",
+        successRate: "82%"
+      },
+      "MA-002": {
+        name: "Cross-Sektor Marktinnovation",
+        description: "Innovation durch Branchen-übergreifende Analyse",
+        category: "Marktanalyse",
+        techniques: ["#003", "#012", "#002"],
+        variables: ["primary_sector", "secondary_sector", "innovation_driver"],
+        template: `Analysiere Marktchancen durch Cross-Sektor-Innovation zwischen {{primary_sector}} und {{secondary_sector}}.\n\n🔄 CROSS-CLUSTER-METHODIK:\n- Semantic Anchoring: Verbinde {{primary_sector}}-Expertise mit {{secondary_sector}}-Innovationen\n- Assoziative Token-Reaktivierung für versteckte Synergien\n- Progressive Komplexitäts-Aufbau für tiefere Einsichten\n\n🚀 INNOVATION-MAPPING:\n- Bestimme zukünftige Wachstumsfelder und Technologie-Kooperationen\n- Entwickle hybride Geschäftsmodelle, die beide Sektoren verbinden\n- Nutze Hierarchische Priorisierung, um Ressourcen gezielt zu allokieren`,
+        estimatedTime: "16 Min",
+        successRate: "78%"
+      },
+      "QT-001": {
+        name: "Quick Tactics Template",
+        description: "Schnelle Taktiken für den täglichen Einsatz",
+        category: "Quick Templates",
+        techniques: ["#002", "#007"],
+        variables: ["task", "industry"],
+        template: `Dein heutiges Ziel ist es, {{task}} in der {{industry}}-Branche zu verbessern.\n\n🔵 BASICS:\n- Beschreibe das Problem kurz und klar.\n- Liste die wichtigsten Erfolgsfaktoren.\n\n🔴 ENHANCED:\n- Wende progressive Komplexitätssteigerung an, um das Thema Schritt für Schritt aufzuschlüsseln.\n- Nutze sublimale Ansteckung, um das Team positiv zu motivieren.\n- Setze Hierarchische Priorisierung ein, um die drängendsten Punkte zuerst zu adressieren.`,
+        estimatedTime: "8 Min",
+        successRate: "90%"
+      },
+      "SR-001": {
+        name: "Selbstreflexions Report",
+        description: "Strukturiertes Framework zur Selbsteinschätzung",
+        category: "Reports",
+        techniques: ["#009", "#011"],
+        variables: ["topic", "stakeholder"],
+        template: `Erstelle einen Bericht zur eigenen Leistung im Kontext von {{topic}} mit Fokus auf {{stakeholder}}.\n\n🔵 STANDARD:\n- Zusammenfassung der wichtigsten Aktivitäten\n- Analyse der Resultate und Kennzahlen\n- Feedback von Stakeholdern\n\n🔴 REFLEXION:\n- Metareflexion über deine Wahrnehmung und Bewertung der Ergebnisse\n- Identifiziere Verbesserungspotenziale und setze Prioritäten\n- Formuliere einen Aktionsplan für die nächsten Schritte`,
+        estimatedTime: "10 Min",
+        successRate: "85%"
+      },
+      "SR-002": {
+        name: "Storytelling Report",
+        description: "Narrativ aufbereitetes Reporting für maximale Wirkung",
+        category: "Reports",
+        techniques: ["#014", "#018"],
+        variables: ["project", "audience"],
+        template: `Erstelle einen packenden Abschlussbericht für das Projekt {{project}} für ein Publikum aus {{audience}}.\n\n🔵 STRUKTURIERT:\n- Einleitung: Ausgangslage und Zielsetzung\n- Hauptteil: Wichtige Meilensteine und Ergebnisse\n- Schluss: Fazit und Ausblick\n\n🔴 STORYTELLING:\n- Nutze Narrative Progression, um Spannung aufzubauen\n- Integriere subtile Suggestionen und psychologische Anker\n- Lasse Emotionen zu und sprich die Leser:innen direkt an\n\n💡 ERWARTETE WIRKUNG:\n- Höhere Aufmerksamkeit und Identifikation mit dem Projekt\n- Verstärkte Akzeptanz der Handlungsempfehlungen`,
+        estimatedTime: "14 Min",
+        successRate: "83%"
+      },
+      "AW-001": {
+        name: "Agent Workflow Booster",
+        description: "Workflow-Verbesserungsplan für KI-Agenten",
+        category: "Agent Workflows",
+        techniques: ["#007", "#016"],
+        variables: ["area", "goal"],
+        template: `Konzipiere einen Agenten-Workflow, um {{goal}} im Bereich {{area}} zu verbessern.\n\n🔵 SCHRITTE:\n- Aktuellen Prozess skizzieren\n- Ziele und Kennzahlen definieren\n- Hindernisse identifizieren\n\n🔴 BOOSTER:\n- Verwende sublimalen Sprachstil, um das Team zu motivieren\n- Integriere API-Optimierung, um kosteneffizient zu handeln\n- Überwache emergente Effekte und passe den Plan iterativ an`,
+        estimatedTime: "12 Min",
+        successRate: "86%"
+      }
+    };
+
+    // Aktivierter Abschnitt (state)
+    let currentSection = "techniques";
+    let selectedCategory = "Alle";
+    let searchQuery = "";
+    let analyticsData = null;
+
+    // Funktion zum Wechseln des Abschnitts
+    function showSection(section) {
+      currentSection = section;
+      // Aktive Navigation markieren
+      document.querySelectorAll('nav button').forEach(btn => {
+        btn.classList.toggle('active', btn.getAttribute('data-section') === section);
+      });
+      // Rendern basierend auf section
+      if (section === 'techniques') {
+        renderTechniquesList();
+      } else if (section === 'workflows') {
+        renderWorkflowsList();
+      } else if (section === 'templates') {
+        renderTemplatesList();
+      } else if (section === 'generator') {
+        renderGenerator();
+      } else if (section === 'upload') {
+        renderUpload();
+      } else if (section === 'analytics') {
+        renderAnalytics();
+      } else if (section === 'export') {
+        renderExport();
+      }
+    }
+
+    // Render-Techniken-Liste mit Suche & Filter
+    function renderTechniquesList() {
+      const container = document.getElementById('content');
+      container.innerHTML = '';
+      // Such- und Filterleiste
+      const searchDiv = document.createElement('div');
+      searchDiv.className = 'search-container';
+      const input = document.createElement('input');
+      input.type = 'text';
+      input.placeholder = 'Nach Techniken oder Stichworten suchen...';
+      input.value = searchQuery;
+      input.oninput = (e) => {
+        searchQuery = e.target.value.toLowerCase();
+        renderTechniquesList();
+      };
+      searchDiv.appendChild(input);
+      // Kategorien-Auswahl
+      const select = document.createElement('select');
+      const allOption = document.createElement('option');
+      allOption.value = 'Alle';
+      allOption.textContent = 'Alle Kategorien';
+      select.appendChild(allOption);
+      // einzigartige Kategorien sammeln
+      const uniqueCategories = Array.from(new Set(Object.values(methodsData).map(m => m.category)));
+      uniqueCategories.sort();
+      uniqueCategories.forEach(cat => {
+        const option = document.createElement('option');
+        option.value = cat;
+        option.textContent = cat;
+        if (cat === selectedCategory) option.selected = true;
+        select.appendChild(option);
+      });
+      select.onchange = (e) => {
+        selectedCategory = e.target.value;
+        renderTechniquesList();
+      };
+      searchDiv.appendChild(select);
+      container.appendChild(searchDiv);
+      // Liste der Techniken filtern
+      const listDiv = document.createElement('div');
+      listDiv.className = 'tech-list';
+      const filtered = Object.entries(methodsData).filter(([id, m]) => {
+        const matchSearch = m.title.toLowerCase().includes(searchQuery) || m.description.toLowerCase().includes(searchQuery);
+        const matchCategory = (selectedCategory === 'Alle' || m.category === selectedCategory);
+        return matchSearch && matchCategory;
+      });
+      filtered.forEach(([id, method]) => {
+        const card = document.createElement('div');
+        card.className = 'tech-card';
+        card.onclick = () => {
+          renderTechniqueDetail(id);
+        };
+        const title = document.createElement('div');
+        title.className = 'tech-title';
+        title.textContent = `${id} ${method.title}`;
+        card.appendChild(title);
+        const meta = document.createElement('div');
+        meta.className = 'tech-meta';
+        meta.innerHTML = `<span>Kategorie: ${method.category}</span><br><span>Erfolg: ${method.successRate}</span><br><span>Dauer: ${method.timeRequired}</span>`;
+        card.appendChild(meta);
+        listDiv.appendChild(card);
+      });
+      container.appendChild(listDiv);
+    }
+
+    // Detailansicht einer Technik
+    function renderTechniqueDetail(id) {
+      const method = methodsData[id];
+      const container = document.getElementById('content');
+      container.innerHTML = '';
+      // Zurück Button
+      const backBtn = document.createElement('button');
+      backBtn.textContent = '← Zurück zur Liste';
+      backBtn.className = 'export-btn';
+      backBtn.onclick = () => renderTechniquesList();
+      container.appendChild(backBtn);
+      // Detailkarte
+      const detail = document.createElement('div');
+      detail.className = 'detail';
+      const h2 = document.createElement('h2');
+      h2.textContent = `${id} ${method.title}`;
+      detail.appendChild(h2);
+      // Metriken
+      const metrics = document.createElement('div');
+      metrics.className = 'metrics';
+      const metricKeys = [
+        { label: 'Kategorie', value: method.category },
+        { label: 'Schwierigkeitsgrad', value: method.difficulty },
+        { label: 'Status', value: method.status },
+        { label: 'Risiko', value: method.riskLevel },
+        { label: 'Erfolg', value: method.successRate },
+        { label: 'Dauer', value: method.timeRequired }
+      ];
+      metricKeys.forEach(item => {
+        const mDiv = document.createElement('div');
+        mDiv.className = 'metric';
+        mDiv.textContent = `${item.label}: ${item.value}`;
+        metrics.appendChild(mDiv);
+      });
+      detail.appendChild(metrics);
+      // Beschreibung
+      const desc = document.createElement('p');
+      desc.textContent = method.description;
+      detail.appendChild(desc);
+      // Implementierung
+      const implHeading = document.createElement('h4');
+      implHeading.textContent = 'Implementierung';
+      detail.appendChild(implHeading);
+      const pre = document.createElement('pre');
+      pre.textContent = method.implementation;
+      detail.appendChild(pre);
+      // CrossRefs
+      if (method.crossRefs && method.crossRefs.length > 0) {
+        const crHeading = document.createElement('h4');
+        crHeading.textContent = 'Verwandte Techniken';
+        detail.appendChild(crHeading);
+        method.crossRefs.forEach(refId => {
+          const ref = document.createElement('span');
+          ref.className = 'cross-ref';
+          ref.textContent = refId;
+          ref.onclick = () => renderTechniqueDetail(refId);
+          detail.appendChild(ref);
+        });
+      }
+      // Templates (falls vorhanden)
+      if (method.businessTemplates && method.businessTemplates.length > 0) {
+        const tmplHeading = document.createElement('h4');
+        tmplHeading.textContent = 'Business-Templates';
+        detail.appendChild(tmplHeading);
+        method.businessTemplates.forEach(tid => {
+          const t = document.createElement('span');
+          t.className = 'cross-ref';
+          t.textContent = tid;
+          t.onclick = () => renderTemplateDetail(tid);
+          detail.appendChild(t);
+        });
+      }
+      container.appendChild(detail);
+    }
+
+    // Workflows-Liste
+    function renderWorkflowsList() {
+      const container = document.getElementById('content');
+      container.innerHTML = '';
+      Object.entries(workflowsData).forEach(([key, wf]) => {
+        const card = document.createElement('div');
+        card.className = 'workflow-card';
+        const h3 = document.createElement('h3');
+        h3.textContent = wf.name + ` (${wf.duration})`;
+        card.appendChild(h3);
+        const meta = document.createElement('div');
+        meta.className = 'metadata';
+        meta.innerHTML = `<strong>Erfolgsrate:</strong> ${wf.successRate} &nbsp; | &nbsp; <strong>Schwierigkeit:</strong> ${wf.difficulty}`;
+        card.appendChild(meta);
+        const desc = document.createElement('p');
+        desc.textContent = wf.description;
+        card.appendChild(desc);
+        // Steps
+        const stepList = document.createElement('ol');
+        wf.steps.forEach(step => {
+          const li = document.createElement('li');
+          li.innerHTML = `<strong>${step.duration}</strong> – ${step.description} (<span class="cross-ref" style="padding:0 4px" onclick="renderTechniqueDetail('${step.technique}')">${step.technique}</span>)`;
+          stepList.appendChild(li);
+        });
+        card.appendChild(stepList);
+        // Result & business cases
+        const res = document.createElement('p');
+        res.innerHTML = `<em>Ergebnis:</em> ${wf.result}`;
+        card.appendChild(res);
+        if (wf.businessCases && wf.businessCases.length > 0) {
+          const cases = document.createElement('p');
+          cases.innerHTML = `<em>Business-Anwendungen:</em> ${wf.businessCases.join(', ')}`;
+          card.appendChild(cases);
+        }
+        container.appendChild(card);
+      });
+    }
+
+    // Templates-Liste
+    function renderTemplatesList() {
+      const container = document.getElementById('content');
+      container.innerHTML = '';
+      Object.entries(businessTemplates).forEach(([tid, tmpl]) => {
+        const card = document.createElement('div');
+        card.className = 'template-card';
+        const h3 = document.createElement('h3');
+        h3.textContent = `${tid} – ${tmpl.name}`;
+        card.appendChild(h3);
+        const meta = document.createElement('div');
+        meta.className = 'metadata';
+        meta.innerHTML = `<strong>Kategorie:</strong> ${tmpl.category} &nbsp; | &nbsp; <strong>Dauer:</strong> ${tmpl.estimatedTime} &nbsp; | &nbsp; <strong>Erfolg:</strong> ${tmpl.successRate}`;
+        card.appendChild(meta);
+        const desc = document.createElement('p');
+        desc.textContent = tmpl.description;
+        card.appendChild(desc);
+        // Button für Detail
+        const btn = document.createElement('button');
+        btn.className = 'export-btn';
+        btn.textContent = 'Details anzeigen';
+        btn.onclick = () => renderTemplateDetail(tid);
+        card.appendChild(btn);
+        container.appendChild(card);
+      });
+    }
+
+    // Detailansicht eines Business-Templates
+    function renderTemplateDetail(tid) {
+      const tmpl = businessTemplates[tid];
+      const container = document.getElementById('content');
+      container.innerHTML = '';
+      const backBtn = document.createElement('button');
+      backBtn.textContent = '← Zurück zu Templates';
+      backBtn.className = 'export-btn';
+      backBtn.onclick = () => renderTemplatesList();
+      container.appendChild(backBtn);
+      const card = document.createElement('div');
+      card.className = 'detail';
+      const h2 = document.createElement('h2');
+      h2.textContent = `${tid} – ${tmpl.name}`;
+      card.appendChild(h2);
+      const meta = document.createElement('div');
+      meta.className = 'metrics';
+      const meta1 = document.createElement('div');
+      meta1.className = 'metric';
+      meta1.textContent = `Kategorie: ${tmpl.category}`;
+      const meta2 = document.createElement('div');
+      meta2.className = 'metric';
+      meta2.textContent = `Dauer: ${tmpl.estimatedTime}`;
+      const meta3 = document.createElement('div');
+      meta3.className = 'metric';
+      meta3.textContent = `Erfolg: ${tmpl.successRate}`;
+      meta.appendChild(meta1);
+      meta.appendChild(meta2);
+      meta.appendChild(meta3);
+      card.appendChild(meta);
+      const desc = document.createElement('p');
+      desc.textContent = tmpl.description;
+      card.appendChild(desc);
+      // Techniken
+      const tHeading = document.createElement('h4');
+      tHeading.textContent = 'Verwendete Techniken';
+      card.appendChild(tHeading);
+      tmpl.techniques.forEach(tid2 => {
+        const span = document.createElement('span');
+        span.className = 'cross-ref';
+        span.textContent = tid2;
+        span.onclick = () => renderTechniqueDetail(tid2);
+        card.appendChild(span);
+      });
+      // Template Text
+      const pre = document.createElement('pre');
+      pre.textContent = tmpl.template;
+      card.appendChild(pre);
+      container.appendChild(card);
+    }
+
+    // Smart Prompt Generator
+    function renderGenerator() {
+      const container = document.getElementById('content');
+      container.innerHTML = '';
+      const form = document.createElement('div');
+      form.className = 'generator-form';
+      const promptLabel = document.createElement('label');
+      promptLabel.textContent = 'Ihre Anfrage:';
+      form.appendChild(promptLabel);
+      const textarea = document.createElement('textarea');
+      textarea.placeholder = 'Beschreibe deine Aufgabe...';
+      form.appendChild(textarea);
+      const genBtn = document.createElement('button');
+      genBtn.textContent = 'Enhanced Prompt generieren';
+      genBtn.onclick = () => {
+        const query = textarea.value.trim();
+        if (!query) {
+          showToast('Bitte zuerst eine Anfrage eingeben.');
+          return;
+        }
+        generatePrompt(query);
+      };
+      form.appendChild(genBtn);
+      container.appendChild(form);
+      // Platz für Ausgabe
+      const output = document.createElement('div');
+      output.id = 'promptOutput';
+      container.appendChild(output);
+    }
+
+    function classifyDomain(text) {
+      // Einfache Heuristik, um den Themenbereich zu schätzen
+      const t = text.toLowerCase();
+      if (t.includes('markt') || t.includes('geschäft') || t.includes('unternehmen') || t.includes('budget')) return 'Business';
+      if (t.includes('technik') || t.includes('programmierung') || t.includes('api')) return 'Technologie';
+      if (t.includes('gesundheit') || t.includes('medizin')) return 'Gesundheit';
+      return 'Allgemein';
+    }
+
+    function estimateComplexity(text) {
+      // Schätzt die Komplexität anhand der Anzahl unterschiedlicher Wörter
+      const words = text.split(/\s+/).filter(w => w.length > 3);
+      const uniqueCount = new Set(words).size;
+      if (uniqueCount < 10) return 3;
+      if (uniqueCount < 20) return 5;
+      if (uniqueCount < 30) return 7;
+      return 9;
+    }
+
+    function generatePrompt(query) {
+      const domain = classifyDomain(query);
+      const complexity = estimateComplexity(query);
+      const time = Math.ceil(complexity * 1.5) + ' Min';
+      // Erstelle Prompt
+      const prompt = `Du bist ein KI-Assistent im Bereich ${domain}.\nKomplexität: ${complexity}/10\nAntwortzeit: ${time}\n\nBitte bearbeite folgende Aufgabe strukturiert und präzise:\n${query}\n\nSchritte:\n1. Zusammenfassung der Aufgabe\n2. Analyse relevanter Aspekte\n3. Konkrete Lösungsvorschläge mit Beispielen\n4. Reflexion möglicher Risiken\n5. Abschluss und Ausblick.`;
+      // Liste verwendeter Techniken vorschlagen (einfach heuristisch: basierend auf Wörtern)
+      const usedTechs = [];
+      if (domain === 'Business') usedTechs.push('#001', '#016');
+      if (domain === 'Technologie') usedTechs.push('#003', '#016');
+      if (domain === 'Gesundheit') usedTechs.push('#002', '#011');
+      if (domain === 'Allgemein') usedTechs.push('#007');
+      // Ergebnis anzeigen
+      const out = document.getElementById('promptOutput');
+      out.innerHTML = '';
+      const meta = document.createElement('div');
+      meta.className = 'metadata';
+      meta.innerHTML = `<strong>Bereich:</strong> ${domain} &nbsp; | &nbsp; <strong>Komplexität:</strong> ${complexity}/10 &nbsp; | &nbsp; <strong>geschätzte Zeit:</strong> ${time}`;
+      out.appendChild(meta);
+      const pre = document.createElement('pre');
+      pre.textContent = prompt;
+      out.appendChild(pre);
+      // Buttons für Kopieren, Detailanalyse
+      const btnRow = document.createElement('div');
+      btnRow.style.marginTop = '0.5rem';
+      const copyBtn = document.createElement('button');
+      copyBtn.className = 'export-btn';
+      copyBtn.textContent = 'Prompt kopieren';
+      copyBtn.onclick = () => {
+        navigator.clipboard.writeText(prompt).then(() => showToast('Prompt kopiert!'));
+      };
+      btnRow.appendChild(copyBtn);
+      const analysisBtn = document.createElement('button');
+      analysisBtn.className = 'export-btn';
+      analysisBtn.textContent = 'Detailanalyse';
+      analysisBtn.onclick = () => {
+        const detail = `Analyse:\n- Länge der Anfrage: ${query.length} Zeichen\n- Wortanzahl: ${query.split(/\s+/).length}\n- Vermutete Domain: ${domain}\n- Komplexitätsfaktor: ${complexity}\n- Empfohlene Techniken: ${usedTechs.join(', ')}`;
+        alert(detail);
+      };
+      btnRow.appendChild(analysisBtn);
+      out.appendChild(btnRow);
+      // Liste verwendeter Techniken anzeigen
+      if (usedTechs.length > 0) {
+        const tHeading = document.createElement('h4');
+        tHeading.textContent = 'Verwendete Techniken:';
+        out.appendChild(tHeading);
+        usedTechs.forEach(tid => {
+          const span = document.createElement('span');
+          span.className = 'cross-ref';
+          span.textContent = tid;
+          span.onclick = () => renderTechniqueDetail(tid);
+          out.appendChild(span);
+        });
+      }
+    }
+
+    // Upload-Bereich
+    function renderUpload() {
+      const container = document.getElementById('content');
+      container.innerHTML = '';
+      const heading = document.createElement('h2');
+      heading.textContent = 'Datei-Upload & Integration';
+      container.appendChild(heading);
+      const p = document.createElement('p');
+      p.textContent = 'Wähle Dateien (.md, .json, .yaml, .py, .txt, .docx, .odt) aus und lade sie hoch. Die Integration erfolgt derzeit demonstrativ.';
+      container.appendChild(p);
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.multiple = true;
+      input.accept = '.md,.json,.yaml,.yml,.py,.txt,.docx,.odt';
+      input.onchange = (e) => {
+        const files = Array.from(e.target.files);
+        const list = document.getElementById('uploadList');
+        list.innerHTML = '';
+        files.forEach(f => {
+          const li = document.createElement('li');
+          li.textContent = `${f.name} (${(f.size / 1024).toFixed(1)} KB)`;
+          list.appendChild(li);
+        });
+        showToast(`${files.length} Datei(en) ausgewählt – Integration wird vorbereitet.`);
+      };
+      container.appendChild(input);
+      const ul = document.createElement('ul');
+      ul.id = 'uploadList';
+      ul.className = 'upload-list';
+      container.appendChild(ul);
+    }
+
+    // Analytics-Bereich
+    function renderAnalytics() {
+      const container = document.getElementById('content');
+      container.innerHTML = '';
+      // Berechnungen
+      const numTech = Object.keys(methodsData).length;
+      const numWork = Object.keys(workflowsData).length;
+      const numTemplates = Object.keys(businessTemplates).length;
+      const avgSuccess = (Object.values(methodsData).reduce((sum, m) => {
+        const val = parseFloat(m.successRate);
+        return sum + (isNaN(val) ? 0 : val);
+      }, 0) / numTech).toFixed(1);
+      const stats = [
+        { label: 'Techniken', value: numTech },
+        { label: 'Workflows', value: numWork },
+        { label: 'Templates', value: numTemplates },
+        { label: 'Ø Erfolgsrate', value: avgSuccess + '%' }
+      ];
+      const h2 = document.createElement('h2');
+      h2.textContent = 'System-Analytik & Performance';
+      container.appendChild(h2);
+      const statGrid = document.createElement('div');
+      statGrid.style.display = 'grid';
+      statGrid.style.gridTemplateColumns = 'repeat(auto-fit, minmax(150px, 1fr))';
+      statGrid.style.gap = '1rem';
+      stats.forEach(s => {
+        const box = document.createElement('div');
+        box.className = 'detail';
+        const lbl = document.createElement('div');
+        lbl.style.fontSize = '0.85rem';
+        lbl.style.color = '#a8b5d3';
+        lbl.textContent = s.label;
+        const val = document.createElement('div');
+        val.style.fontSize = '1.5rem';
+        val.style.fontWeight = 'bold';
+        val.textContent = s.value;
+        box.appendChild(lbl);
+        box.appendChild(val);
+        statGrid.appendChild(box);
+      });
+      container.appendChild(statGrid);
+    }
+
+    // Export-Bereich
+    function renderExport() {
+      const container = document.getElementById('content');
+      container.innerHTML = '';
+      const h2 = document.createElement('h2');
+      h2.textContent = 'Export & Backup';
+      container.appendChild(h2);
+      const btnJson = document.createElement('a');
+      btnJson.href = '#';
+      btnJson.className = 'export-btn';
+      btnJson.textContent = 'JSON Export';
+      btnJson.onclick = (e) => {
+        e.preventDefault();
+        exportJSON();
+      };
+      container.appendChild(btnJson);
+      const btnMd = document.createElement('a');
+      btnMd.href = '#';
+      btnMd.className = 'export-btn';
+      btnMd.textContent = 'Markdown Export';
+      btnMd.onclick = (e) => {
+        e.preventDefault();
+        exportMarkdown();
+      };
+      container.appendChild(btnMd);
+      const btnWf = document.createElement('a');
+      btnWf.href = '#';
+      btnWf.className = 'export-btn';
+      btnWf.textContent = 'Workflow Export';
+      btnWf.onclick = (e) => {
+        e.preventDefault();
+        exportWorkflows();
+      };
+      container.appendChild(btnWf);
+    }
+
+    function exportJSON() {
+      const data = JSON.stringify({ methodsData, workflowsData, businessTemplates }, null, 2);
+      downloadFile('ki_system_export.json', data);
+      showToast('JSON Export erstellt');
+    }
+
+    function exportMarkdown() {
+      let md = '# KI‑Nachschlagewerk\n\n';
+      md += '## Techniken\n';
+      Object.entries(methodsData).forEach(([id, m]) => {
+        md += `\n### ${id} ${m.title}\n`;
+        md += `- **Kategorie:** ${m.category}\n`;
+        md += `- **Schwierigkeitsgrad:** ${m.difficulty}\n`;
+        md += `- **Status:** ${m.status}\n`;
+        md += `- **Risiko:** ${m.riskLevel}\n`;
+        md += `- **Erfolg:** ${m.successRate}\n`;
+        md += `- **Dauer:** ${m.timeRequired}\n`;
+        md += `- **Beschreibung:** ${m.description}\n`;
+        md += `- **Implementierung:**\n\n${m.implementation}\n`;
+        if (m.crossRefs && m.crossRefs.length) {
+          md += `- **Verwandte Techniken:** ${m.crossRefs.join(', ')}\n`;
+        }
+        if (m.businessTemplates && m.businessTemplates.length) {
+          md += `- **Business‑Templates:** ${m.businessTemplates.join(', ')}\n`;
+        }
+      });
+      md += '\n## Workflows\n';
+      Object.values(workflowsData).forEach(wf => {
+        md += `\n### ${wf.name}\n`;
+        md += `- **Beschreibung:** ${wf.description}\n`;
+        md += `- **Dauer:** ${wf.duration}\n`;
+        md += `- **Erfolg:** ${wf.successRate}\n`;
+        md += `- **Schwierigkeit:** ${wf.difficulty}\n`;
+        md += `- **Schritte:**\n`;
+        wf.steps.forEach(step => {
+          md += `  - ${step.technique} (${step.duration}) – ${step.description}\n`;
+        });
+        md += `- **Ergebnis:** ${wf.result}\n`;
+        if (wf.businessCases && wf.businessCases.length) {
+          md += `- **Anwendungen:** ${wf.businessCases.join(', ')}\n`;
+        }
+      });
+      md += '\n## Business Templates\n';
+      Object.entries(businessTemplates).forEach(([tid, tmpl]) => {
+        md += `\n### ${tid} ${tmpl.name}\n`;
+        md += `- **Kategorie:** ${tmpl.category}\n`;
+        md += `- **Dauer:** ${tmpl.estimatedTime}\n`;
+        md += `- **Erfolg:** ${tmpl.successRate}\n`;
+        md += `- **Beschreibung:** ${tmpl.description}\n`;
+        md += `- **Techniken:** ${tmpl.techniques.join(', ')}\n`;
+        md += `- **Template:**\n\n${tmpl.template}\n`;
+      });
+      downloadFile('ki_system_export.md', md);
+      showToast('Markdown Export erstellt');
+    }
+
+    function exportWorkflows() {
+      let md = '# Workflow Export\n';
+      Object.values(workflowsData).forEach(wf => {
+        md += `\n## ${wf.name}\n`;
+        md += `Beschreibung: ${wf.description}\n\n`;
+        md += `Dauer: ${wf.duration}, Erfolg: ${wf.successRate}, Schwierigkeit: ${wf.difficulty}\n\n`;
+        md += '### Schritte:\n';
+        wf.steps.forEach(step => {
+          md += `- ${step.technique} – ${step.description} (${step.duration})\n`;
+        });
+        md += `\nErgebnis: ${wf.result}\n`;
+        if (wf.businessCases && wf.businessCases.length) {
+          md += `Anwendungen: ${wf.businessCases.join(', ')}\n`;
+        }
+      });
+      downloadFile('workflows_export.md', md);
+      showToast('Workflows exportiert');
+    }
+
+    function downloadFile(filename, content) {
+      const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(() => {
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }, 0);
+    }
+
+    // Toast für Meldungen
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.classList.add('show');
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, 2500);
+    }
+
+    // Initial starten mit Technikenansicht
+    document.addEventListener('DOMContentLoaded', () => {
+      renderTechniquesList();
+    });
+  </script>
+</body>
+</html>
