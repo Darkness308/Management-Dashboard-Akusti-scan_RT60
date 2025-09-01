@@ -1,0 +1,148 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script>```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AcoustiScan RT60 Demo</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+  <link rel="stylesheet" href="output.css">
+  <style>
+    body { margin: 0; font-family: Arial, sans-serif; }
+    #canvas { width: 100%; height: 300px; }
+    #waveform { height: 40px; background: linear-gradient(90deg, #3b82f6, #60a5fa); border-radius: 8px; animation: pulse 2s infinite; }
+    @keyframes pulse { 0% { transform: scaleY(1); } 50% { transform: scaleY(1.2); } 100% { transform: scaleY(1); } }
+    #chart { max-width: 400px; margin: 20px auto; }
+  </style>
+</head>
+<body class="bg-gray-900 text-white">
+  <div class="container mx-auto p-4">
+    <h1 class="text-3xl font-bold mb-4 text-center">AcoustiScan: Raumakustik-Demo</h1>
+    <p class="text-center mb-4">Teste, wie Absorber den Hall reduzieren – wie Magie für deine Ohren!</p>
+    <div id="canvas" class="mb-4"></div>
+    <div class="flex flex-col gap-4 max-w-md mx-auto">
+      <div>
+        <label for="volume" class="block text-sm">Raumvolumen (m³):</label>
+        <input id="volume" type="number" value="100" class="w-full p-2 rounded text-black">
+      </div>
+      <div>
+        <label for="absorber" class="block text-sm">Absorberfläche (m²):</label>
+        <input id="absorber" type="number" value="10" class="w-full p-2 rounded text-black">
+      </div>
+      <button onclick="calculateRT60()" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+        Hall berechnen
+      </button>
+      <p id="result" class="text-lg text-center"></p>
+      <div id="waveform" class="w-full"></div>
+      <canvas id="chart"></canvas>
+    </div>
+  </div>
+  <script>
+    // RT60 Calculation (Sabine Formula)
+    function calculateRT60() {
+      const volume = parseFloat(document.getElementById('volume').value) || 100;
+      const absorber = parseFloat(document.getElementById('absorber').value) || 10;
+      const absorptionCoefficient = 0.5; // Average for demo
+      const rt60 = 0.161 * volume / (absorber * absorptionCoefficient);
+      document.getElementById('result').innerText = `Nachhallzeit: ${rt60.toFixed(2)} Sekunden`;
+      document.getElementById('waveform').style.animationDuration = `${Math.min(rt60, 5)}s`;
+      updateChart(rt60);
+    }
+
+    // Chart.js for RT60 Visualization
+    const ctx = document.getElementById('chart').getContext('2d');
+    const chart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: ['Nachhallzeit (RT60)'],
+        datasets: [{
+          label: 'Sekunden',
+          data: [0],
+          backgroundColor: '#3b82f6',
+          borderColor: '#60a5fa',
+          borderWidth: 1
+        }]
+      },
+      options: {
+        scales: { y: { beginAtZero: true, max: 5 } },
+        plugins: { legend: { display: false } }
+      }
+    });
+    function updateChart(rt60) {
+      chart.data.datasets[0].data = [rt60];
+      chart.update();
+    }
+
+    // 3D Room Visualization
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / 300, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('canvas') });
+    renderer.setSize(window.innerWidth * 0.9, 300);
+    const geometry = new THREE.BoxGeometry(5, 3, 5);
+    const material = new THREE.MeshBasicMaterial({ color: 0x60a5fa, wireframe: true });
+    const room = new THREE.Mesh(geometry, material);
+    scene.add(room);
+    camera.position.z = 8;
+    function animate() {
+      requestAnimationFrame(animate);
+      room.rotation.y += 0.02;
+      renderer.render(scene, camera);
+    }
+    animate();
+
+    // Web Audio API for Click Sound
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    function playClick() {
+      const oscillator = audioCtx.createOscillator();
+      oscillator.type = 'sine';
+      oscillator.frequency.setValueAtTime(440, audioCtx.currentTime);
+      oscillator.connect(audioCtx.destination);
+      oscillator.start();
+      oscillator.stop(audioCtx.currentTime + 0.1);
+    }
+    document.getElementById('volume').addEventListener('change', playClick);
+    document.getElementById('absorber').addEventListener('change', playClick);
+  </script>
+</body>
+</html>
+```
