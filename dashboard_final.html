@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Raumakustik Dashboard – Komplett</title>
+    <!-- TailwindCSS via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js via CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- SheetJS for Excel/CSV parsing -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+</head>
+<body class="bg-gray-50 text-gray-900 font-sans">
+
+    <!-- Global Header -->
+    <header class="bg-gray-800 shadow-md">
+        <div class="max-w-7xl mx-auto py-6 px-4 flex flex-wrap justify-between items-center">
+            <h1 class="text-2xl font-bold text-white">📊 Raumakustik Analyse Dashboard</h1>
+            <nav class="flex flex-wrap gap-3 mt-4 md:mt-0">
+                <button data-tab="innovation" class="tab-btn bg-white text-gray-800 px-3 py-2 rounded shadow hover:bg-gray-200">Innovation</button>
+                <button data-tab="markt" class="tab-btn bg-white text-gray-800 px-3 py-2 rounded shadow hover:bg-gray-200">Markt</button>
+                <button data-tab="zielgruppen" class="tab-btn bg-white text-gray-800 px-3 py-2 rounded shadow hover:bg-gray-200">Zielgruppen</button>
+                <button data-tab="preise" class="tab-btn bg-white text-gray-800 px-3 py-2 rounded shadow hover:bg-gray-200">Preise</button>
+                <button data-tab="daten" class="tab-btn bg-white text-gray-800 px-3 py-2 rounded shadow hover:bg-gray-200">Daten & Wettbewerb</button>
+            </nav>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto p-6">
+        <!-- Modul 1: Innovation Mapping -->
+        <section id="innovation" class="tab-content">
+            <h2 class="text-3xl font-bold mb-4">🚀 Innovation Mapping</h2>
+            <p class="text-gray-600 mb-6">Analyse der Cross-Sektor-Synergien & zukünftigen Wachstumsfelder für die Raumakustik-App.</p>
+            <div class="overflow-x-auto mb-6">
+                <table class="table-auto w-full bg-white rounded shadow">
+                    <thead class="bg-blue-700 text-white">
+                        <tr>
+                            <th class="px-4 py-2 text-left">Primärer Sektor</th>
+                            <th class="px-4 py-2 text-left">Emerging Tech</th>
+                            <th class="px-4 py-2 text-left">Potenzial</th>
+                            <th class="px-4 py-2 text-left">Relevanz</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="border-b hover:bg-blue-50">
+                            <td class="px-4 py-3">Raumakustik / Bauphysik</td>
+                            <td class="px-4 py-3">Smart-Building, IoT, Sensorintegration</td>
+                            <td class="px-4 py-3">Automatisierte RT60-Messungen</td>
+                            <td class="px-4 py-3 font-semibold text-blue-700">5</td>
+                        </tr>
+                        <tr class="border-b hover:bg-blue-50">
+                            <td class="px-4 py-3">PropTech</td>
+                            <td class="px-4 py-3">BIM, CAD, Digital Twin</td>
+                            <td class="px-4 py-3">Integration von BIM-Schnittstellen</td>
+                            <td class="px-4 py-3 font-semibold text-blue-700">5</td>
+                        </tr>
+                        <tr class="border-b hover:bg-blue-50">
+                            <td class="px-4 py-3">Bildung / Schulen</td>
+                            <td class="px-4 py-3">Förderprogramme, E-Learning</td>
+                            <td class="px-4 py-3">Digitale Raumoptimierung</td>
+                            <td class="px-4 py-3 font-semibold text-blue-700">4</td>
+                        </tr>
+                        <tr class="border-b hover:bg-blue-50">
+                            <td class="px-4 py-3">AR/VR & Spatial Computing</td>
+                            <td class="px-4 py-3">Apple Vision Pro, 3D-Simulation</td>
+                            <td class="px-4 py-3">Echtzeit-Auralisation</td>
+                            <td class="px-4 py-3 font-semibold text-blue-700">4</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="bg-white rounded shadow p-4">
+                <canvas id="innovationChart" height="150"></canvas>
+            </div>
+        </section>
+
+        <!-- Modul 2: Marktanalyse (Marktgröße) -->
+        <section id="markt" class="tab-content hidden">
+            <h2 class="text-3xl font-bold mb-4">🌍 Marktanalyse: Wachstum & Trends</h2>
+            <p class="text-gray-600 mb-6">Marktvolumen und Wachstumsprognosen für iPad-Apps im DACH- und EU-Markt.</p>
+            <div class="bg-white rounded shadow p-4">
+                <canvas id="marktChart" height="150"></canvas>
+            </div>
+        </section>
+
+        <!-- Modul 2: Zielgruppen (Segmentierung) -->
+        <section id="zielgruppen" class="tab-content hidden">
+            <h2 class="text-3xl font-bold mb-4">🎯 Zielgruppen-Segmentierung</h2>
+            <p class="text-gray-600 mb-6">Verteilung der potenziellen Kunden nach Marktsegment.</p>
+            <div class="bg-white rounded shadow p-4">
+                <canvas id="zielgruppenChart" height="150"></canvas>
+            </div>
+        </section>
+
+        <!-- Modul 2: Preisstrategie (Benchmarking) -->
+        <section id="preise" class="tab-content hidden">
+            <h2 class="text-3xl font-bold mb-4">💰 Preisstrategie-Benchmarking</h2>
+            <p class="text-gray-600 mb-6">Vergleich gängiger Preismodelle mit unserer geplanten Preisstrategie.</p>
+            <div class="bg-white rounded shadow p-4">
+                <canvas id="preiseChart" height="150"></canvas>
+            </div>
+        </section>
+
+        <!-- Modul 3: Daten & Wettbewerb -->
+        <section id="daten" class="tab-content hidden">
+            <h2 class="text-3xl font-bold mb-4">📂 Datenintegration & Wettbewerbsanalyse</h2>
+            <p class="text-gray-600 mb-6">Lade eigene Dateien hoch oder verbinde deinen Google-Drive-Ordner, um aktuelle Wettbewerbsdaten zu analysieren.</p>
+            <div class="mb-4">
+                <label class="block mb-2 font-semibold" for="fileInput">Datei-Upload (Excel, CSV, PDF, DOCX)</label>
+                <input id="fileInput" type="file" accept=".csv,.xlsx,.xls,.pdf,.docx" class="border p-2 rounded" />
+                <button id="clearStorage" class="ml-4 px-4 py-2 bg-red-600 text-white rounded shadow hover:bg-red-700">Daten löschen</button>
+            </div>
+            <div id="driveSection" class="mb-6 hidden">
+                <h3 class="text-xl font-semibold mb-2">Google-Drive-Daten</h3>
+                <p>Hier erscheinen später deine Daten aus dem Google-Drive-Ordner. (Funktion noch nicht aktiviert)</p>
+            </div>
+            <div class="overflow-x-auto mb-4">
+                <table id="dataTable" class="table-auto w-full bg-white rounded shadow hidden">
+                    <thead class="bg-green-700 text-white">
+                        <tr id="tableHeaders"></tr>
+                    </thead>
+                    <tbody id="tableBody"></tbody>
+                </table>
+            </div>
+            <div id="chartArea" class="bg-white rounded shadow p-4 hidden">
+                <canvas id="dataChart" height="150"></canvas>
+            </div>
+            <p id="statusMessage" class="text-sm text-gray-500"></p>
+        </section>
+    </main>
+
+    <footer class="bg-gray-800 text-gray-100 text-center py-4">
+        &copy; 2025 Raumakustik Projekt – Dynamisches Dashboard
+    </footer>
+
+    <!-- JavaScript: Tabs, Charts, File Upload & Storage -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const tabs = document.querySelectorAll('.tab-btn');
+            const sections = document.querySelectorAll('.tab-content');
+
+            function openTab(tabId) {
+                sections.forEach(sec => sec.classList.add('hidden'));
+                const active = document.getElementById(tabId);
+                if (active) active.classList.remove('hidden');
+            }
+
+            tabs.forEach(btn => {
+                btn.addEventListener('click', () => openTab(btn.dataset.tab));
+            });
+
+            // Default tab
+            openTab('innovation');
+
+            // Chart definitions
+            const innovationCtx = document.getElementById('innovationChart').getContext('2d');
+            new Chart(innovationCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Raumakustik', 'PropTech', 'Bildung', 'AR/VR'],
+                    datasets: [{
+                        label: 'Relevanz',
+                        data: [5, 5, 4, 4],
+                        backgroundColor: ['#2563eb', '#1d4ed8', '#3b82f6', '#60a5fa']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: { legend: { display: false } },
+                    scales: { y: { beginAtZero: true, max: 5 } }
+                }
+            });
+
+            // Markt chart
+            const marktCtx = document.getElementById('marktChart').getContext('2d');
+            new Chart(marktCtx, {
+                type: 'line',
+                data: {
+                    labels: ['2022', '2023', '2024', '2025', '2026'],
+                    datasets: [{
+                        label: 'Marktvolumen (Mio €)',
+                        data: [150, 210, 280, 360, 450],
+                        borderColor: '#22c55e',
+                        backgroundColor: 'rgba(34,197,94,0.2)',
+                        tension: 0.4
+                    }]
+                },
+                options: { responsive: true }
+            });
+
+            // Zielgruppen chart
+            const zielCtx = document.getElementById('zielgruppenChart').getContext('2d');
+            new Chart(zielCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Architekturbüros', 'Schulen', 'Öffentliche Träger', 'Unternehmen'],
+                    datasets: [{
+                        label: 'Potenzial',
+                        data: [35, 25, 20, 20],
+                        backgroundColor: ['#4ade80', '#22c55e', '#16a34a', '#15803d']
+                    }]
+                },
+                options: { responsive: true }
+            });
+
+            // Preise chart
+            const preiseCtx = document.getElementById('preiseChart').getContext('2d');
+            new Chart(preiseCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Wettbewerber A', 'Wettbewerber B', 'Wettbewerber C', 'Unser Modell'],
+                    datasets: [{
+                        label: 'Preis (€)',
+                        data: [199, 249, 299, 229],
+                        backgroundColor: ['#bbf7d0', '#86efac', '#4ade80', '#22c55e']
+                    }]
+                },
+                options: { responsive: true }
+            });
+
+            // File upload & parse
+            const fileInput = document.getElementById('fileInput');
+            const table = document.getElementById('dataTable');
+            const tableHeaders = document.getElementById('tableHeaders');
+            const tableBody = document.getElementById('tableBody');
+            const chartArea = document.getElementById('chartArea');
+            const dataChartCanvas = document.getElementById('dataChart');
+            const statusMessage = document.getElementById('statusMessage');
+
+            function clearData() {
+                localStorage.removeItem('uploadData');
+                table.classList.add('hidden');
+                chartArea.classList.add('hidden');
+                statusMessage.textContent = 'Daten wurden gelöscht. Lade neue Datei hoch.';
+            }
+            document.getElementById('clearStorage').addEventListener('click', clearData);
+
+            // Load from storage if available
+            const stored = localStorage.getItem('uploadData');
+            if (stored) {
+                const data = JSON.parse(stored);
+                renderTableAndChart(data.headers, data.rows);
+            }
+
+            fileInput.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                const name = file.name.toLowerCase();
+                if (name.endsWith('.csv')) {
+                    parseCSV(file);
+                } else if (name.endsWith('.xlsx') || name.endsWith('.xls')) {
+                    parseExcel(file);
+                } else {
+                    statusMessage.textContent = 'Dateiformat nicht unterstützt. Bitte CSV oder Excel hochladen.';
+                }
+            });
+
+            function parseCSV(file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const text = event.target.result;
+                    const lines = text.trim().split(/\r?\n/);
+                    const headers = lines[0].split(',').map(h => h.trim());
+                    const rows = lines.slice(1).map(line => line.split(',').map(c => c.trim()));
+                    saveData(headers, rows);
+                    renderTableAndChart(headers, rows);
+                    statusMessage.textContent = 'CSV-Datei erfolgreich eingelesen.';
+                };
+                reader.readAsText(file);
+            }
+
+            function parseExcel(file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const data = new Uint8Array(event.target.result);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    const sheetName = workbook.SheetNames[0];
+                    const sheet = workbook.Sheets[sheetName];
+                    const json = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+                    const headers = json[0];
+                    const rows = json.slice(1);
+                    saveData(headers, rows);
+                    renderTableAndChart(headers, rows);
+                    statusMessage.textContent = 'Excel-Datei erfolgreich eingelesen.';
+                };
+                reader.readAsArrayBuffer(file);
+            }
+
+            function saveData(headers, rows) {
+                localStorage.setItem('uploadData', JSON.stringify({ headers, rows }));
+            }
+
+            function renderTableAndChart(headers, rows) {
+                // Render Table
+                tableHeaders.innerHTML = '';
+                headers.forEach(h => {
+                    const th = document.createElement('th');
+                    th.textContent = h;
+                    th.className = 'px-4 py-2 bg-green-700 text-white';
+                    tableHeaders.appendChild(th);
+                });
+                tableBody.innerHTML = '';
+                rows.forEach(row => {
+                    const tr = document.createElement('tr');
+                    row.forEach(cell => {
+                        const td = document.createElement('td');
+                        td.textContent = cell;
+                        td.className = 'border px-4 py-2';
+                        tr.appendChild(td);
+                    });
+                    tableBody.appendChild(tr);
+                });
+                table.classList.remove('hidden');
+
+                // Render Chart (First Numeric Column vs. Second Numeric Column) if possible
+                // Find first two numeric columns
+                const numericIndices = [];
+                for (let col = 0; col < headers.length; col++) {
+                    if (rows.every(row => !isNaN(parseFloat(row[col])))) {
+                        numericIndices.push(col);
+                        if (numericIndices.length === 2) break;
+                    }
+                }
+                if (numericIndices.length >= 2) {
+                    const labels = rows.map(row => row[0]);
+                    const data1 = rows.map(row => parseFloat(row[numericIndices[0]]));
+                    const data2 = rows.map(row => parseFloat(row[numericIndices[1]]));
+                    chartArea.classList.remove('hidden');
+                    const ctx = dataChartCanvas.getContext('2d');
+                    // Destroy existing chart if any
+                    if (window.uploadChart) window.uploadChart.destroy();
+                    window.uploadChart = new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: labels,
+                            datasets: [
+                                { label: headers[numericIndices[0]], data: data1, backgroundColor: '#6ee7b7' },
+                                { label: headers[numericIndices[1]], data: data2, backgroundColor: '#10b981' }
+                            ]
+                        },
+                        options: { responsive: true }
+                    });
+                }
+            }
+        });
+    </script>
+</body>
+</html>
