@@ -1,0 +1,215 @@
+name: RT60 CI/CD Pipeline
+
+on:
+  push:
+    branches: ["main", "develop", "claude/**"]
+  pull_request:
+    branches: ["main", "develop"]
+
+env:
+  PYTHON_VERSION: "3.11"
+
+jobs:
+  # Job 1: Backend Tests
+  backend-tests:
+    name: Backend Tests (Python)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ env.PYTHON_VERSION }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: "pip"
+
+      - name: Install Dependencies
+        working-directory: ./backend
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Verify Material Database
+        run: |
+          if [ ! -f "./shared/material_database.json" ]; then
+            echo "❌ Material database not found"
+            exit 1
+          fi
+          echo "✅ Material database found"
+
+      - name: Run Tests with Coverage
+        working-directory: ./backend
+        run: |
+          pytest tests/ -v --cov=src --cov-report=xml --cov-report=term
+
+      - name: Upload Coverage to Codecov (Optional)
+        if: github.event_name == 'push'
+        uses: codecov/codecov-action@v3
+        with:
+          files: ./backend/coverage.xml
+          flags: backend
+          fail_ci_if_error: false
+
+  # Job 2: Code Quality Checks
+  code-quality:
+    name: Code Quality (Linting & Formatting)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ env.PYTHON_VERSION }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install Dependencies
+        working-directory: ./backend
+        run: |
+          pip install black flake8 mypy
+
+      - name: Run Black (Code Formatting Check)
+        working-directory: ./backend
+        run: |
+          black --check src/ tests/ || (echo "❌ Code formatting issues found. Run 'black src/ tests/' locally" && exit 1)
+
+      - name: Run Flake8 (Linting)
+        working-directory: ./backend
+        run: |
+          flake8 src/ tests/ --max-line-length=100 --extend-ignore=E203,W503
+
+      - name: Run MyPy (Type Checking)
+        working-directory: ./backend
+        run: |
+          mypy src/ --ignore-missing-imports || echo "⚠️  MyPy found type issues (non-blocking)"
+
+  # Job 3: Docker Build Test
+  docker-build:
+    name: Docker Build Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Backend Docker Image
+        working-directory: ./backend
+        run: |
+          docker build -t rt60-backend:test .
+
+      - name: Test Docker Image (Health Check)
+        run: |
+          docker run -d --name rt60-test -p 8000:8000 rt60-backend:test
+          sleep 10
+          # Simple health check
+          curl -f http://localhost:8000/health || (docker logs rt60-test && exit 1)
+          docker stop rt60-test
+
+  # Job 4: Documentation Build
+  docs-build:
+    name: Build Documentation Site
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Verify HTML Dashboard Files
+        run: |
+          if [ ! -d "./docs/dashboard" ]; then
+            echo "❌ Dashboard directory not found"
+            exit 1
+          fi
+          file_count=$(find ./docs/dashboard -name "*.html" | wc -l)
+          echo "✅ Found $file_count HTML files"
+          if [ "$file_count" -lt 10 ]; then
+            echo "⚠️  Expected at least 10 HTML files"
+            exit 1
+          fi
+
+      - name: Test HTML Validity (Optional)
+        run: |
+          echo "HTML validation would go here"
+          # Could use: html5validator, tidy, etc.
+
+  # Job 5: Security Scan
+  security-scan:
+    name: Security Vulnerability Scan
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push'
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install Safety
+        run: pip install safety
+
+      - name: Run Safety Check
+        working-directory: ./backend
+        run: |
+          pip install -r requirements.txt
+          safety check || echo "⚠️  Security vulnerabilities found (non-blocking)"
+
+  # Job 6: Performance Benchmarks (Optional)
+  benchmarks:
+    name: Performance Benchmarks
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install Dependencies
+        working-directory: ./backend
+        run: |
+          pip install -r requirements.txt
+          pip install pytest-benchmark
+
+      - name: Run Benchmarks
+        working-directory: ./backend
+        run: |
+          echo "Benchmark tests would go here"
+          # pytest tests/benchmarks/ --benchmark-only
+
+  # Summary Job
+  ci-summary:
+    name: CI Summary
+    runs-on: ubuntu-latest
+    needs: [backend-tests, code-quality, docker-build, docs-build]
+    if: always()
+
+    steps:
+      - name: Check All Jobs Status
+        run: |
+          echo "Backend Tests: ${{ needs.backend-tests.result }}"
+          echo "Code Quality: ${{ needs.code-quality.result }}"
+          echo "Docker Build: ${{ needs.docker-build.result }}"
+          echo "Docs Build: ${{ needs.docs-build.result }}"
+
+          if [ "${{ needs.backend-tests.result }}" != "success" ] || \
+             [ "${{ needs.code-quality.result }}" != "success" ] || \
+             [ "${{ needs.docker-build.result }}" != "success" ] || \
+             [ "${{ needs.docs-build.result }}" != "success" ]; then
+            echo "❌ CI Pipeline failed"
+            exit 1
+          fi
+
+          echo "✅ All CI checks passed!"

@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  # RT60 Backend API
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: rt60-backend
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend/src:/app/src
+      - ./shared:/app/shared
+      - ./backend/tests:/app/tests
+    environment:
+      - ENV=development
+      - API_PORT=8000
+      - DATABASE_URL=sqlite:///./rt60.db
+      - CORS_ORIGINS=http://localhost:3000,http://localhost:8080
+    env_file:
+      - ./backend/.env
+    networks:
+      - rt60-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Optional: Documentation Server (Serve HTML Dashboard)
+  docs:
+    image: nginx:alpine
+    container_name: rt60-docs
+    ports:
+      - "8080:80"
+    volumes:
+      - ./docs/dashboard:/usr/share/nginx/html:ro
+    networks:
+      - rt60-network
+    restart: unless-stopped
+
+networks:
+  rt60-network:
+    driver: bridge
+
+# Optional: Volumes für persistente Daten
+volumes:
+  rt60-data:

@@ -1,0 +1,110 @@
+name: Deploy to Production
+
+on:
+  push:
+    tags:
+      - "v*.*.*"  # Trigger on version tags (e.g., v1.0.0)
+
+env:
+  PYTHON_VERSION: "3.11"
+
+jobs:
+  deploy-backend:
+    name: Deploy Backend
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v')
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Extract Version from Tag
+        id: version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to Docker Hub (Optional)
+        if: github.event_name == 'push'
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build and Push Docker Image
+        working-directory: ./backend
+        run: |
+          docker build -t rt60-backend:${{ steps.version.outputs.VERSION }} .
+          docker tag rt60-backend:${{ steps.version.outputs.VERSION }} rt60-backend:latest
+          # docker push rt60-backend:${{ steps.version.outputs.VERSION }}
+          # docker push rt60-backend:latest
+          echo "✅ Docker image built (push disabled for now)"
+
+      - name: Deploy to Server (Placeholder)
+        run: |
+          echo "Deployment to production server would happen here"
+          echo "Version: ${{ steps.version.outputs.VERSION }}"
+          # Example: SSH into server and run docker-compose pull && docker-compose up -d
+
+  deploy-docs:
+    name: Deploy Documentation
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v')
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Deploy to GitHub Pages (Optional)
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./docs/dashboard
+          publish_branch: gh-pages
+          enable_jekyll: false
+
+  create-release:
+    name: Create GitHub Release
+    runs-on: ubuntu-latest
+    needs: [deploy-backend, deploy-docs]
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Extract Version
+        id: version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+
+      - name: Create Release Notes
+        id: release_notes
+        run: |
+          cat > release_notes.md << EOF
+          ## RT60 Raumakustik-Analyse System ${{ steps.version.outputs.VERSION }}
+
+          ### 🎯 Features
+          - RT60-Berechnung nach Sabine & Eyring
+          - 20 Materialien mit Absorptionskoeffizienten
+          - DIN 18041 Compliance-Validierung
+          - REST API mit FastAPI
+
+          ### 📦 Artifacts
+          - Docker Image: \`rt60-backend:${{ steps.version.outputs.VERSION }}\`
+          - Documentation: [GitHub Pages](https://your-org.github.io/rt60)
+
+          ### 🚀 Deployment
+          \`\`\`bash
+          docker pull rt60-backend:${{ steps.version.outputs.VERSION }}
+          docker-compose up -d
+          \`\`\`
+          EOF
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          body_path: release_notes.md
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
