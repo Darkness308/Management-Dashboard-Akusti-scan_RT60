@@ -6,9 +6,13 @@ REST API für RT60-Berechnungen und Materialdatenbank-Zugriff.
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
 from pydantic import BaseModel, Field
 from typing import List, Dict, Optional
 import os
+import tempfile
+from pathlib import Path
+from datetime import datetime
 
 from src.acoustics import (
     calculate_rt60_sabine,
@@ -20,6 +24,7 @@ from src.acoustics import (
     RoomUsageType,
 )
 from src.materials_db import MaterialRepository
+from src.reports import RT60ReportGenerator
 
 
 # FastAPI App initialisieren
@@ -48,6 +53,9 @@ try:
 except FileNotFoundError:
     print("⚠️  Materialdatenbank nicht gefunden - API läuft im eingeschränkten Modus")
     material_repo = None
+
+# PDF Report Generator initialisieren
+report_generator = RT60ReportGenerator()
 
 
 # Pydantic Models
@@ -91,6 +99,17 @@ class RT60Result(BaseModel):
         None, description="DIN 18041 Validierung"
     )
     recommendations: List[str] = Field(default_factory=list, description="Empfehlungen")
+
+
+class PDFReportRequest(BaseModel):
+    """Request für PDF-Report-Generierung"""
+
+    room: RoomDimensions
+    surfaces: List[Surface]
+    target_usage: Optional[str] = Field("office", description="Raumnutzung")
+    rt60_result: Dict = Field(..., description="RT60-Berechnungsergebnis")
+    project_name: Optional[str] = Field(None, description="Projektname")
+    customer_name: Optional[str] = Field(None, description="Kundenname")
 
 
 # API Endpoints
@@ -283,6 +302,66 @@ async def get_room_types():
             {"value": rt.value, "name": rt.name} for rt in RoomUsageType
         ]
     }
+
+
+@app.post("/api/v1/export-pdf", tags=["Reports"])
+async def export_pdf_report(request: PDFReportRequest):
+    """
+    Generiert einen PDF-Report mit RT60-Berechnungsergebnissen.
+
+    Args:
+        request: PDFReportRequest mit Raum, Materialien und Ergebnis
+
+    Returns:
+        PDF-Datei zum Download
+    """
+    if material_repo is None:
+        raise HTTPException(status_code=503, detail="Materialdatenbank nicht verfügbar")
+
+    try:
+        # Materialien aus IDs holen
+        materials_used = []
+        for surface in request.surfaces:
+            material = material_repo.get_material_by_id(surface.material_id)
+            if material:
+                materials_used.append({
+                    "name": material.name,
+                    "category": material.category,
+                    "alpha_w": material.alpha_w,
+                    "nrc": material.nrc,
+                })
+
+        # Temp-Datei erstellen
+        with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as tmp_file:
+            output_path = tmp_file.name
+
+        # Raumdaten vorbereiten
+        room_data = {
+            "length": request.room.length,
+            "width": request.room.width,
+            "height": request.room.height,
+            "usage": request.target_usage,
+        }
+
+        # PDF generieren
+        report_generator.generate_report(
+            output_path=output_path,
+            room_data=room_data,
+            rt60_result=request.rt60_result,
+            materials_used=materials_used,
+            project_name=request.project_name,
+            customer_name=request.customer_name,
+        )
+
+        # PDF zurückgeben
+        return FileResponse(
+            output_path,
+            media_type="application/pdf",
+            filename=f"RT60_Report_{datetime.now().strftime('%Y%m%d_%H%M%S')}.pdf",
+        )
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Fehler bei PDF-Generierung: {str(e)}")
 
 
 # Run with: uvicorn src.api.main:app --reload
