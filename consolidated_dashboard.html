@@ -950,8 +950,8 @@
                             const char = line[i];
                             const nextChar = line[i + 1];
                             
-                            // Check if this quote starts a quoted field
-                            if (char === '"' && !inQuotes && current.replace(/\s/g, '') === '') {
+                            // Check if this quote starts a quoted field (only if at field start)
+                            if (char === '"' && !inQuotes && current.trim() === '') {
                                 inQuotes = true;
                                 isQuoted = true;
                                 current = ''; // Discard leading whitespace before quote
