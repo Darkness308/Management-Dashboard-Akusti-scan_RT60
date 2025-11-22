@@ -1136,6 +1136,8 @@
             // Toast notification function
             function showToast(message, type = 'success') {
                 const container = document.getElementById('toast-container');
+                if (!container) return;
+                
                 const toast = document.createElement('div');
                 toast.className = `toast ${type}`;
                 
@@ -1151,7 +1153,7 @@
                 setTimeout(() => {
                     toast.classList.add('hiding');
                     setTimeout(() => {
-                        container.removeChild(toast);
+                        toast.remove();
                     }, 300); // Match animation duration
                 }, 3000);
             }
