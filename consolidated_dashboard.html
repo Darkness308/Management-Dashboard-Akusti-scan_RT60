@@ -167,27 +167,27 @@
             <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
                 <h3 class="text-2xl font-bold mb-4 text-gray-800">📋 Verfügbare Module</h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    <div class="p-4 border-2 border-gray-200 rounded-lg hover:border-purple-400 cursor-pointer transition" onclick="switchTab('innovation')">
+                    <div class="module-card p-4 border-2 border-gray-200 rounded-lg hover:border-purple-400 cursor-pointer transition" data-tab="innovation">
                         <h4 class="font-bold text-lg mb-2">🚀 Innovation Mapping</h4>
                         <p class="text-sm text-gray-600">Cross-Sektor-Synergien & Wachstumsfelder</p>
                     </div>
-                    <div class="p-4 border-2 border-gray-200 rounded-lg hover:border-purple-400 cursor-pointer transition" onclick="switchTab('market')">
+                    <div class="module-card p-4 border-2 border-gray-200 rounded-lg hover:border-purple-400 cursor-pointer transition" data-tab="market">
                         <h4 class="font-bold text-lg mb-2">🌍 Marktanalyse</h4>
                         <p class="text-sm text-gray-600">Wachstumstrends & Zielgruppen</p>
                     </div>
-                    <div class="p-4 border-2 border-gray-200 rounded-lg hover:border-purple-400 cursor-pointer transition" onclick="switchTab('business')">
+                    <div class="module-card p-4 border-2 border-gray-200 rounded-lg hover:border-purple-400 cursor-pointer transition" data-tab="business">
                         <h4 class="font-bold text-lg mb-2">💼 Business Strategie</h4>
                         <p class="text-sm text-gray-600">Preisstrategie & Wettbewerb</p>
                     </div>
-                    <div class="p-4 border-2 border-gray-200 rounded-lg hover:border-purple-400 cursor-pointer transition" onclick="switchTab('ki-system')">
+                    <div class="module-card p-4 border-2 border-gray-200 rounded-lg hover:border-purple-400 cursor-pointer transition" data-tab="ki-system">
                         <h4 class="font-bold text-lg mb-2">🤖 KI-System</h4>
                         <p class="text-sm text-gray-600">20 Techniken, Workflows & Templates</p>
                     </div>
-                    <div class="p-4 border-2 border-gray-200 rounded-lg hover:border-purple-400 cursor-pointer transition" onclick="switchTab('technik')">
+                    <div class="module-card p-4 border-2 border-gray-200 rounded-lg hover:border-purple-400 cursor-pointer transition" data-tab="technik">
                         <h4 class="font-bold text-lg mb-2">⚙️ Technik & Normen</h4>
                         <p class="text-sm text-gray-600">Standards & Anforderungen</p>
                     </div>
-                    <div class="p-4 border-2 border-gray-200 rounded-lg hover:border-purple-400 cursor-pointer transition" onclick="switchTab('data')">
+                    <div class="module-card p-4 border-2 border-gray-200 rounded-lg hover:border-purple-400 cursor-pointer transition" data-tab="data">
                         <h4 class="font-bold text-lg mb-2">📂 Datenintegration</h4>
                         <p class="text-sm text-gray-600">Upload & Analyse von Excel/CSV</p>
                     </div>
@@ -582,7 +582,7 @@
                         <div class="text-6xl mb-4">📁</div>
                         <p class="text-lg font-semibold text-gray-700 mb-2">Datei hochladen</p>
                         <p class="text-sm text-gray-500">Excel (.xlsx, .xls) oder CSV-Dateien</p>
-                        <button onclick="document.getElementById('fileInput').click()" class="mt-4 bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700 transition">
+                        <button id="fileSelectBtn" class="mt-4 bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700 transition">
                             Datei auswählen
                         </button>
                     </label>
@@ -732,6 +732,18 @@
             btn.addEventListener('click', () => {
                 switchTab(btn.dataset.tab);
             });
+        });
+
+        // Event listeners for module cards
+        document.querySelectorAll('.module-card').forEach(card => {
+            card.addEventListener('click', () => {
+                switchTab(card.dataset.tab);
+            });
+        });
+
+        // Event listener for file select button
+        document.getElementById('fileSelectBtn').addEventListener('click', () => {
+            document.getElementById('fileInput').click();
         });
 
         // Initialize Charts
