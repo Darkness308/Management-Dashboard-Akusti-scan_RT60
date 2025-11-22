@@ -999,8 +999,55 @@
                         if (numericIndices.length === 2) break;
                     }
                 }
+                // Find candidate label columns (non-numeric, non-empty)
+                function isLabelColumn(colIdx) {
+                    return rows.every(row => row[colIdx] !== undefined && row[colIdx] !== "" && isNaN(parseFloat(row[colIdx])));
+                }
+                let labelColIdx = 0;
+                let labelCandidates = [];
+                for (let col = 0; col < headers.length; col++) {
+                    if (isLabelColumn(col)) labelCandidates.push(col);
+                }
+                // Add dropdown for label selection if needed
+                let labelSelector = document.getElementById('label-column-selector');
+                if (!labelSelector) {
+                    labelSelector = document.createElement('select');
+                    labelSelector.id = 'label-column-selector';
+                    labelSelector.className = 'mb-2 px-2 py-1 border rounded';
+                    labelSelector.style.display = 'none';
+                    chartArea.parentNode.insertBefore(labelSelector, chartArea);
+                }
+                if (labelCandidates.length === 0) {
+                    // No suitable label column, prompt user to select any column
+                    labelSelector.innerHTML = '';
+                    headers.forEach((h, idx) => {
+                        const opt = document.createElement('option');
+                        opt.value = idx;
+                        opt.textContent = h;
+                        labelSelector.appendChild(opt);
+                    });
+                    labelSelector.style.display = '';
+                    labelColIdx = parseInt(labelSelector.value, 10) || 0;
+                    labelSelector.onchange = function() {
+                        renderTableAndChart(headers, rows);
+                    };
+                } else {
+                    // Use first candidate, allow user to choose if multiple
+                    labelSelector.innerHTML = '';
+                    labelCandidates.forEach(idx => {
+                        const opt = document.createElement('option');
+                        opt.value = idx;
+                        opt.textContent = headers[idx];
+                        labelSelector.appendChild(opt);
+                    });
+                    labelSelector.style.display = labelCandidates.length > 1 ? '' : 'none';
+                    labelColIdx = parseInt(labelSelector.value, 10) || labelCandidates[0];
+                    labelSelector.onchange = function() {
+                        renderTableAndChart(headers, rows);
+                    };
+                }
                 if (numericIndices.length >= 2) {
-                    const labels = rows.map(row => row[0]);
+                    const labels = rows.map(row => row[labelColIdx]);
                     const data1 = rows.map(row => parseFloat(row[numericIndices[0]]));
                     const data2 = rows.map(row => parseFloat(row[numericIndices[1]]));
                     chartArea.classList.remove('hidden');
