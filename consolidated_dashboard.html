@@ -962,8 +962,48 @@
                 reader.onload = function(event) {
                     const text = event.target.result;
                     const lines = text.trim().split(/\r?\n/);
-                    const headers = lines[0].split(',').map(h => h.trim());
-                    const rows = lines.slice(1).map(line => line.split(',').map(c => c.trim()));
+                    
+                    // Helper function to parse a CSV line respecting quoted values
+                    function parseCSVLine(line) {
+                        const result = [];
+                        let current = '';
+                        let inQuotes = false;
+                        let isQuoted = false;
+                        
+                        for (let i = 0; i < line.length; i++) {
+                            const char = line[i];
+                            const nextChar = line[i + 1];
+                            
+                            // Check if this quote starts a quoted field (only if at field start)
+                            if (char === '"' && !inQuotes && current.trim() === '') {
+                                inQuotes = true;
+                                isQuoted = true;
+                                current = ''; // Discard leading whitespace before quote
+                            } else if (char === '"' && inQuotes) {
+                                if (nextChar === '"') {
+                                    // Escaped quote
+                                    current += '"';
+                                    i++; // Skip next quote
+                                } else {
+                                    // Closing quote
+                                    inQuotes = false;
+                                }
+                            } else if (char === ',' && !inQuotes) {
+                                // Field delimiter
+                                result.push(isQuoted ? current : current.trim());
+                                current = '';
+                                isQuoted = false;
+                            } else {
+                                current += char;
+                            }
+                        }
+                        // Add the last field
+                        result.push(isQuoted ? current : current.trim());
+                        return result;
+                    }
+                    
+                    const headers = parseCSVLine(lines[0]);
+                    const rows = lines.slice(1).map(line => parseCSVLine(line));
                     saveData(headers, rows);
                     renderTableAndChart(headers, rows);
                     statusMessage.textContent = 'CSV-Datei erfolgreich eingelesen.';
