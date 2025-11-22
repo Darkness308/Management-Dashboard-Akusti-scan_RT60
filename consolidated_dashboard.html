@@ -944,30 +944,37 @@
                         const result = [];
                         let current = '';
                         let inQuotes = false;
+                        let isQuoted = false;
                         
                         for (let i = 0; i < line.length; i++) {
                             const char = line[i];
                             const nextChar = line[i + 1];
                             
-                            if (char === '"') {
-                                if (inQuotes && nextChar === '"') {
+                            // Check if this quote starts a quoted field
+                            if (char === '"' && !inQuotes && current.replace(/\s/g, '') === '') {
+                                inQuotes = true;
+                                isQuoted = true;
+                                current = ''; // Discard leading whitespace before quote
+                            } else if (char === '"' && inQuotes) {
+                                if (nextChar === '"') {
                                     // Escaped quote
                                     current += '"';
                                     i++; // Skip next quote
                                 } else {
-                                    // Toggle quote state
-                                    inQuotes = !inQuotes;
+                                    // Closing quote
+                                    inQuotes = false;
                                 }
                             } else if (char === ',' && !inQuotes) {
-                                // Field delimiter outside quotes
-                                result.push(current.trim());
+                                // Field delimiter
+                                result.push(isQuoted ? current : current.trim());
                                 current = '';
+                                isQuoted = false;
                             } else {
                                 current += char;
                             }
                         }
                         // Add the last field
-                        result.push(current.trim());
+                        result.push(isQuoted ? current : current.trim());
                         return result;
                     }
                     
