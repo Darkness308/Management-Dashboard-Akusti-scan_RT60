@@ -740,6 +740,11 @@
             });
         });
 
+        // Event listener for file select button
+        document.getElementById('fileSelectBtn').addEventListener('click', () => {
+            document.getElementById('fileInput').click();
+        });
+
         // Initialize Charts
         document.addEventListener('DOMContentLoaded', () => {
 
@@ -926,11 +931,6 @@
                 const data = JSON.parse(stored);
                 renderTableAndChart(data.headers, data.rows);
             }
-
-            // Event listener for file select button
-            document.getElementById('fileSelectBtn').addEventListener('click', () => {
-                fileInput.click();
-            });
 
             fileInput.addEventListener('change', (e) => {
                 const file = e.target.files[0];
