@@ -938,8 +938,41 @@
                 reader.onload = function(event) {
                     const text = event.target.result;
                     const lines = text.trim().split(/\r?\n/);
-                    const headers = lines[0].split(',').map(h => h.trim());
-                    const rows = lines.slice(1).map(line => line.split(',').map(c => c.trim()));
+                    
+                    // Helper function to parse a CSV line respecting quoted values
+                    function parseCSVLine(line) {
+                        const result = [];
+                        let current = '';
+                        let inQuotes = false;
+                        
+                        for (let i = 0; i < line.length; i++) {
+                            const char = line[i];
+                            const nextChar = line[i + 1];
+                            
+                            if (char === '"') {
+                                if (inQuotes && nextChar === '"') {
+                                    // Escaped quote
+                                    current += '"';
+                                    i++; // Skip next quote
+                                } else {
+                                    // Toggle quote state
+                                    inQuotes = !inQuotes;
+                                }
+                            } else if (char === ',' && !inQuotes) {
+                                // Field delimiter outside quotes
+                                result.push(current.trim());
+                                current = '';
+                            } else {
+                                current += char;
+                            }
+                        }
+                        // Add the last field
+                        result.push(current.trim());
+                        return result;
+                    }
+                    
+                    const headers = parseCSVLine(lines[0]);
+                    const rows = lines.slice(1).map(line => parseCSVLine(line));
                     saveData(headers, rows);
                     renderTableAndChart(headers, rows);
                     statusMessage.textContent = 'CSV-Datei erfolgreich eingelesen.';
