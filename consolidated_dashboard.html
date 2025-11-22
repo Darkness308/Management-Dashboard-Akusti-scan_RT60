@@ -1152,7 +1152,9 @@
                 
                 // Auto-remove after 3 seconds
                 setTimeout(() => {
-                    toast.classList.add('hiding');
+                        if (toast.parentNode === container) {
+                            container.removeChild(toast);
+                        }
                     setTimeout(() => {
                         toast.remove();
                     }, 300); // Match animation duration
