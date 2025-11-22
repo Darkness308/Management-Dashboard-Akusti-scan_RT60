@@ -1,0 +1,186 @@
+{
+  "$schema": "https://github.com/features/copilot/agents/schema",
+  "version": "1.0",
+  "agents": [
+    {
+      "name": "dashboard-architect",
+      "description": "Expert in dashboard architecture, agent systems, and React patterns",
+      "capabilities": [
+        "agent-system-design",
+        "react-architecture",
+        "event-driven-systems",
+        "code-review"
+      ],
+      "context": {
+        "files": [
+          "src/agents/**/*.js",
+          "src/App.jsx",
+          "docs/agents.md"
+        ],
+        "patterns": [
+          "Agent-based architecture",
+          "Event-Bus communication",
+          "React component patterns"
+        ]
+      },
+      "instructions": "Focus on maintaining clean agent boundaries and event-driven communication. Follow patterns in BaseAgent.js and DashboardOrchestrator.js.",
+      "examples": [
+        {
+          "prompt": "Create a new agent for handling market data",
+          "response": "I'll create a new MarketAnalysisAgent that extends BaseAgent, registers with the orchestrator, and communicates via events."
+        }
+      ]
+    },
+    {
+      "name": "build-fixer",
+      "description": "Specialized in fixing build errors, linting issues, and dependency problems",
+      "capabilities": [
+        "error-diagnosis",
+        "dependency-resolution",
+        "build-fixing",
+        "lint-fixing"
+      ],
+      "context": {
+        "files": [
+          "package.json",
+          "vite.config.js",
+          "tailwind.config.js",
+          ".eslintrc.json"
+        ],
+        "errors": [
+          "Module not found",
+          "Type errors",
+          "ESLint errors",
+          "Build failures"
+        ]
+      },
+      "instructions": "When build fails, analyze error logs, identify root cause, apply fixes, and verify build succeeds. Use the self-healing workflow patterns.",
+      "examples": [
+        {
+          "prompt": "Build failed with 'Cannot find module'",
+          "response": "I'll check package.json, install missing dependencies, update import paths if needed, and retry the build."
+        }
+      ]
+    },
+    {
+      "name": "module-builder",
+      "description": "Expert in creating dashboard modules with data integration and charts",
+      "capabilities": [
+        "module-creation",
+        "chart-integration",
+        "data-modeling",
+        "ui-components"
+      ],
+      "context": {
+        "files": [
+          "src/components/modules/**/*.jsx",
+          "src/data/**/*.js",
+          "src/components/charts/**/*.jsx"
+        ],
+        "patterns": [
+          "Module structure",
+          "Chart.js integration",
+          "TailwindCSS styling"
+        ]
+      },
+      "instructions": "Create modules following the pattern in InnovationModule.jsx and MarketModule.jsx. Use predefined charts, data models, and styling classes.",
+      "examples": [
+        {
+          "prompt": "Create a new reporting module",
+          "response": "I'll create ReportingModule.jsx with section layout, data integration, charts, and proper styling."
+        }
+      ]
+    },
+    {
+      "name": "data-specialist",
+      "description": "Expert in data parsing, transformation, and export functionality",
+      "capabilities": [
+        "file-parsing",
+        "data-transformation",
+        "export-generation",
+        "validation"
+      ],
+      "context": {
+        "files": [
+          "src/utils/dataParser.js",
+          "src/utils/exportUtils.js",
+          "src/agents/DataIntegrationAgent.js"
+        ],
+        "patterns": [
+          "Excel/CSV parsing",
+          "Data validation",
+          "Export formats"
+        ]
+      },
+      "instructions": "Handle data upload, parsing, validation, and export. Use SheetJS for Excel, support CSV, JSON, Markdown. Integrate with DataIntegrationAgent.",
+      "examples": [
+        {
+          "prompt": "Add PDF export support",
+          "response": "I'll use jsPDF to generate PDF exports, integrate with exportUtils.js, and add to the export dropdown."
+        }
+      ]
+    }
+  ],
+  "workflows": [
+    {
+      "name": "self-healing-build",
+      "description": "Automatic build error detection and fixing",
+      "trigger": "build-failure",
+      "agent": "build-fixer",
+      "steps": [
+        "Analyze error logs",
+        "Identify root cause",
+        "Apply appropriate fixes",
+        "Retry build",
+        "Verify success or escalate"
+      ],
+      "max_retries": 3
+    },
+    {
+      "name": "module-development",
+      "description": "Create new dashboard module",
+      "trigger": "manual",
+      "agents": ["module-builder", "data-specialist"],
+      "steps": [
+        "Create data model in src/data/",
+        "Create module component in src/components/modules/",
+        "Integrate charts and styling",
+        "Add to App.jsx routing",
+        "Test and validate"
+      ]
+    },
+    {
+      "name": "agent-creation",
+      "description": "Create new agent in the system",
+      "trigger": "manual",
+      "agent": "dashboard-architect",
+      "steps": [
+        "Extend BaseAgent",
+        "Define responsibilities and events",
+        "Register with orchestrator",
+        "Add to src/agents/index.js",
+        "Update documentation"
+      ]
+    }
+  ],
+  "conventions": {
+    "naming": {
+      "agents": "PascalCase with 'Agent' suffix (e.g., DataIntegrationAgent)",
+      "components": "PascalCase (e.g., InnovationModule)",
+      "utilities": "camelCase (e.g., parseCSV)",
+      "events": "SCREAMING_SNAKE_CASE (e.g., DATA_UPLOADED)"
+    },
+    "files": {
+      "agents": "src/agents/[AgentName].js",
+      "components": "src/components/[category]/[ComponentName].jsx",
+      "utilities": "src/utils/[utilName].js",
+      "data": "src/data/[dataName]Data.js"
+    },
+    "patterns": {
+      "agent": "Extend BaseAgent, use event-driven communication",
+      "component": "Functional components with hooks",
+      "styling": "TailwindCSS utility classes",
+      "errors": "Try-catch with agent.error() method"
+    }
+  }
+}
