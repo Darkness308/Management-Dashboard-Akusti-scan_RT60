@@ -1,0 +1,1057 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Konsolidiertes Management Dashboard - Akusti-Scan RT60</title>
+
+    <!-- TailwindCSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- SheetJS für Excel/CSV -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+    <style>
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .nav-btn.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.15);
+        }
+        .metric-card {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        }
+        .section-header {
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-900 font-sans">
+
+    <!-- Header -->
+    <header class="gradient-bg shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto py-4 px-6">
+            <div class="flex flex-wrap justify-between items-center">
+                <div class="flex items-center space-x-4">
+                    <div class="w-12 h-12 bg-white rounded-lg flex items-center justify-center">
+                        <span class="text-2xl">📊</span>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-bold text-white">Management Dashboard</h1>
+                        <p class="text-sm text-purple-100">Akusti-Scan RT60 - Konsolidierte Ansicht</p>
+                    </div>
+                </div>
+                <div class="mt-4 md:mt-0">
+                    <button id="exportBtn" class="bg-white text-purple-700 px-4 py-2 rounded-lg shadow hover:bg-purple-50 transition">
+                        📥 Export
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation Tabs -->
+    <nav class="bg-white shadow-md sticky top-20 z-40">
+        <div class="max-w-7xl mx-auto px-6 py-3">
+            <div class="flex flex-wrap gap-2">
+                <button data-tab="overview" class="nav-btn active px-4 py-2 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200 transition">
+                    🏠 Übersicht
+                </button>
+                <button data-tab="innovation" class="nav-btn px-4 py-2 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200 transition">
+                    🚀 Innovation
+                </button>
+                <button data-tab="market" class="nav-btn px-4 py-2 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200 transition">
+                    🌍 Markt
+                </button>
+                <button data-tab="business" class="nav-btn px-4 py-2 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200 transition">
+                    💼 Business
+                </button>
+                <button data-tab="ki-system" class="nav-btn px-4 py-2 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200 transition">
+                    🤖 KI-System
+                </button>
+                <button data-tab="technik" class="nav-btn px-4 py-2 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200 transition">
+                    ⚙️ Technik
+                </button>
+                <button data-tab="vertrieb" class="nav-btn px-4 py-2 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200 transition">
+                    📈 Vertrieb
+                </button>
+                <button data-tab="data" class="nav-btn px-4 py-2 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200 transition">
+                    📂 Daten
+                </button>
+                <button data-tab="analytics" class="nav-btn px-4 py-2 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200 transition">
+                    📊 Analytics
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto p-6">
+
+        <!-- Übersicht Tab -->
+        <section id="overview" class="tab-content active">
+            <h2 class="text-4xl font-bold section-header mb-6">Dashboard Übersicht</h2>
+
+            <!-- KPI Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <div class="bg-white rounded-xl shadow-lg p-6 card-hover">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-gray-500 font-semibold">TAM Marktgröße</p>
+                            <p class="text-3xl font-bold text-blue-600">63.841</p>
+                            <p class="text-xs text-gray-400">Unternehmen DACH</p>
+                        </div>
+                        <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                            <span class="text-2xl">🎯</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-lg p-6 card-hover">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-gray-500 font-semibold">SAM (30%)</p>
+                            <p class="text-3xl font-bold text-purple-600">19.152</p>
+                            <p class="text-xs text-gray-400">Adressierbare Kunden</p>
+                        </div>
+                        <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+                            <span class="text-2xl">📊</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-lg p-6 card-hover">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-gray-500 font-semibold">SOM (5%)</p>
+                            <p class="text-3xl font-bold text-green-600">958</p>
+                            <p class="text-xs text-gray-400">Realistische Kunden</p>
+                        </div>
+                        <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                            <span class="text-2xl">✅</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-lg p-6 card-hover">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-gray-500 font-semibold">Umsatzpotenzial</p>
+                            <p class="text-3xl font-bold text-yellow-600">1,4M €</p>
+                            <p class="text-xs text-gray-400">bei 1.500€/Jahr</p>
+                        </div>
+                        <div class="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center">
+                            <span class="text-2xl">💰</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Schnellzugriff Module -->
+            <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+                <h3 class="text-2xl font-bold mb-4 text-gray-800">📋 Verfügbare Module</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div class="p-4 border-2 border-gray-200 rounded-lg hover:border-purple-400 cursor-pointer transition" onclick="switchTab('innovation')">
+                        <h4 class="font-bold text-lg mb-2">🚀 Innovation Mapping</h4>
+                        <p class="text-sm text-gray-600">Cross-Sektor-Synergien & Wachstumsfelder</p>
+                    </div>
+                    <div class="p-4 border-2 border-gray-200 rounded-lg hover:border-purple-400 cursor-pointer transition" onclick="switchTab('market')">
+                        <h4 class="font-bold text-lg mb-2">🌍 Marktanalyse</h4>
+                        <p class="text-sm text-gray-600">Wachstumstrends & Zielgruppen</p>
+                    </div>
+                    <div class="p-4 border-2 border-gray-200 rounded-lg hover:border-purple-400 cursor-pointer transition" onclick="switchTab('business')">
+                        <h4 class="font-bold text-lg mb-2">💼 Business Strategie</h4>
+                        <p class="text-sm text-gray-600">Preisstrategie & Wettbewerb</p>
+                    </div>
+                    <div class="p-4 border-2 border-gray-200 rounded-lg hover:border-purple-400 cursor-pointer transition" onclick="switchTab('ki-system')">
+                        <h4 class="font-bold text-lg mb-2">🤖 KI-System</h4>
+                        <p class="text-sm text-gray-600">20 Techniken, Workflows & Templates</p>
+                    </div>
+                    <div class="p-4 border-2 border-gray-200 rounded-lg hover:border-purple-400 cursor-pointer transition" onclick="switchTab('technik')">
+                        <h4 class="font-bold text-lg mb-2">⚙️ Technik & Normen</h4>
+                        <p class="text-sm text-gray-600">Standards & Anforderungen</p>
+                    </div>
+                    <div class="p-4 border-2 border-gray-200 rounded-lg hover:border-purple-400 cursor-pointer transition" onclick="switchTab('data')">
+                        <h4 class="font-bold text-lg mb-2">📂 Datenintegration</h4>
+                        <p class="text-sm text-gray-600">Upload & Analyse von Excel/CSV</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Stats -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <h3 class="text-xl font-bold mb-4 text-gray-800">📈 Marktwachstum</h3>
+                    <canvas id="overviewMarketChart"></canvas>
+                </div>
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <h3 class="text-xl font-bold mb-4 text-gray-800">🎯 Zielgruppen</h3>
+                    <canvas id="overviewTargetChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- Innovation Tab -->
+        <section id="innovation" class="tab-content">
+            <h2 class="text-4xl font-bold section-header mb-6">🚀 Innovation Mapping</h2>
+            <p class="text-gray-600 mb-6">Analyse der Cross-Sektor-Synergien & zukünftigen Wachstumsfelder</p>
+
+            <div class="bg-white rounded-xl shadow-lg p-6 mb-6">
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead class="bg-gradient-to-r from-blue-600 to-purple-600 text-white">
+                            <tr>
+                                <th class="px-4 py-3 text-left rounded-tl-lg">Primärer Sektor</th>
+                                <th class="px-4 py-3 text-left">Emerging Tech</th>
+                                <th class="px-4 py-3 text-left">Potenzial</th>
+                                <th class="px-4 py-3 text-left rounded-tr-lg">Relevanz</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200">
+                            <tr class="hover:bg-blue-50 transition">
+                                <td class="px-4 py-3 font-semibold">Raumakustik / Bauphysik</td>
+                                <td class="px-4 py-3">Smart-Building, IoT, Sensorintegration</td>
+                                <td class="px-4 py-3">Automatisierte RT60-Messungen</td>
+                                <td class="px-4 py-3"><span class="bg-blue-600 text-white px-3 py-1 rounded-full font-bold">5</span></td>
+                            </tr>
+                            <tr class="hover:bg-blue-50 transition">
+                                <td class="px-4 py-3 font-semibold">PropTech</td>
+                                <td class="px-4 py-3">BIM, CAD, Digital Twin</td>
+                                <td class="px-4 py-3">Integration von BIM-Schnittstellen</td>
+                                <td class="px-4 py-3"><span class="bg-blue-600 text-white px-3 py-1 rounded-full font-bold">5</span></td>
+                            </tr>
+                            <tr class="hover:bg-blue-50 transition">
+                                <td class="px-4 py-3 font-semibold">Bildung / Schulen</td>
+                                <td class="px-4 py-3">Förderprogramme, E-Learning</td>
+                                <td class="px-4 py-3">Digitale Raumoptimierung</td>
+                                <td class="px-4 py-3"><span class="bg-purple-600 text-white px-3 py-1 rounded-full font-bold">4</span></td>
+                            </tr>
+                            <tr class="hover:bg-blue-50 transition">
+                                <td class="px-4 py-3 font-semibold">AR/VR & Spatial Computing</td>
+                                <td class="px-4 py-3">Apple Vision Pro, 3D-Simulation</td>
+                                <td class="px-4 py-3">Echtzeit-Auralisation</td>
+                                <td class="px-4 py-3"><span class="bg-purple-600 text-white px-3 py-1 rounded-full font-bold">4</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-lg p-6">
+                <h3 class="text-xl font-bold mb-4 text-gray-800">Relevanz-Übersicht</h3>
+                <canvas id="innovationChart"></canvas>
+            </div>
+        </section>
+
+        <!-- Market Tab -->
+        <section id="market" class="tab-content">
+            <h2 class="text-4xl font-bold section-header mb-6">🌍 Marktanalyse</h2>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <h3 class="text-xl font-bold mb-4 text-gray-800">Marktwachstum & Trends</h3>
+                    <canvas id="marktChart"></canvas>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <h3 class="text-xl font-bold mb-4 text-gray-800">Zielgruppen-Segmentierung</h3>
+                    <canvas id="zielgruppenChart"></canvas>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-lg p-6">
+                <h3 class="text-xl font-bold mb-4 text-gray-800">TAM / SAM / SOM Analyse</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="metric-card p-6 rounded-lg">
+                        <p class="text-sm font-semibold text-gray-600">TAM (Total Addressable Market)</p>
+                        <p class="text-3xl font-bold text-blue-600 mt-2">63.841</p>
+                        <p class="text-sm text-gray-500 mt-1">Gesamtmarkt DACH-Region</p>
+                    </div>
+                    <div class="metric-card p-6 rounded-lg">
+                        <p class="text-sm font-semibold text-gray-600">SAM (Serviceable Available Market)</p>
+                        <p class="text-3xl font-bold text-purple-600 mt-2">19.152</p>
+                        <p class="text-sm text-gray-500 mt-1">30% adressierbar</p>
+                    </div>
+                    <div class="metric-card p-6 rounded-lg">
+                        <p class="text-sm font-semibold text-gray-600">SOM (Serviceable Obtainable Market)</p>
+                        <p class="text-3xl font-bold text-green-600 mt-2">958</p>
+                        <p class="text-sm text-gray-500 mt-1">5% realistisch erreichbar</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Business Tab -->
+        <section id="business" class="tab-content">
+            <h2 class="text-4xl font-bold section-header mb-6">💼 Business Strategie</h2>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <h3 class="text-xl font-bold mb-4 text-gray-800">Preisstrategie-Benchmarking</h3>
+                    <canvas id="preiseChart"></canvas>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <h3 class="text-xl font-bold mb-4 text-gray-800">Wettbewerbsanalyse</h3>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm">
+                            <thead class="bg-gray-100">
+                                <tr>
+                                    <th class="px-3 py-2 text-left">Anbieter</th>
+                                    <th class="px-3 py-2 text-left">Preis/Monat</th>
+                                    <th class="px-3 py-2 text-left">KI</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-200">
+                                <tr>
+                                    <td class="px-3 py-2">Autodesk Forma</td>
+                                    <td class="px-3 py-2 font-semibold">185 $</td>
+                                    <td class="px-3 py-2">✅</td>
+                                </tr>
+                                <tr>
+                                    <td class="px-3 py-2">PlanRadar</td>
+                                    <td class="px-3 py-2 font-semibold">26-129 €</td>
+                                    <td class="px-3 py-2">✅</td>
+                                </tr>
+                                <tr>
+                                    <td class="px-3 py-2">Archicad AI</td>
+                                    <td class="px-3 py-2 font-semibold">234 $</td>
+                                    <td class="px-3 py-2">✅</td>
+                                </tr>
+                                <tr class="bg-green-50">
+                                    <td class="px-3 py-2 font-bold">Unser Modell</td>
+                                    <td class="px-3 py-2 font-bold text-green-600">125 € (~1.500€/Jahr)</td>
+                                    <td class="px-3 py-2">✅</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-lg p-6">
+                <h3 class="text-xl font-bold mb-4 text-gray-800">Umsatzprognose</h3>
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div class="text-center p-4 bg-blue-50 rounded-lg">
+                        <p class="text-sm text-gray-600">Jahr 1</p>
+                        <p class="text-2xl font-bold text-blue-600">360K €</p>
+                    </div>
+                    <div class="text-center p-4 bg-purple-50 rounded-lg">
+                        <p class="text-sm text-gray-600">Jahr 2</p>
+                        <p class="text-2xl font-bold text-purple-600">720K €</p>
+                    </div>
+                    <div class="text-center p-4 bg-green-50 rounded-lg">
+                        <p class="text-sm text-gray-600">Jahr 3</p>
+                        <p class="text-2xl font-bold text-green-600">1.2M €</p>
+                    </div>
+                    <div class="text-center p-4 bg-yellow-50 rounded-lg">
+                        <p class="text-sm text-gray-600">Jahr 5</p>
+                        <p class="text-2xl font-bold text-yellow-600">2.4M €</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- KI-System Tab -->
+        <section id="ki-system" class="tab-content">
+            <h2 class="text-4xl font-bold section-header mb-6">🤖 KI-System & Techniken</h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                <div class="bg-gradient-to-br from-blue-500 to-blue-700 text-white rounded-xl shadow-lg p-6">
+                    <h3 class="text-lg font-semibold mb-2">Techniken</h3>
+                    <p class="text-4xl font-bold">20</p>
+                    <p class="text-sm mt-2">KI-Manipulations-Techniken</p>
+                </div>
+                <div class="bg-gradient-to-br from-purple-500 to-purple-700 text-white rounded-xl shadow-lg p-6">
+                    <h3 class="text-lg font-semibold mb-2">Workflows</h3>
+                    <p class="text-4xl font-bold">6</p>
+                    <p class="text-sm mt-2">Optimierte Workflow-Kombinationen</p>
+                </div>
+                <div class="bg-gradient-to-br from-green-500 to-green-700 text-white rounded-xl shadow-lg p-6">
+                    <h3 class="text-lg font-semibold mb-2">Templates</h3>
+                    <p class="text-4xl font-bold">8</p>
+                    <p class="text-sm mt-2">Business-Templates</p>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-lg p-6 mb-6">
+                <h3 class="text-xl font-bold mb-4 text-gray-800">Top KI-Techniken</h3>
+                <div class="space-y-4">
+                    <div class="border-l-4 border-blue-500 pl-4 py-2">
+                        <h4 class="font-bold">#002 Progressive Komplexitäts-Eskalation</h4>
+                        <p class="text-sm text-gray-600">Erfolgsrate: 93% | Dauer: 5 Min | Status: Flagship</p>
+                        <p class="text-sm mt-1">4-Stufen-Modell für optimale Verständlichkeit und Token-Persistenz</p>
+                    </div>
+                    <div class="border-l-4 border-purple-500 pl-4 py-2">
+                        <h4 class="font-bold">#007 Sublimale Sprachliche Ansteckung</h4>
+                        <p class="text-sm text-gray-600">Erfolgsrate: 95% | Dauer: 2 Min | Status: Bewährt</p>
+                        <p class="text-sm mt-1">Übertragung spezifischer Sprachmuster auf KI-Ausgaben</p>
+                    </div>
+                    <div class="border-l-4 border-green-500 pl-4 py-2">
+                        <h4 class="font-bold">#011 Meta-Reflexions-Trigger</h4>
+                        <p class="text-sm text-gray-600">Erfolgsrate: 92% | Dauer: 12 Min | Status: Bewährt</p>
+                        <p class="text-sm mt-1">Aktivierung von Meta-Analyse durch Rückfragen</p>
+                    </div>
+                    <div class="border-l-4 border-yellow-500 pl-4 py-2">
+                        <h4 class="font-bold">#016 API-Integration Optimization</h4>
+                        <p class="text-sm text-gray-600">Erfolgsrate: 87% | Dauer: 15 Min | Status: Bewährt</p>
+                        <p class="text-sm mt-1">Intelligente Kostenoptimierung durch strategische Modell-Auswahl</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-lg p-6">
+                <h3 class="text-xl font-bold mb-4 text-gray-800">Empfohlene Workflows</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="border-2 border-gray-200 rounded-lg p-4 hover:border-purple-400 transition">
+                        <h4 class="font-bold text-lg mb-2">KI-Transformation Workflow</h4>
+                        <p class="text-sm text-gray-600 mb-2">Dauer: 19 Min | Erfolg: 91%</p>
+                        <p class="text-xs text-gray-500">Vollständige KI-Persönlichkeits-Transformation</p>
+                    </div>
+                    <div class="border-2 border-gray-200 rounded-lg p-4 hover:border-purple-400 transition">
+                        <h4 class="font-bold text-lg mb-2">Business-Enhancement</h4>
+                        <p class="text-sm text-gray-600 mb-2">Dauer: 20 Min | Erfolg: 89%</p>
+                        <p class="text-xs text-gray-500">Professionelle Ergebnisse mit Verbesserungen</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Technik Tab -->
+        <section id="technik" class="tab-content">
+            <h2 class="text-4xl font-bold section-header mb-6">⚙️ Technik & Normen</h2>
+
+            <div class="bg-white rounded-xl shadow-lg p-6 mb-6">
+                <h3 class="text-xl font-bold mb-4 text-gray-800">Technische Anforderungen</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <h4 class="font-semibold mb-2">Hardware</h4>
+                        <ul class="list-disc list-inside text-gray-700 space-y-1">
+                            <li>iPad Pro mit LiDAR Scanner</li>
+                            <li>iOS 15+ kompatibel</li>
+                            <li>Mikrofon für RT60-Messung</li>
+                            <li>Mindestens 4GB RAM</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold mb-2">Software</h4>
+                        <ul class="list-disc list-inside text-gray-700 space-y-1">
+                            <li>Swift / SwiftUI</li>
+                            <li>ARKit für Raumerfassung</li>
+                            <li>Core ML für KI-Features</li>
+                            <li>Chart.js für Visualisierung</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-lg p-6">
+                <h3 class="text-xl font-bold mb-4 text-gray-800">Relevante Normen</h3>
+                <div class="space-y-3">
+                    <div class="flex items-start space-x-3">
+                        <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded text-sm font-semibold">DIN 18041</span>
+                        <p class="text-gray-700">Hörsamkeit in Räumen - Anforderungen, Empfehlungen und Hinweise für die Planung</p>
+                    </div>
+                    <div class="flex items-start space-x-3">
+                        <span class="bg-purple-100 text-purple-800 px-3 py-1 rounded text-sm font-semibold">ISO 3382</span>
+                        <p class="text-gray-700">Messung von Raumakustischen Parametern</p>
+                    </div>
+                    <div class="flex items-start space-x-3">
+                        <span class="bg-green-100 text-green-800 px-3 py-1 rounded text-sm font-semibold">VDI 2081</span>
+                        <p class="text-gray-700">Geräuscherzeugung und Lärmminderung in RLT-Anlagen</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Vertrieb Tab -->
+        <section id="vertrieb" class="tab-content">
+            <h2 class="text-4xl font-bold section-header mb-6">📈 Vertrieb & Zielgruppen</h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <h3 class="text-xl font-bold mb-4 text-gray-800">Primäre Zielgruppen</h3>
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
+                            <span class="font-semibold">Architekturbüros</span>
+                            <span class="bg-blue-600 text-white px-3 py-1 rounded-full text-sm">35%</span>
+                        </div>
+                        <div class="flex items-center justify-between p-3 bg-purple-50 rounded-lg">
+                            <span class="font-semibold">Schulen & Bildung</span>
+                            <span class="bg-purple-600 text-white px-3 py-1 rounded-full text-sm">25%</span>
+                        </div>
+                        <div class="flex items-center justify-between p-3 bg-green-50 rounded-lg">
+                            <span class="font-semibold">Öffentliche Träger</span>
+                            <span class="bg-green-600 text-white px-3 py-1 rounded-full text-sm">20%</span>
+                        </div>
+                        <div class="flex items-center justify-between p-3 bg-yellow-50 rounded-lg">
+                            <span class="font-semibold">Unternehmen</span>
+                            <span class="bg-yellow-600 text-white px-3 py-1 rounded-full text-sm">20%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <h3 class="text-xl font-bold mb-4 text-gray-800">Vertriebskanäle</h3>
+                    <div class="space-y-3">
+                        <div class="p-3 border-l-4 border-blue-500">
+                            <h4 class="font-semibold">Direktvertrieb</h4>
+                            <p class="text-sm text-gray-600">Sales Team für große Kunden</p>
+                        </div>
+                        <div class="p-3 border-l-4 border-purple-500">
+                            <h4 class="font-semibold">App Store</h4>
+                            <p class="text-sm text-gray-600">Apple App Store & Enterprise</p>
+                        </div>
+                        <div class="p-3 border-l-4 border-green-500">
+                            <h4 class="font-semibold">Partner-Netzwerk</h4>
+                            <p class="text-sm text-gray-600">Architektur-Verbände & Planer</p>
+                        </div>
+                        <div class="p-3 border-l-4 border-yellow-500">
+                            <h4 class="font-semibold">Online-Marketing</h4>
+                            <p class="text-sm text-gray-600">SEO, SEM, Content Marketing</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-lg p-6">
+                <h3 class="text-xl font-bold mb-4 text-gray-800">Preismodelle</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="border-2 border-gray-300 rounded-lg p-6 text-center">
+                        <h4 class="font-bold text-lg mb-2">Basic</h4>
+                        <p class="text-3xl font-bold text-blue-600 mb-2">49 €</p>
+                        <p class="text-sm text-gray-600">pro Monat</p>
+                        <ul class="text-sm text-left mt-4 space-y-2">
+                            <li>✅ Raumerfassung</li>
+                            <li>✅ RT60-Messung</li>
+                            <li>✅ Basis-Berichte</li>
+                        </ul>
+                    </div>
+                    <div class="border-4 border-purple-500 rounded-lg p-6 text-center bg-purple-50">
+                        <div class="bg-purple-600 text-white text-xs font-bold px-2 py-1 rounded-full inline-block mb-2">BELIEBT</div>
+                        <h4 class="font-bold text-lg mb-2">Professional</h4>
+                        <p class="text-3xl font-bold text-purple-600 mb-2">125 €</p>
+                        <p class="text-sm text-gray-600">pro Monat</p>
+                        <ul class="text-sm text-left mt-4 space-y-2">
+                            <li>✅ Alle Basic Features</li>
+                            <li>✅ KI-Optimierung</li>
+                            <li>✅ BIM-Integration</li>
+                            <li>✅ Export-Funktionen</li>
+                        </ul>
+                    </div>
+                    <div class="border-2 border-gray-300 rounded-lg p-6 text-center">
+                        <h4 class="font-bold text-lg mb-2">Enterprise</h4>
+                        <p class="text-3xl font-bold text-green-600 mb-2">Custom</p>
+                        <p class="text-sm text-gray-600">Individuelle Preise</p>
+                        <ul class="text-sm text-left mt-4 space-y-2">
+                            <li>✅ Alle Pro Features</li>
+                            <li>✅ API-Zugang</li>
+                            <li>✅ White-Label</li>
+                            <li>✅ Support 24/7</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Data Tab -->
+        <section id="data" class="tab-content">
+            <h2 class="text-4xl font-bold section-header mb-6">📂 Datenintegration & Analyse</h2>
+
+            <div class="bg-white rounded-xl shadow-lg p-6 mb-6">
+                <h3 class="text-xl font-bold mb-4 text-gray-800">Datei-Upload</h3>
+                <div class="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
+                    <input id="fileInput" type="file" accept=".csv,.xlsx,.xls" class="hidden" />
+                    <label for="fileInput" class="cursor-pointer">
+                        <div class="text-6xl mb-4">📁</div>
+                        <p class="text-lg font-semibold text-gray-700 mb-2">Datei hochladen</p>
+                        <p class="text-sm text-gray-500">Excel (.xlsx, .xls) oder CSV-Dateien</p>
+                        <button onclick="document.getElementById('fileInput').click()" class="mt-4 bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700 transition">
+                            Datei auswählen
+                        </button>
+                    </label>
+                </div>
+                <div class="mt-4 flex gap-2">
+                    <button id="clearStorage" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition">
+                        🗑️ Daten löschen
+                    </button>
+                </div>
+            </div>
+
+            <div id="dataTableContainer" class="bg-white rounded-xl shadow-lg p-6 mb-6 hidden">
+                <h3 class="text-xl font-bold mb-4 text-gray-800">Hochgeladene Daten</h3>
+                <div class="overflow-x-auto">
+                    <table id="dataTable" class="w-full">
+                        <thead class="bg-gradient-to-r from-green-600 to-blue-600 text-white">
+                            <tr id="tableHeaders"></tr>
+                        </thead>
+                        <tbody id="tableBody" class="divide-y divide-gray-200"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="chartArea" class="bg-white rounded-xl shadow-lg p-6 hidden">
+                <h3 class="text-xl font-bold mb-4 text-gray-800">Daten-Visualisierung</h3>
+                <canvas id="dataChart"></canvas>
+            </div>
+
+            <p id="statusMessage" class="text-sm text-gray-500 mt-4"></p>
+        </section>
+
+        <!-- Analytics Tab -->
+        <section id="analytics" class="tab-content">
+            <h2 class="text-4xl font-bold section-header mb-6">📊 Analytics & Performance</h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+                <div class="bg-gradient-to-br from-blue-500 to-blue-600 text-white rounded-xl shadow-lg p-6">
+                    <p class="text-sm font-semibold mb-2">Module</p>
+                    <p class="text-4xl font-bold">11</p>
+                    <p class="text-sm mt-2">Verfügbare Dashboards</p>
+                </div>
+                <div class="bg-gradient-to-br from-purple-500 to-purple-600 text-white rounded-xl shadow-lg p-6">
+                    <p class="text-sm font-semibold mb-2">Features</p>
+                    <p class="text-4xl font-bold">45+</p>
+                    <p class="text-sm mt-2">Funktionen integriert</p>
+                </div>
+                <div class="bg-gradient-to-br from-green-500 to-green-600 text-white rounded-xl shadow-lg p-6">
+                    <p class="text-sm font-semibold mb-2">Charts</p>
+                    <p class="text-4xl font-bold">12</p>
+                    <p class="text-sm mt-2">Interaktive Visualisierungen</p>
+                </div>
+                <div class="bg-gradient-to-br from-yellow-500 to-yellow-600 text-white rounded-xl shadow-lg p-6">
+                    <p class="text-sm font-semibold mb-2">Integration</p>
+                    <p class="text-4xl font-bold">100%</p>
+                    <p class="text-sm mt-2">Vollständig konsolidiert</p>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-lg p-6 mb-6">
+                <h3 class="text-xl font-bold mb-4 text-gray-800">System-Performance</h3>
+                <div class="space-y-4">
+                    <div>
+                        <div class="flex justify-between mb-1">
+                            <span class="text-sm font-semibold">Datenintegration</span>
+                            <span class="text-sm font-semibold text-blue-600">95%</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-3">
+                            <div class="bg-blue-600 h-3 rounded-full" style="width: 95%"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between mb-1">
+                            <span class="text-sm font-semibold">Visualisierung</span>
+                            <span class="text-sm font-semibold text-purple-600">100%</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-3">
+                            <div class="bg-purple-600 h-3 rounded-full" style="width: 100%"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between mb-1">
+                            <span class="text-sm font-semibold">KI-Features</span>
+                            <span class="text-sm font-semibold text-green-600">88%</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-3">
+                            <div class="bg-green-600 h-3 rounded-full" style="width: 88%"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between mb-1">
+                            <span class="text-sm font-semibold">Export-Funktionen</span>
+                            <span class="text-sm font-semibold text-yellow-600">92%</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-3">
+                            <div class="bg-yellow-600 h-3 rounded-full" style="width: 92%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <h3 class="text-xl font-bold mb-4 text-gray-800">Modul-Nutzung</h3>
+                    <canvas id="moduleUsageChart"></canvas>
+                </div>
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <h3 class="text-xl font-bold mb-4 text-gray-800">Feature-Aktivität</h3>
+                    <canvas id="featureActivityChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="gradient-bg text-white text-center py-6 mt-12">
+        <p class="font-semibold">&copy; 2025 Raumakustik Projekt – Management Dashboard</p>
+        <p class="text-sm text-purple-100 mt-2">Konsolidierte Ansicht aller Module & Features</p>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        // Tab Navigation
+        function switchTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            // Remove active class from all buttons
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            // Show selected tab
+            document.getElementById(tabName).classList.add('active');
+
+            // Add active class to clicked button
+            document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Event listeners for navigation
+        document.querySelectorAll('.nav-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                switchTab(btn.dataset.tab);
+            });
+        });
+
+        // Initialize Charts
+        document.addEventListener('DOMContentLoaded', () => {
+
+            // Overview Market Chart
+            new Chart(document.getElementById('overviewMarketChart').getContext('2d'), {
+                type: 'line',
+                data: {
+                    labels: ['2022', '2023', '2024', '2025', '2026'],
+                    datasets: [{
+                        label: 'Marktvolumen (Mio €)',
+                        data: [150, 210, 280, 360, 450],
+                        borderColor: '#667eea',
+                        backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { display: true }
+                    }
+                }
+            });
+
+            // Overview Target Chart
+            new Chart(document.getElementById('overviewTargetChart').getContext('2d'), {
+                type: 'doughnut',
+                data: {
+                    labels: ['Architekturbüros', 'Schulen', 'Öffentliche Träger', 'Unternehmen'],
+                    datasets: [{
+                        data: [35, 25, 20, 20],
+                        backgroundColor: ['#667eea', '#764ba2', '#f093fb', '#4facfe']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { position: 'bottom' }
+                    }
+                }
+            });
+
+            // Innovation Chart
+            new Chart(document.getElementById('innovationChart').getContext('2d'), {
+                type: 'bar',
+                data: {
+                    labels: ['Raumakustik', 'PropTech', 'Bildung', 'AR/VR'],
+                    datasets: [{
+                        label: 'Relevanz',
+                        data: [5, 5, 4, 4],
+                        backgroundColor: ['#667eea', '#764ba2', '#667eea', '#764ba2']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: { legend: { display: false } },
+                    scales: { y: { beginAtZero: true, max: 5 } }
+                }
+            });
+
+            // Market Chart
+            new Chart(document.getElementById('marktChart').getContext('2d'), {
+                type: 'line',
+                data: {
+                    labels: ['2022', '2023', '2024', '2025', '2026'],
+                    datasets: [{
+                        label: 'Marktvolumen (Mio €)',
+                        data: [150, 210, 280, 360, 450],
+                        borderColor: '#22c55e',
+                        backgroundColor: 'rgba(34,197,94,0.2)',
+                        tension: 0.4
+                    }]
+                },
+                options: { responsive: true }
+            });
+
+            // Target Groups Chart
+            new Chart(document.getElementById('zielgruppenChart').getContext('2d'), {
+                type: 'doughnut',
+                data: {
+                    labels: ['Architekturbüros', 'Schulen', 'Öffentliche Träger', 'Unternehmen'],
+                    datasets: [{
+                        data: [35, 25, 20, 20],
+                        backgroundColor: ['#4ade80', '#22c55e', '#16a34a', '#15803d']
+                    }]
+                },
+                options: { responsive: true }
+            });
+
+            // Prices Chart
+            new Chart(document.getElementById('preiseChart').getContext('2d'), {
+                type: 'bar',
+                data: {
+                    labels: ['Wettbewerber A', 'Wettbewerber B', 'Wettbewerber C', 'Unser Modell'],
+                    datasets: [{
+                        label: 'Preis (€)',
+                        data: [185, 234, 129, 125],
+                        backgroundColor: ['#bbf7d0', '#86efac', '#4ade80', '#22c55e']
+                    }]
+                },
+                options: { responsive: true }
+            });
+
+            // Module Usage Chart
+            new Chart(document.getElementById('moduleUsageChart').getContext('2d'), {
+                type: 'pie',
+                data: {
+                    labels: ['Innovation', 'Markt', 'Business', 'KI-System', 'Technik', 'Vertrieb', 'Daten'],
+                    datasets: [{
+                        data: [15, 18, 20, 22, 10, 8, 7],
+                        backgroundColor: ['#667eea', '#764ba2', '#f093fb', '#4facfe', '#43e97b', '#fa709a', '#fee140']
+                    }]
+                },
+                options: { responsive: true }
+            });
+
+            // Feature Activity Chart
+            new Chart(document.getElementById('featureActivityChart').getContext('2d'), {
+                type: 'bar',
+                data: {
+                    labels: ['Charts', 'Upload', 'Export', 'KI-Tools', 'Analytics'],
+                    datasets: [{
+                        label: 'Aktivität (%)',
+                        data: [95, 75, 85, 88, 92],
+                        backgroundColor: '#667eea'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: { y: { beginAtZero: true, max: 100 } }
+                }
+            });
+
+            // File Upload Handler
+            const fileInput = document.getElementById('fileInput');
+            const table = document.getElementById('dataTable');
+            const tableHeaders = document.getElementById('tableHeaders');
+            const tableBody = document.getElementById('tableBody');
+            const chartArea = document.getElementById('chartArea');
+            const dataChartCanvas = document.getElementById('dataChart');
+            const statusMessage = document.getElementById('statusMessage');
+            const dataTableContainer = document.getElementById('dataTableContainer');
+
+            function clearData() {
+                localStorage.removeItem('uploadData');
+                dataTableContainer.classList.add('hidden');
+                chartArea.classList.add('hidden');
+                statusMessage.textContent = 'Daten wurden gelöscht. Lade neue Datei hoch.';
+            }
+
+            document.getElementById('clearStorage').addEventListener('click', clearData);
+
+            // Load from storage if available
+            const stored = localStorage.getItem('uploadData');
+            if (stored) {
+                const data = JSON.parse(stored);
+                renderTableAndChart(data.headers, data.rows);
+            }
+
+            fileInput.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                const name = file.name.toLowerCase();
+                if (name.endsWith('.csv')) {
+                    parseCSV(file);
+                } else if (name.endsWith('.xlsx') || name.endsWith('.xls')) {
+                    parseExcel(file);
+                } else {
+                    statusMessage.textContent = 'Dateiformat nicht unterstützt. Bitte CSV oder Excel hochladen.';
+                }
+            });
+
+            function parseCSV(file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const text = event.target.result;
+                    const lines = text.trim().split(/\r?\n/);
+                    const headers = lines[0].split(',').map(h => h.trim());
+                    const rows = lines.slice(1).map(line => line.split(',').map(c => c.trim()));
+                    saveData(headers, rows);
+                    renderTableAndChart(headers, rows);
+                    statusMessage.textContent = 'CSV-Datei erfolgreich eingelesen.';
+                };
+                reader.readAsText(file);
+            }
+
+            function parseExcel(file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const data = new Uint8Array(event.target.result);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    const sheetName = workbook.SheetNames[0];
+                    const sheet = workbook.Sheets[sheetName];
+                    const json = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+                    const headers = json[0];
+                    const rows = json.slice(1);
+                    saveData(headers, rows);
+                    renderTableAndChart(headers, rows);
+                    statusMessage.textContent = 'Excel-Datei erfolgreich eingelesen.';
+                };
+                reader.readAsArrayBuffer(file);
+            }
+
+            function saveData(headers, rows) {
+                localStorage.setItem('uploadData', JSON.stringify({ headers, rows }));
+            }
+
+            function renderTableAndChart(headers, rows) {
+                // Render Table
+                tableHeaders.innerHTML = '';
+                headers.forEach(h => {
+                    const th = document.createElement('th');
+                    th.textContent = h;
+                    th.className = 'px-4 py-3 text-left';
+                    tableHeaders.appendChild(th);
+                });
+                tableBody.innerHTML = '';
+                rows.forEach(row => {
+                    const tr = document.createElement('tr');
+                    tr.className = 'hover:bg-gray-50';
+                    row.forEach(cell => {
+                        const td = document.createElement('td');
+                        td.textContent = cell;
+                        td.className = 'px-4 py-3';
+                        tr.appendChild(td);
+                    });
+                    tableBody.appendChild(tr);
+                });
+                dataTableContainer.classList.remove('hidden');
+
+                // Render Chart
+                const numericIndices = [];
+                for (let col = 0; col < headers.length; col++) {
+                    if (rows.every(row => !isNaN(parseFloat(row[col])))) {
+                        numericIndices.push(col);
+                        if (numericIndices.length === 2) break;
+                    }
+                }
+                if (numericIndices.length >= 2) {
+                    const labels = rows.map(row => row[0]);
+                    const data1 = rows.map(row => parseFloat(row[numericIndices[0]]));
+                    const data2 = rows.map(row => parseFloat(row[numericIndices[1]]));
+                    chartArea.classList.remove('hidden');
+                    const ctx = dataChartCanvas.getContext('2d');
+                    if (window.uploadChart) window.uploadChart.destroy();
+                    window.uploadChart = new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: labels,
+                            datasets: [
+                                { label: headers[numericIndices[0]], data: data1, backgroundColor: '#667eea' },
+                                { label: headers[numericIndices[1]], data: data2, backgroundColor: '#764ba2' }
+                            ]
+                        },
+                        options: { responsive: true }
+                    });
+                }
+            }
+
+            // Export functionality
+            document.getElementById('exportBtn').addEventListener('click', () => {
+                const exportMenu = confirm('Dashboard-Daten exportieren?\n\nOK = JSON Export\nAbbrechen = Markdown Export');
+                if (exportMenu) {
+                    exportJSON();
+                } else {
+                    exportMarkdown();
+                }
+            });
+
+            function exportJSON() {
+                const data = {
+                    overview: {
+                        tam: 63841,
+                        sam: 19152,
+                        som: 958,
+                        revenue: 1437000
+                    },
+                    timestamp: new Date().toISOString()
+                };
+                downloadFile('dashboard_export.json', JSON.stringify(data, null, 2));
+                alert('JSON Export erstellt');
+            }
+
+            function exportMarkdown() {
+                let md = '# Management Dashboard Export\n\n';
+                md += `**Datum:** ${new Date().toLocaleDateString('de-DE')}\n\n`;
+                md += '## Marktdaten\n';
+                md += '- TAM: 63.841 Unternehmen\n';
+                md += '- SAM: 19.152 Unternehmen (30%)\n';
+                md += '- SOM: 958 Unternehmen (5%)\n';
+                md += '- Umsatzpotenzial: 1,4M €\n\n';
+                md += '## Module\n';
+                md += '- Innovation Mapping\n';
+                md += '- Marktanalyse\n';
+                md += '- Business Strategie\n';
+                md += '- KI-System\n';
+                md += '- Technik & Normen\n';
+                md += '- Vertrieb\n';
+                md += '- Datenintegration\n';
+                md += '- Analytics\n';
+                downloadFile('dashboard_export.md', md);
+                alert('Markdown Export erstellt');
+            }
+
+            function downloadFile(filename, content) {
+                const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                setTimeout(() => {
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                }, 0);
+            }
+        });
+    </script>
+</body>
+</html>
