@@ -5,7 +5,12 @@ import Footer from './components/layout/Footer'
 import Overview from './components/dashboard/Overview'
 import InnovationModule from './components/modules/InnovationModule'
 import MarketModule from './components/modules/MarketModule'
-import PlaceholderModule from './components/modules/PlaceholderModule'
+import BusinessModule from './components/modules/BusinessModule'
+import KISystemModule from './components/modules/KISystemModule'
+import TechnikModule from './components/modules/TechnikModule'
+import VertriebModule from './components/modules/VertriebModule'
+import DataModule from './components/modules/DataModule'
+import AnalyticsModule from './components/modules/AnalyticsModule'
 
 function App() {
   const [activeTab, setActiveTab] = useState('overview')
@@ -31,58 +36,22 @@ function App() {
         return <MarketModule />
 
       case 'business':
-        return (
-          <PlaceholderModule
-            title="Business Strategie"
-            icon="💼"
-            description="Preisstrategie, Wettbewerbsanalyse & Umsatzmodellierung"
-          />
-        )
+        return <BusinessModule />
 
       case 'ki-system':
-        return (
-          <PlaceholderModule
-            title="KI-System"
-            icon="🤖"
-            description="20 KI-Manipulations-Techniken, Workflows & Templates"
-          />
-        )
+        return <KISystemModule />
 
       case 'technik':
-        return (
-          <PlaceholderModule
-            title="Technik & Normen"
-            icon="⚙️"
-            description="Technische Anforderungen & Standards (DIN, ISO, VDI)"
-          />
-        )
+        return <TechnikModule />
 
       case 'vertrieb':
-        return (
-          <PlaceholderModule
-            title="Vertrieb & Zielgruppen"
-            icon="📈"
-            description="Zielgruppen-Segmentierung & Vertriebskanal-Management"
-          />
-        )
+        return <VertriebModule />
 
       case 'data':
-        return (
-          <PlaceholderModule
-            title="Datenintegration"
-            icon="📂"
-            description="Excel/CSV Upload, Parsing & Daten-Transformation"
-          />
-        )
+        return <DataModule />
 
       case 'analytics':
-        return (
-          <PlaceholderModule
-            title="Analytics & Performance"
-            icon="📊"
-            description="Performance-Tracking, Nutzungsstatistiken & Dashboard-Analytics"
-          />
-        )
+        return <AnalyticsModule />
 
       default:
         return <Overview onModuleClick={handleTabChange} />
