@@ -11,9 +11,33 @@ import TechnikModule from './components/modules/TechnikModule'
 import VertriebModule from './components/modules/VertriebModule'
 import DataModule from './components/modules/DataModule'
 import AnalyticsModule from './components/modules/AnalyticsModule'
+import { initializeAgentSystem, orchestrator } from './agents'
 
 function App() {
   const [activeTab, setActiveTab] = useState('overview')
+  const [agentSystemReady, setAgentSystemReady] = useState(false)
+
+  // Initialize Agent System
+  useEffect(() => {
+    const initAgents = async () => {
+      try {
+        await initializeAgentSystem()
+        setAgentSystemReady(true)
+        console.log('[App] Agent system initialized successfully')
+      } catch (error) {
+        console.error('[App] Failed to initialize agent system:', error)
+      }
+    }
+
+    initAgents()
+
+    // Cleanup on unmount
+    return () => {
+      if (orchestrator.initialized) {
+        orchestrator.destroy()
+      }
+    }
+  }, [])
 
   // Scroll to top on tab change
   useEffect(() => {
@@ -22,6 +46,11 @@ function App() {
 
   const handleTabChange = (tabId) => {
     setActiveTab(tabId)
+
+    // Notify orchestrator about module change
+    if (agentSystemReady) {
+      orchestrator.switchModule(tabId)
+    }
   }
 
   const renderContent = () => {
