@@ -39,6 +39,62 @@
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
+        /* Toast notification styles */
+        .toast-container {
+            position: fixed;
+            top: 100px;
+            right: 20px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .toast {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 16px 24px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-width: 300px;
+            animation: slideIn 0.3s ease-out;
+            opacity: 0.95;
+        }
+        .toast.success {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        }
+        .toast-icon {
+            font-size: 24px;
+        }
+        .toast-message {
+            flex: 1;
+            font-weight: 500;
+        }
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 0.95;
+            }
+        }
+        @keyframes slideOut {
+            from {
+                transform: translateX(0);
+                opacity: 0.95;
+            }
+            to {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+        }
+        .toast.hiding {
+            animation: slideOut 0.3s ease-in;
+        }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-900 font-sans">
@@ -1077,6 +1133,29 @@
                 }
             });
 
+            // Toast notification function
+            function showToast(message, type = 'success') {
+                const container = document.getElementById('toast-container');
+                const toast = document.createElement('div');
+                toast.className = `toast ${type}`;
+                
+                const icon = type === 'success' ? '✓' : 'ℹ';
+                toast.innerHTML = `
+                    <span class="toast-icon">${icon}</span>
+                    <span class="toast-message">${message}</span>
+                `;
+                
+                container.appendChild(toast);
+                
+                // Auto-remove after 3 seconds
+                setTimeout(() => {
+                    toast.classList.add('hiding');
+                    setTimeout(() => {
+                        container.removeChild(toast);
+                    }, 300); // Match animation duration
+                }, 3000);
+            }
+
             function exportJSON() {
                 const data = {
                     overview: {
@@ -1088,7 +1167,7 @@
                     timestamp: new Date().toISOString()
                 };
                 downloadFile('dashboard_export.json', JSON.stringify(data, null, 2));
-                alert('JSON Export erstellt');
+                showToast('JSON Export erstellt');
             }
 
             function exportMarkdown() {
@@ -1109,7 +1188,7 @@
                 md += '- Datenintegration\n';
                 md += '- Analytics\n';
                 downloadFile('dashboard_export.md', md);
-                alert('Markdown Export erstellt');
+                showToast('Markdown Export erstellt');
             }
 
             function downloadFile(filename, content) {
@@ -1127,5 +1206,8 @@
             }
         });
     </script>
+
+    <!-- Toast Notification Container -->
+    <div id="toast-container" class="toast-container"></div>
 </body>
 </html>
