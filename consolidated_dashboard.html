@@ -824,49 +824,76 @@
             });
 
             // Prices Chart
-            new Chart(document.getElementById('preiseChart').getContext('2d'), {
-                type: 'bar',
-                data: {
-                    labels: ['Wettbewerber A', 'Wettbewerber B', 'Wettbewerber C', 'Unser Modell'],
-                    datasets: [{
-                        label: 'Preis (€)',
-                        data: [185, 234, 129, 125],
-                        backgroundColor: ['#bbf7d0', '#86efac', '#4ade80', '#22c55e']
-                    }]
-                },
-                options: { responsive: true }
-            });
+            // Lazy-load chart initialization
+            let preiseChartInitialized = false;
+            let moduleUsageChartInitialized = false;
+            let featureActivityChartInitialized = false;
 
-            // Module Usage Chart
-            new Chart(document.getElementById('moduleUsageChart').getContext('2d'), {
-                type: 'pie',
-                data: {
-                    labels: ['Innovation', 'Markt', 'Business', 'KI-System', 'Technik', 'Vertrieb', 'Daten'],
-                    datasets: [{
-                        data: [15, 18, 20, 22, 10, 8, 7],
-                        backgroundColor: ['#667eea', '#764ba2', '#f093fb', '#4facfe', '#43e97b', '#fa709a', '#fee140']
-                    }]
-                },
-                options: { responsive: true }
-            });
+            function initPreiseChart() {
+                if (preiseChartInitialized) return;
+                const ctx = document.getElementById('preiseChart').getContext('2d');
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Wettbewerber A', 'Wettbewerber B', 'Wettbewerber C', 'Unser Modell'],
+                        datasets: [{
+                            label: 'Preis (€)',
+                            data: [185, 234, 129, 125],
+                            backgroundColor: ['#bbf7d0', '#86efac', '#4ade80', '#22c55e']
+                        }]
+                    },
+                    options: { responsive: true }
+                });
+                preiseChartInitialized = true;
+            }
 
-            // Feature Activity Chart
-            new Chart(document.getElementById('featureActivityChart').getContext('2d'), {
-                type: 'bar',
-                data: {
-                    labels: ['Charts', 'Upload', 'Export', 'KI-Tools', 'Analytics'],
-                    datasets: [{
-                        label: 'Aktivität (%)',
-                        data: [95, 75, 85, 88, 92],
-                        backgroundColor: '#667eea'
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    scales: { y: { beginAtZero: true, max: 100 } }
-                }
-            });
+            function initModuleUsageChart() {
+                if (moduleUsageChartInitialized) return;
+                const ctx = document.getElementById('moduleUsageChart').getContext('2d');
+                new Chart(ctx, {
+                    type: 'pie',
+                    data: {
+                        labels: ['Innovation', 'Markt', 'Business', 'KI-System', 'Technik', 'Vertrieb', 'Daten'],
+                        datasets: [{
+                            data: [15, 18, 20, 22, 10, 8, 7],
+                            backgroundColor: ['#667eea', '#764ba2', '#f093fb', '#4facfe', '#43e97b', '#fa709a', '#fee140']
+                        }]
+                    },
+                    options: { responsive: true }
+                });
+                moduleUsageChartInitialized = true;
+            }
 
+            function initFeatureActivityChart() {
+                if (featureActivityChartInitialized) return;
+                const ctx = document.getElementById('featureActivityChart').getContext('2d');
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Charts', 'Upload', 'Export', 'KI-Tools', 'Analytics'],
+                        datasets: [{
+                            label: 'Aktivität (%)',
+                            data: [95, 75, 85, 88, 92],
+                            backgroundColor: '#667eea'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        scales: { y: { beginAtZero: true, max: 100 } }
+                    }
+                });
+                featureActivityChartInitialized = true;
+            }
+
+            // Tab event listeners for lazy-loading charts
+            // Assumes tab buttons have IDs: 'tab-preise', 'tab-moduleUsage', 'tab-featureActivity'
+            document.getElementById('tab-preise')?.addEventListener('click', initPreiseChart);
+            document.getElementById('tab-moduleUsage')?.addEventListener('click', initModuleUsageChart);
+            document.getElementById('tab-featureActivity')?.addEventListener('click', initFeatureActivityChart);
+
+            // Optionally, initialize charts for the default visible tab on page load
+            // For example, if 'preiseChart' is visible by default:
+            initPreiseChart();
             // File Upload Handler
             const fileInput = document.getElementById('fileInput');
             const table = document.getElementById('dataTable');
