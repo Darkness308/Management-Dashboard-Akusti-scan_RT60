@@ -923,6 +923,16 @@
             fileInput.addEventListener('change', (e) => {
                 const file = e.target.files[0];
                 if (!file) return;
+                
+                // File size validation (max 10MB)
+                const maxSize = 10 * 1024 * 1024; // 10MB in bytes
+                if (file.size > maxSize) {
+                    statusMessage.textContent = `Datei zu groß (${(file.size / 1024 / 1024).toFixed(2)} MB). Maximale Dateigröße: 10 MB.`;
+                    statusMessage.style.color = '#e53e3e'; // Red color for error
+                    fileInput.value = ''; // Clear the file input
+                    return;
+                }
+                
                 const name = file.name.toLowerCase();
                 if (name.endsWith('.csv')) {
                     parseCSV(file);
@@ -930,6 +940,7 @@
                     parseExcel(file);
                 } else {
                     statusMessage.textContent = 'Dateiformat nicht unterstützt. Bitte CSV oder Excel hochladen.';
+                    statusMessage.style.color = '#e53e3e'; // Red color for error
                 }
             });
 
@@ -943,6 +954,7 @@
                     saveData(headers, rows);
                     renderTableAndChart(headers, rows);
                     statusMessage.textContent = 'CSV-Datei erfolgreich eingelesen.';
+                    statusMessage.style.color = ''; // Reset color for success
                 };
                 reader.readAsText(file);
             }
@@ -960,6 +972,7 @@
                     saveData(headers, rows);
                     renderTableAndChart(headers, rows);
                     statusMessage.textContent = 'Excel-Datei erfolgreich eingelesen.';
+                    statusMessage.style.color = ''; // Reset color for success
                 };
                 reader.readAsArrayBuffer(file);
             }
