@@ -12,7 +12,10 @@ build/
 # Environment variables
 .env
 .env.local
-.env.production
+.env*.local
+
+# Note: .env.example, .env.development, and .env.production are tracked
+# as templates. Use .env.local for local overrides with sensitive data.
 
 # IDE
 .vscode/
