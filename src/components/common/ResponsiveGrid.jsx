@@ -11,7 +11,7 @@ function ResponsiveGrid({
   gap = 4,
   className = ''
 }) {
-  const { isMobile, isTablet, isDesktop } = useResponsive()
+  const { isMobile, isTablet } = useResponsive()
 
   // Determine number of columns
   const numCols = isMobile
