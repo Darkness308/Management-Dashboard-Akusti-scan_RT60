@@ -38,11 +38,6 @@ import {
   Building2,
   Target,
   DollarSign,
-  Calendar,
-  Clock,
-  Mail,
-  Phone,
-  MapPin,
   ExternalLink,
   Copy,
   Edit,
@@ -52,10 +47,6 @@ import {
   SortAsc,
   Eye,
   EyeOff,
-  Lock,
-  Unlock,
-  Star,
-  Heart,
   Share2
 } from 'lucide-react'
 
