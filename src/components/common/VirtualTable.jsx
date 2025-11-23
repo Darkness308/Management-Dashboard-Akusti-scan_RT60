@@ -3,22 +3,29 @@ import { useState, useEffect, useRef, memo } from 'react'
 /**
  * Virtual Table Component with Virtual Scrolling
  * Only renders visible rows for optimal performance with large datasets
+ * @param {Array} data - Table data
+ * @param {Array} columns - Table columns
+ * @param {number} rowHeight - Height of each row
+ * @param {number} containerHeight - Height of the scrollable container
+ * @param {string} className - Additional class names
+ * @param {number} overscan - Number of extra rows to render above/below the visible area (default 5)
  */
 function VirtualTable({
   data = [],
   columns = [],
   rowHeight = 50,
   containerHeight = 600,
-  className = ''
+  className = '',
+  overscan = 5
 }) {
   const [scrollTop, setScrollTop] = useState(0)
   const containerRef = useRef(null)
 
-  // Calculate visible range
+  // Calculate visible range with overscan buffer
   const totalHeight = data.length * rowHeight
-  const startIndex = Math.floor(scrollTop / rowHeight)
+  const startIndex = Math.max(0, Math.floor(scrollTop / rowHeight) - overscan)
   const endIndex = Math.min(
-    startIndex + Math.ceil(containerHeight / rowHeight) + 1,
+    startIndex + Math.ceil(containerHeight / rowHeight) + 1 + overscan * 2,
     data.length
   )
 
