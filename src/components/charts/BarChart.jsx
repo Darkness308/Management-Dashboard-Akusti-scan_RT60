@@ -1,3 +1,4 @@
+import { memo, useMemo } from 'react'
 import { Bar } from 'react-chartjs-2'
 import {
   Chart as ChartJS,
@@ -20,17 +21,19 @@ ChartJS.register(
   Legend
 )
 
-export default function BarChart({ labels, datasets, options = {}, className = '' }) {
-  const data = {
+function BarChart({ labels, datasets, options = {}, className = '' }) {
+  // Memoize chart data to prevent unnecessary re-renders
+  const data = useMemo(() => ({
     labels,
     datasets: datasets.map(dataset => ({
       ...dataset,
       borderWidth: dataset.borderWidth || 0,
       borderRadius: dataset.borderRadius || 8
     }))
-  }
+  }), [labels, datasets])
 
-  const chartOptions = {
+  // Memoize chart options
+  const chartOptions = useMemo(() => ({
     ...defaultChartOptions,
     scales: {
       y: {
@@ -46,7 +49,7 @@ export default function BarChart({ labels, datasets, options = {}, className = '
       }
     },
     ...options
-  }
+  }), [options])
 
   return (
     <div className={className}>
@@ -54,3 +57,6 @@ export default function BarChart({ labels, datasets, options = {}, className = '
     </div>
   )
 }
+
+// Export memoized component to prevent re-renders when props don't change
+export default memo(BarChart)

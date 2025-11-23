@@ -1,17 +1,21 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, lazy, Suspense } from 'react'
 import Header from './components/layout/Header'
 import Navigation from './components/layout/Navigation'
 import Footer from './components/layout/Footer'
 import Overview from './components/dashboard/Overview'
-import InnovationModule from './components/modules/InnovationModule'
-import MarketModule from './components/modules/MarketModule'
-import BusinessModule from './components/modules/BusinessModule'
-import KISystemModule from './components/modules/KISystemModule'
-import TechnikModule from './components/modules/TechnikModule'
-import VertriebModule from './components/modules/VertriebModule'
-import DataModule from './components/modules/DataModule'
-import AnalyticsModule from './components/modules/AnalyticsModule'
+import PWAInstallPrompt from './components/pwa/PWAInstallPrompt'
+import PWAStatus from './components/pwa/PWAStatus'
 import { initializeAgentSystem, orchestrator } from './agents'
+
+// Lazy load modules for better performance and code splitting
+const InnovationModule = lazy(() => import('./components/modules/InnovationModule'))
+const MarketModule = lazy(() => import('./components/modules/MarketModule'))
+const BusinessModule = lazy(() => import('./components/modules/BusinessModule'))
+const KISystemModule = lazy(() => import('./components/modules/KISystemModule'))
+const TechnikModule = lazy(() => import('./components/modules/TechnikModule'))
+const VertriebModule = lazy(() => import('./components/modules/VertriebModule'))
+const DataModule = lazy(() => import('./components/modules/DataModule'))
+const AnalyticsModule = lazy(() => import('./components/modules/AnalyticsModule'))
 
 function App() {
   const [activeTab, setActiveTab] = useState('overview')
@@ -53,34 +57,76 @@ function App() {
     }
   }
 
+  // Loading component for lazy-loaded modules
+  const LoadingFallback = () => (
+    <div className="flex items-center justify-center min-h-[400px]">
+      <div className="text-center">
+        <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-primary-blue border-t-transparent mb-4"></div>
+        <p className="text-gray-600 font-medium">Modul wird geladen...</p>
+      </div>
+    </div>
+  )
+
   const renderContent = () => {
     switch (activeTab) {
       case 'overview':
         return <Overview onModuleClick={handleTabChange} />
 
       case 'innovation':
-        return <InnovationModule />
+        return (
+          <Suspense fallback={<LoadingFallback />}>
+            <InnovationModule />
+          </Suspense>
+        )
 
       case 'market':
-        return <MarketModule />
+        return (
+          <Suspense fallback={<LoadingFallback />}>
+            <MarketModule />
+          </Suspense>
+        )
 
       case 'business':
-        return <BusinessModule />
+        return (
+          <Suspense fallback={<LoadingFallback />}>
+            <BusinessModule />
+          </Suspense>
+        )
 
       case 'ki-system':
-        return <KISystemModule />
+        return (
+          <Suspense fallback={<LoadingFallback />}>
+            <KISystemModule />
+          </Suspense>
+        )
 
       case 'technik':
-        return <TechnikModule />
+        return (
+          <Suspense fallback={<LoadingFallback />}>
+            <TechnikModule />
+          </Suspense>
+        )
 
       case 'vertrieb':
-        return <VertriebModule />
+        return (
+          <Suspense fallback={<LoadingFallback />}>
+            <VertriebModule />
+          </Suspense>
+        )
 
       case 'data':
-        return <DataModule />
+        return (
+          <Suspense fallback={<LoadingFallback />}>
+            <DataModule />
+          </Suspense>
+        )
 
       case 'analytics':
-        return <AnalyticsModule />
+        return (
+          <Suspense fallback={<LoadingFallback />}>
+            <AnalyticsModule />
+          </Suspense>
+        )
 
       default:
         return <Overview onModuleClick={handleTabChange} />
@@ -92,11 +138,15 @@ function App() {
       <Header />
       <Navigation activeTab={activeTab} onTabChange={handleTabChange} />
 
-      <main className="max-w-7xl mx-auto w-full p-6 flex-grow">
+      <main className="max-w-7xl mx-auto w-full px-4 sm:px-6 py-4 sm:py-6 flex-grow">
         {renderContent()}
       </main>
 
       <Footer />
+
+      {/* PWA Components */}
+      <PWAStatus />
+      <PWAInstallPrompt />
     </div>
   )
 }

@@ -1,3 +1,4 @@
+import { memo, useMemo } from 'react'
 import { Doughnut } from 'react-chartjs-2'
 import {
   Chart as ChartJS,
@@ -14,17 +15,18 @@ ChartJS.register(
   Legend
 )
 
-export default function DoughnutChart({ labels, data: chartData, backgroundColor, options = {}, className = '' }) {
-  const defaultColors = [
-    '#667eea',
-    '#764ba2',
-    '#f093fb',
-    '#4facfe',
-    '#43e97b',
-    '#fa709a'
-  ]
+const defaultColors = [
+  '#667eea',
+  '#764ba2',
+  '#f093fb',
+  '#4facfe',
+  '#43e97b',
+  '#fa709a'
+]
 
-  const data = {
+function DoughnutChart({ labels, data: chartData, backgroundColor, options = {}, className = '' }) {
+  // Memoize chart data to prevent unnecessary re-renders
+  const data = useMemo(() => ({
     labels,
     datasets: [{
       data: chartData,
@@ -32,13 +34,14 @@ export default function DoughnutChart({ labels, data: chartData, backgroundColor
       borderWidth: 2,
       borderColor: '#ffffff'
     }]
-  }
+  }), [labels, chartData, backgroundColor])
 
-  const chartOptions = {
+  // Memoize chart options
+  const chartOptions = useMemo(() => ({
     ...defaultChartOptions,
     cutout: '60%',
     ...options
-  }
+  }), [options])
 
   return (
     <div className={className}>
@@ -46,3 +49,6 @@ export default function DoughnutChart({ labels, data: chartData, backgroundColor
     </div>
   )
 }
+
+// Export memoized component to prevent re-renders when props don't change
+export default memo(DoughnutChart)

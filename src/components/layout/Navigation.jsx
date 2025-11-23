@@ -1,4 +1,9 @@
+import { useState, useEffect } from 'react'
+
 export default function Navigation({ activeTab, onTabChange }) {
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [isMobile, setIsMobile] = useState(false)
+
   const tabs = [
     { id: 'overview', label: 'Übersicht', icon: '🏠' },
     { id: 'innovation', label: 'Innovation', icon: '🚀' },
@@ -11,10 +16,35 @@ export default function Navigation({ activeTab, onTabChange }) {
     { id: 'analytics', label: 'Analytics', icon: '📊' }
   ]
 
+  // Detect mobile viewport
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768)
+    }
+
+    checkMobile()
+    window.addEventListener('resize', checkMobile)
+
+    return () => window.removeEventListener('resize', checkMobile)
+  }, [])
+
+  // Close mobile menu when tab changes
+  useEffect(() => {
+    setIsMobileMenuOpen(false)
+  }, [activeTab])
+
+  const handleTabClick = (tabId) => {
+    onTabChange(tabId)
+    setIsMobileMenuOpen(false)
+  }
+
+  const activeTabData = tabs.find(tab => tab.id === activeTab)
+
   return (
     <nav className="bg-white shadow-md sticky top-20 z-40">
-      <div className="max-w-7xl mx-auto px-6 py-3">
-        <div className="flex flex-wrap gap-2">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3">
+        {/* Desktop Navigation */}
+        <div className="hidden md:flex flex-wrap gap-2">
           {tabs.map(tab => (
             <button
               key={tab.id}
@@ -25,7 +55,70 @@ export default function Navigation({ activeTab, onTabChange }) {
             </button>
           ))}
         </div>
+
+        {/* Mobile Navigation */}
+        <div className="md:hidden">
+          {/* Mobile Header with Hamburger */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2 text-gray-700 font-medium">
+              <span className="text-2xl">{activeTabData?.icon}</span>
+              <span>{activeTabData?.label}</span>
+            </div>
+
+            {/* Hamburger Button */}
+            <button
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              className="p-2 rounded-lg hover:bg-gray-100 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-blue"
+              aria-label="Menu"
+            >
+              <div className="w-6 h-5 flex flex-col justify-between">
+                <span
+                  className={`block h-0.5 w-6 bg-gray-600 transition-all duration-300 ${
+                    isMobileMenuOpen ? 'rotate-45 translate-y-2' : ''
+                  }`}
+                ></span>
+                <span
+                  className={`block h-0.5 w-6 bg-gray-600 transition-all duration-300 ${
+                    isMobileMenuOpen ? 'opacity-0' : ''
+                  }`}
+                ></span>
+                <span
+                  className={`block h-0.5 w-6 bg-gray-600 transition-all duration-300 ${
+                    isMobileMenuOpen ? '-rotate-45 -translate-y-2' : ''
+                  }`}
+                ></span>
+              </div>
+            </button>
+          </div>
+
+          {/* Mobile Menu Dropdown */}
+          <div
+            className={`overflow-hidden transition-all duration-300 ${
+              isMobileMenuOpen ? 'max-h-96 mt-3' : 'max-h-0'
+            }`}
+          >
+            <div className="flex flex-col gap-2 pb-2">
+              {tabs.map(tab => (
+                <button
+                  key={tab.id}
+                  onClick={() => handleTabClick(tab.id)}
+                  className={`nav-btn text-left ${activeTab === tab.id ? 'active' : ''}`}
+                >
+                  {tab.icon} {tab.label}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
       </div>
+
+      {/* Backdrop for mobile menu */}
+      {isMobileMenuOpen && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-20 z-[-1] md:hidden"
+          onClick={() => setIsMobileMenuOpen(false)}
+        ></div>
+      )}
     </nav>
   )
 }
