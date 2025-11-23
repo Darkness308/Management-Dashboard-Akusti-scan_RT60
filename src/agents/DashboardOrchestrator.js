@@ -1,18 +1,13 @@
 import { BaseAgent } from './BaseAgent'
-import { EVENTS } from '@utils/eventBus'
+import { EVENTS } from '@/store/useDashboardStore'
 
 /**
  * Dashboard Orchestrator - Main Agent
- * Coordinates all sub-agents and manages global state
+ * Coordinates all sub-agents and manages global state via Zustand store
  */
 export class DashboardOrchestrator extends BaseAgent {
   constructor() {
     super('DashboardOrchestrator')
-    this.state = {
-      activeModule: 'overview',
-      globalData: {},
-      agents: []
-    }
   }
 
   async init() {
@@ -20,6 +15,10 @@ export class DashboardOrchestrator extends BaseAgent {
 
     // Setup event listeners
     this.setupEventListeners()
+
+    // Initialize agent system in store
+    const store = this.getStore()
+    store.initializeAgentSystem()
 
     this.log('Dashboard Orchestrator initialized')
   }
@@ -46,7 +45,8 @@ export class DashboardOrchestrator extends BaseAgent {
    * @param {BaseAgent} agent - Agent instance
    */
   registerAgent(agent) {
-    this.state.agents.push(agent)
+    const store = this.getStore()
+    store.registerAgent(agent)
     this.log(`Registered agent: ${agent.name}`)
   }
 
@@ -55,7 +55,9 @@ export class DashboardOrchestrator extends BaseAgent {
    */
   async initializeAgents() {
     this.log('Initializing all sub-agents...')
-    for (const agent of this.state.agents) {
+    const store = this.getStore()
+    const agents = store.agents
+    for (const agent of agents) {
       await agent.init()
     }
     this.log('All sub-agents initialized')
@@ -66,7 +68,8 @@ export class DashboardOrchestrator extends BaseAgent {
    * @param {string} moduleName - Module name
    */
   switchModule(moduleName) {
-    this.state.activeModule = moduleName
+    const store = this.getStore()
+    store.switchModule(moduleName)
     this.emit(EVENTS.MODULE_CHANGED, { module: moduleName })
     this.log(`Switched to module: ${moduleName}`)
   }
@@ -76,16 +79,23 @@ export class DashboardOrchestrator extends BaseAgent {
    * @param {Object} data - Data to merge into global state
    */
   updateGlobalData(data) {
-    this.state.globalData = { ...this.state.globalData, ...data }
-    this.emit(EVENTS.DATA_CHANGED, { data: this.state.globalData })
+    const store = this.getStore()
+    store.updateGlobalData(data)
+    this.emit(EVENTS.DATA_CHANGED, { data: store.globalData })
   }
 
   /**
-   * Get current state
+   * Get current state from store
    * @returns {Object} Current state
    */
-  getState() {
-    return { ...this.state }
+  getCurrentState() {
+    const store = this.getStore()
+    return {
+      activeModule: store.activeModule,
+      globalData: store.globalData,
+      agents: store.agents,
+      agentSystemReady: store.agentSystemReady
+    }
   }
 
   /**
@@ -125,10 +135,11 @@ export class DashboardOrchestrator extends BaseAgent {
    * @param {string} format - Export format (json, markdown, excel)
    */
   exportDashboard(format) {
+    const store = this.getStore()
     this.log(`Exporting dashboard as ${format}`)
     this.emit(EVENTS.DATA_EXPORTED, {
       format,
-      data: this.state.globalData
+      data: store.globalData
     })
   }
 }

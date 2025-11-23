@@ -1,5 +1,5 @@
 import { BaseAgent } from './BaseAgent'
-import { EVENTS } from '@utils/eventBus'
+import { EVENTS } from '@/store/useDashboardStore'
 import { trackModuleUsage, generateAnalyticsReport } from '@data/analyticsData'
 
 /**

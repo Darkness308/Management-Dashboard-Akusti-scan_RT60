@@ -1,6 +1,15 @@
 /**
  * Event-Bus System for Agent Communication
- * Allows decoupled communication between agents
+ *
+ * @deprecated This event bus is deprecated. Use Zustand store instead.
+ * @see {@link ../store/useDashboardStore.js}
+ *
+ * Migration Guide:
+ * - Replace `eventBus.emit(event, data)` with `useDashboardStore.getState().emit(event, data)`
+ * - Replace `eventBus.on(event, callback)` with `useDashboardStore.getState().subscribe(event, callback)`
+ * - All agents should import EVENTS from '@/store/useDashboardStore' instead
+ *
+ * This file is kept for backwards compatibility but will be removed in the next major version.
  */
 class EventBus {
   constructor() {
@@ -124,7 +133,10 @@ class EventBus {
 // Create and export singleton instance
 export const eventBus = new EventBus()
 
-// Event names constants for type safety
+/**
+ * Event names constants for type safety
+ * @deprecated Import EVENTS from '@/store/useDashboardStore' instead
+ */
 export const EVENTS = {
   // Data Events
   DATA_UPLOADED: 'data:uploaded',

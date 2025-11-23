@@ -1,25 +1,64 @@
 import { create } from 'zustand'
-import { devtools } from 'zustand/middleware'
+import { devtools, subscribeWithSelector } from 'zustand/middleware'
+
+/**
+ * Event names constants for type safety
+ */
+export const EVENTS = {
+  // Data Events
+  DATA_UPLOADED: 'data:uploaded',
+  DATA_CHANGED: 'data:changed',
+  DATA_DELETED: 'data:deleted',
+  DATA_EXPORTED: 'data:exported',
+
+  // Module Events
+  MODULE_CHANGED: 'module:changed',
+  MODULE_LOADED: 'module:loaded',
+  MODULE_ERROR: 'module:error',
+
+  // Analytics Events
+  ANALYTICS_TRACKED: 'analytics:tracked',
+  PERFORMANCE_UPDATED: 'performance:updated',
+
+  // UI Events
+  NOTIFICATION_SHOW: 'notification:show',
+  MODAL_OPEN: 'modal:open',
+  MODAL_CLOSE: 'modal:close',
+
+  // Error Events
+  ERROR_OCCURRED: 'error:occurred',
+
+  // Agent Events
+  AGENT_INITIALIZED: 'agent:initialized',
+  AGENT_ACTION: 'agent:action'
+}
 
 /**
  * Dashboard Store (Zustand)
  * Replaces the old Event-Bus pattern with modern state management
+ * Includes event system for agent communication
  */
 const useDashboardStore = create(
-  devtools(
-    (set, get) => ({
-      // Global State
-      activeModule: 'overview',
-      globalData: {},
-      uploadedData: null,
-      agents: [],
+  subscribeWithSelector(
+    devtools(
+      (set, get) => ({
+        // Global State
+        activeModule: 'overview',
+        globalData: {},
+        uploadedData: null,
+        agents: [],
 
-      // Agent System State
-      agentSystemReady: false,
+        // Agent System State
+        agentSystemReady: false,
 
-      // Analytics State
-      moduleViews: {},
-      performanceMetrics: [],
+        // Analytics State
+        moduleViews: {},
+        performanceMetrics: [],
+
+        // Event System State
+        events: {},
+        eventSubscribers: new Map(),
+        lastEvent: null,
 
       // Actions
       switchModule: (moduleName) => {
@@ -94,6 +133,42 @@ const useDashboardStore = create(
         }
       },
 
+      // Event System Actions
+      emit: (eventName, data) => {
+        const event = {
+          name: eventName,
+          data,
+          timestamp: Date.now()
+        }
+
+        // Update lastEvent to trigger subscribers
+        set({ lastEvent: event })
+
+        // Execute subscribers
+        const subscribers = get().eventSubscribers.get(eventName) || []
+        subscribers.forEach(callback => {
+          try {
+            callback(data)
+          } catch (error) {
+            console.error(`[Store] Error in subscriber for ${eventName}:`, error)
+          }
+        })
+      },
+
+      subscribe: (eventName, callback) => {
+        const subscribers = get().eventSubscribers
+        const eventSubs = subscribers.get(eventName) || []
+        eventSubs.push(callback)
+        subscribers.set(eventName, eventSubs)
+
+        // Return unsubscribe function
+        return () => {
+          const subs = get().eventSubscribers.get(eventName) || []
+          const filtered = subs.filter(cb => cb !== callback)
+          get().eventSubscribers.set(eventName, filtered)
+        }
+      },
+
       // Reset store (for testing)
       reset: () => {
         set({
@@ -103,14 +178,19 @@ const useDashboardStore = create(
           agents: [],
           agentSystemReady: false,
           moduleViews: {},
-          performanceMetrics: []
+          performanceMetrics: [],
+          events: {},
+          lastEvent: null
         })
+        // Clear all subscribers
+        get().eventSubscribers.clear()
       }
-    }),
-    {
-      name: 'dashboard-store',
-      enabled: import.meta.env.DEV
-    }
+      }),
+      {
+        name: 'dashboard-store',
+        enabled: import.meta.env.DEV
+      }
+    )
   )
 )
 
