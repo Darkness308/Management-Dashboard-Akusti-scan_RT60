@@ -166,7 +166,7 @@ function App() {
 
 ### 4. **KISystemAgent**
 
-**Aufgabe:** Verwaltung der 20 KI-Manipulations-Techniken, Workflows & Templates
+**Aufgabe:** Verwaltung von KI-Optimierungs-Strategien, Workflows & Templates
 
 **Datenmodell:**
 ```javascript
@@ -174,23 +174,40 @@ function App() {
   techniques: [
     {
       id: '002',
-      name: 'Progressive Komplexitäts-Eskalation',
+      name: 'Progressive Komplexitäts-Steigerung',
       successRate: 93,
       duration: 5,
       status: 'Flagship',
-      description: '4-Stufen-Modell für optimale Verständlichkeit'
+      description: '4-Stufen-Modell für optimale Verständlichkeit und Kontext-Persistenz'
+    },
+    {
+      id: '007',
+      name: 'Adaptive Sprach-Optimierung',
+      successRate: 95,
+      duration: 2,
+      status: 'Bewährt',
+      description: 'Konsistente Sprachmuster für präzise KI-Ausgaben'
     }
-    // ...weitere Techniken
+    // ...weitere Optimierungs-Strategien (insgesamt 20)
   ],
   workflows: [
     {
-      id: 'ki-transformation',
-      name: 'KI-Transformation Workflow',
+      id: 'ki-optimization',
+      name: 'KI-Optimierungs-Workflow',
       duration: 19,
       successRate: 91,
+      description: 'Systematische Verbesserung der KI-Ausgabe-Qualität',
       steps: ['#002', '#007', '#011']
+    },
+    {
+      id: 'efficiency-boost',
+      name: 'Effizienz-Optimierung',
+      duration: 18,
+      successRate: 87,
+      description: 'Maximale Kosteneffizienz bei hoher Qualität',
+      steps: ['#016', '#003', '#013']
     }
-    // ...
+    // ...weitere Workflows
   ],
   templates: [
     { id: 'business-enhancement', name: 'Business-Enhancement', /* ... */ }
@@ -200,10 +217,16 @@ function App() {
 ```
 
 **Funktionen:**
-- `getTechniquesBySuccessRate()` - Top-Techniken abrufen
-- `getRecommendedWorkflow(goal)` - Workflow-Empfehlung
-- `applyTechnique(techniqueId, context)` - Technik anwenden
+- `getTopTechniques(count)` - Top-Strategien nach Erfolgsrate abrufen
+- `getRecommendedWorkflow(goal)` - Workflow-Empfehlung (optimization, business, efficiency)
+- `getTechniquesByCategory(category)` - Strategien nach Kategorie filtern
 - `exportTemplate(templateId)` - Template exportieren
+
+**Kategorien:**
+- **Strukturierung:** Prompt-Engineering, Komplexitäts-Management
+- **Qualität:** Meta-Reflexion, Output-Format-Standardisierung
+- **Effizienz:** API-Optimierung, Context-Window-Maximierung
+- **Sprachsteuerung:** Adaptive Sprach-Optimierung
 
 **Datei:** `src/data/kiSystemData.js`
 

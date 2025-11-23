@@ -1,3 +1,4 @@
+import { memo, useMemo } from 'react'
 import { Line } from 'react-chartjs-2'
 import {
   Chart as ChartJS,
@@ -24,8 +25,9 @@ ChartJS.register(
   Filler
 )
 
-export default function LineChart({ labels, datasets, options = {}, className = '' }) {
-  const data = {
+function LineChart({ labels, datasets, options = {}, className = '' }) {
+  // Memoize chart data to prevent unnecessary re-renders
+  const data = useMemo(() => ({
     labels,
     datasets: datasets.map(dataset => ({
       ...dataset,
@@ -35,9 +37,10 @@ export default function LineChart({ labels, datasets, options = {}, className = 
       pointRadius: dataset.pointRadius || 4,
       pointHoverRadius: dataset.pointHoverRadius || 6
     }))
-  }
+  }), [labels, datasets])
 
-  const chartOptions = {
+  // Memoize chart options
+  const chartOptions = useMemo(() => ({
     ...defaultChartOptions,
     scales: {
       y: {
@@ -53,7 +56,7 @@ export default function LineChart({ labels, datasets, options = {}, className = 
       }
     },
     ...options
-  }
+  }), [options])
 
   return (
     <div className={className}>
@@ -61,3 +64,6 @@ export default function LineChart({ labels, datasets, options = {}, className = 
     </div>
   )
 }
+
+// Export memoized component to prevent re-renders when props don't change
+export default memo(LineChart)

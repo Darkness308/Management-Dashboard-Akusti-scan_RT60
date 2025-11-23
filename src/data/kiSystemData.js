@@ -1,23 +1,23 @@
-// KI-System Data - Techniken, Workflows, Templates
+// KI-System Data - Optimierungs-Strategien, Workflows, Templates
 
 export const kiSystemData = {
   techniques: [
     {
       id: '002',
-      name: 'Progressive Komplexitäts-Eskalation',
+      name: 'Progressive Komplexitäts-Steigerung',
       successRate: 93,
       duration: 5,
       status: 'Flagship',
-      description: '4-Stufen-Modell für optimale Verständlichkeit und Token-Persistenz',
+      description: '4-Stufen-Modell für optimale Verständlichkeit und Kontext-Persistenz',
       category: 'Strukturierung'
     },
     {
       id: '007',
-      name: 'Sublimale Sprachliche Ansteckung',
+      name: 'Adaptive Sprach-Optimierung',
       successRate: 95,
       duration: 2,
       status: 'Bewährt',
-      description: 'Übertragung spezifischer Sprachmuster auf KI-Ausgaben',
+      description: 'Konsistente Sprachmuster für präzise KI-Ausgaben',
       category: 'Sprachsteuerung'
     },
     {
@@ -26,7 +26,7 @@ export const kiSystemData = {
       successRate: 92,
       duration: 12,
       status: 'Bewährt',
-      description: 'Aktivierung von Meta-Analyse durch Rückfragen',
+      description: 'Aktivierung von Meta-Analyse durch Qualitätssicherungs-Fragen',
       category: 'Qualität'
     },
     {
@@ -37,16 +37,52 @@ export const kiSystemData = {
       status: 'Bewährt',
       description: 'Intelligente Kostenoptimierung durch strategische Modell-Auswahl',
       category: 'Effizienz'
+    },
+    {
+      id: '003',
+      name: 'Context-Window Maximierung',
+      successRate: 88,
+      duration: 8,
+      status: 'Aktiv',
+      description: 'Optimale Nutzung des verfügbaren Kontext-Fensters',
+      category: 'Effizienz'
+    },
+    {
+      id: '009',
+      name: 'Prompt-Engineering Framework',
+      successRate: 91,
+      duration: 10,
+      status: 'Aktiv',
+      description: 'Strukturierte Prompt-Entwicklung nach Best Practices',
+      category: 'Strukturierung'
+    },
+    {
+      id: '013',
+      name: 'Output-Format Standardisierung',
+      successRate: 89,
+      duration: 6,
+      status: 'Aktiv',
+      description: 'Konsistente Ausgabeformate für nachgelagerte Prozesse',
+      category: 'Qualität'
+    },
+    {
+      id: '018',
+      name: 'Multi-Step Reasoning Chain',
+      successRate: 90,
+      duration: 14,
+      status: 'Aktiv',
+      description: 'Schrittweise Problemlösung mit Zwischenergebnissen',
+      category: 'Qualität'
     }
   ],
 
   workflows: [
     {
-      id: 'ki-transformation',
-      name: 'KI-Transformation Workflow',
+      id: 'ki-optimization',
+      name: 'KI-Optimierungs-Workflow',
       duration: 19,
       successRate: 91,
-      description: 'Vollständige KI-Persönlichkeits-Transformation',
+      description: 'Systematische Verbesserung der KI-Ausgabe-Qualität',
       steps: ['#002', '#007', '#011']
     },
     {
@@ -54,8 +90,16 @@ export const kiSystemData = {
       name: 'Business-Enhancement',
       duration: 20,
       successRate: 89,
-      description: 'Professionelle Ergebnisse mit Verbesserungen',
+      description: 'Professionelle Ergebnisse mit Qualitätsverbesserungen',
       steps: ['#007', '#016', '#002']
+    },
+    {
+      id: 'efficiency-boost',
+      name: 'Effizienz-Optimierung',
+      duration: 18,
+      successRate: 87,
+      description: 'Maximale Kosteneffizienz bei hoher Qualität',
+      steps: ['#016', '#003', '#013']
     }
   ],
 
@@ -74,12 +118,13 @@ export const getTopTechniques = (count = 4) => {
 }
 
 // Get recommended workflow by goal
-export const getRecommendedWorkflow = (goal = 'transformation') => {
+export const getRecommendedWorkflow = (goal = 'optimization') => {
   const mapping = {
-    transformation: 'ki-transformation',
-    business: 'business-enhancement'
+    optimization: 'ki-optimization',
+    business: 'business-enhancement',
+    efficiency: 'efficiency-boost'
   }
-  const workflowId = mapping[goal] || 'ki-transformation'
+  const workflowId = mapping[goal] || 'ki-optimization'
   return kiSystemData.workflows.find(w => w.id === workflowId)
 }
 

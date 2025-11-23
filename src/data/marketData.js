@@ -1,11 +1,12 @@
 // Market Analysis Data - TAM/SAM/SOM & Growth
+import marketConfig, { calculateSAM as configCalculateSAM, calculateSOM as configCalculateSOM } from '@/config/market.config'
 
 export const marketData = {
-  tam: 63841,
-  sam: 19152,
-  samPercentage: 30,
-  som: 958,
-  somPercentage: 5,
+  tam: marketConfig.market.tam,
+  sam: configCalculateSAM(),
+  samPercentage: marketConfig.market.samPercentage,
+  som: configCalculateSOM(),
+  somPercentage: marketConfig.market.somPercentage,
   revenuePerCustomer: 1500,
 
   marketGrowth: [
