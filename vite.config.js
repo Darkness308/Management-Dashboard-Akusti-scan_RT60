@@ -40,6 +40,21 @@ export default defineConfig({
             return 'xlsx-vendor'
           }
 
+          // State management (Zustand)
+          if (id.includes('node_modules/zustand')) {
+            return 'zustand-vendor'
+          }
+
+          // Icons library (Lucide React)
+          if (id.includes('node_modules/lucide-react')) {
+            return 'icons-vendor'
+          }
+
+          // PDF/Word export libraries
+          if (id.includes('node_modules/jspdf') || id.includes('node_modules/docx') || id.includes('node_modules/html2canvas')) {
+            return 'export-vendor'
+          }
+
           // Module-specific chunks (only loaded when module is accessed)
           if (id.includes('src/components/modules/InnovationModule')) {
             return 'innovation-module'

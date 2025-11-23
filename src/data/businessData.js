@@ -1,28 +1,23 @@
 // Business Strategy Data - Pricing, Competitors, Revenue
+import marketConfig from '@/config/market.config'
+
+// Import pricing from centralized config
+const { pricing, competitors } = marketConfig
 
 export const businessData = {
   pricing: {
     basic: {
-      price: 49,
+      price: pricing.basic.price,
       name: 'Basic',
       period: 'Monat',
-      features: [
-        'Raumerfassung',
-        'RT60-Messung',
-        'Basis-Berichte'
-      ]
+      features: pricing.basic.features
     },
     professional: {
-      price: 125,
+      price: pricing.pro.price,
       name: 'Professional',
       period: 'Monat',
-      popular: true,
-      features: [
-        'Alle Basic Features',
-        'KI-Optimierung',
-        'BIM-Integration',
-        'Export-Funktionen'
-      ]
+      popular: pricing.pro.highlight,
+      features: pricing.pro.features
     },
     enterprise: {
       price: 'Custom',
@@ -37,11 +32,21 @@ export const businessData = {
     }
   },
 
+  // Map competitors from config to display format
   competitors: [
-    { name: 'Autodesk Forma', price: 185, currency: '$', hasAI: true },
-    { name: 'PlanRadar', price: '26-129', currency: '€', hasAI: true },
-    { name: 'Archicad AI', price: 234, currency: '$', hasAI: true },
-    { name: 'Unser Modell', price: 125, currency: '€', hasAI: true, highlight: true }
+    ...competitors.map(c => ({
+      name: c.name,
+      price: c.priceRange ? `${c.priceRange.min}-${c.priceRange.max}` : c.price,
+      currency: c.currency === 'USD' ? '$' : '€',
+      hasAI: true
+    })),
+    {
+      name: 'Unser Modell',
+      price: pricing.pro.price,
+      currency: '€',
+      hasAI: true,
+      highlight: true
+    }
   ],
 
   revenueProjections: [

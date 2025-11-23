@@ -1,19 +1,20 @@
 import { useState, useEffect } from 'react'
+import { moduleIcons } from '@/config/icons.config'
 
 export default function Navigation({ activeTab, onTabChange }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
 
   const tabs = [
-    { id: 'overview', label: 'Übersicht', icon: '🏠' },
-    { id: 'innovation', label: 'Innovation', icon: '🚀' },
-    { id: 'market', label: 'Markt', icon: '🌍' },
-    { id: 'business', label: 'Business', icon: '💼' },
-    { id: 'ki-system', label: 'KI-System', icon: '🤖' },
-    { id: 'technik', label: 'Technik', icon: '⚙️' },
-    { id: 'vertrieb', label: 'Vertrieb', icon: '📈' },
-    { id: 'data', label: 'Daten', icon: '📂' },
-    { id: 'analytics', label: 'Analytics', icon: '📊' }
+    { id: 'overview', label: 'Übersicht', Icon: moduleIcons.overview },
+    { id: 'innovation', label: 'Innovation', Icon: moduleIcons.innovation },
+    { id: 'market', label: 'Markt', Icon: moduleIcons.market },
+    { id: 'business', label: 'Business', Icon: moduleIcons.business },
+    { id: 'ki-system', label: 'KI-System', Icon: moduleIcons['ki-system'] },
+    { id: 'technik', label: 'Technik', Icon: moduleIcons.technik },
+    { id: 'vertrieb', label: 'Vertrieb', Icon: moduleIcons.vertrieb },
+    { id: 'data', label: 'Daten', Icon: moduleIcons.data },
+    { id: 'analytics', label: 'Analytics', Icon: moduleIcons.analytics }
   ]
 
   // Detect mobile viewport
@@ -45,15 +46,19 @@ export default function Navigation({ activeTab, onTabChange }) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3">
         {/* Desktop Navigation */}
         <div className="hidden md:flex flex-wrap gap-2">
-          {tabs.map(tab => (
-            <button
-              key={tab.id}
-              onClick={() => onTabChange(tab.id)}
-              className={`nav-btn ${activeTab === tab.id ? 'active' : ''}`}
-            >
-              {tab.icon} {tab.label}
-            </button>
-          ))}
+          {tabs.map(tab => {
+            const Icon = tab.Icon
+            return (
+              <button
+                key={tab.id}
+                onClick={() => onTabChange(tab.id)}
+                className={`nav-btn ${activeTab === tab.id ? 'active' : ''}`}
+              >
+                <Icon className="inline-block w-4 h-4 mr-1" />
+                {tab.label}
+              </button>
+            )
+          })}
         </div>
 
         {/* Mobile Navigation */}
@@ -61,7 +66,7 @@ export default function Navigation({ activeTab, onTabChange }) {
           {/* Mobile Header with Hamburger */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 text-gray-700 font-medium">
-              <span className="text-2xl">{activeTabData?.icon}</span>
+              {activeTabData?.Icon && <activeTabData.Icon className="w-5 h-5" />}
               <span>{activeTabData?.label}</span>
             </div>
 
@@ -98,15 +103,19 @@ export default function Navigation({ activeTab, onTabChange }) {
             }`}
           >
             <div className="flex flex-col gap-2 pb-2">
-              {tabs.map(tab => (
-                <button
-                  key={tab.id}
-                  onClick={() => handleTabClick(tab.id)}
-                  className={`nav-btn text-left ${activeTab === tab.id ? 'active' : ''}`}
-                >
-                  {tab.icon} {tab.label}
-                </button>
-              ))}
+              {tabs.map(tab => {
+                const Icon = tab.Icon
+                return (
+                  <button
+                    key={tab.id}
+                    onClick={() => handleTabClick(tab.id)}
+                    className={`nav-btn text-left ${activeTab === tab.id ? 'active' : ''}`}
+                  >
+                    <Icon className="inline-block w-4 h-4 mr-2" />
+                    {tab.label}
+                  </button>
+                )
+              })}
             </div>
           </div>
         </div>
