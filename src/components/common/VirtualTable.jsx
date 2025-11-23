@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, memo } from 'react'
+import { useState, useRef, memo } from 'react'
 
 /**
  * Virtual Table Component with Virtual Scrolling
