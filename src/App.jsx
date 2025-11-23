@@ -6,6 +6,8 @@ import Overview from './components/dashboard/Overview'
 import PWAInstallPrompt from './components/pwa/PWAInstallPrompt'
 import PWAStatus from './components/pwa/PWAStatus'
 import PerformanceMonitor from './components/performance/PerformanceMonitor'
+import SkipLink from './components/a11y/SkipLink'
+import A11yAnnouncer from './components/a11y/A11yAnnouncer'
 import { initializeAgentSystem, orchestrator } from './agents'
 
 // Lazy load modules for better performance and code splitting
@@ -136,10 +138,14 @@ function App() {
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
+      {/* Accessibility Components */}
+      <SkipLink />
+      <A11yAnnouncer />
+
       <Header />
       <Navigation activeTab={activeTab} onTabChange={handleTabChange} />
 
-      <main className="max-w-7xl mx-auto w-full px-4 sm:px-6 py-4 sm:py-6 flex-grow">
+      <main id="main-content" className="max-w-7xl mx-auto w-full px-4 sm:px-6 py-4 sm:py-6 flex-grow" tabIndex="-1">
         {renderContent()}
       </main>
 

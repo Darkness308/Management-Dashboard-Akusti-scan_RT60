@@ -323,3 +323,220 @@
     padding-right: env(safe-area-inset-right);
   }
 }
+
+/* ========================================
+   Accessibility (A11y) Styles
+   ======================================== */
+
+/* Screen Reader Only - Visually hidden but accessible to screen readers */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* Screen Reader Only Focusable - Visible when focused */
+.sr-only-focusable:focus,
+.sr-only-focusable:active {
+  position: static;
+  width: auto;
+  height: auto;
+  overflow: visible;
+  clip: auto;
+  white-space: normal;
+}
+
+/* Skip Link - Jump to main content for keyboard users */
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  z-index: 100;
+  padding: 8px 16px;
+  background: var(--primary-blue);
+  color: white;
+  text-decoration: none;
+  font-weight: 600;
+  border-radius: 0 0 4px 0;
+  transition: top 0.2s ease;
+}
+
+.skip-link:focus {
+  top: 0;
+  outline: 3px solid var(--primary-purple);
+  outline-offset: 2px;
+}
+
+/* Enhanced Focus Styles - WCAG 2.1 Success Criterion 2.4.7 */
+*:focus {
+  outline: 2px solid var(--primary-blue);
+  outline-offset: 2px;
+}
+
+*:focus:not(:focus-visible) {
+  outline: none;
+}
+
+*:focus-visible {
+  outline: 2px solid var(--primary-blue);
+  outline-offset: 2px;
+}
+
+/* High Contrast Focus for buttons and links */
+button:focus-visible,
+a:focus-visible,
+[role="button"]:focus-visible,
+[role="tab"]:focus-visible,
+[role="menuitem"]:focus-visible {
+  outline: 3px solid var(--primary-blue);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+}
+
+/* Ensure sufficient color contrast */
+.high-contrast {
+  --gray-500: #4b5563;
+  --gray-600: #374151;
+  --gray-700: #1f2937;
+}
+
+/* Reduce Motion - Respect user's motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Increase tap targets for touch devices - WCAG 2.1 SC 2.5.5 */
+@media (pointer: coarse) {
+  button,
+  a,
+  input,
+  select,
+  textarea,
+  [role="button"],
+  [role="tab"],
+  [role="menuitem"] {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
+
+/* High Contrast Mode Support */
+@media (prefers-contrast: high) {
+  * {
+    border-color: currentColor;
+  }
+
+  .card,
+  .btn,
+  .nav-btn {
+    border: 2px solid currentColor;
+  }
+}
+
+/* Focus Within - Highlight container when child has focus */
+.focus-within-highlight:focus-within {
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.3);
+  border-color: var(--primary-blue);
+}
+
+/* Keyboard Navigation Indicators */
+[data-keyboard-user] *:focus {
+  outline: 3px solid var(--primary-blue);
+  outline-offset: 3px;
+}
+
+/* Accessible Text Selection */
+::selection {
+  background-color: var(--primary-blue);
+  color: white;
+}
+
+::-moz-selection {
+  background-color: var(--primary-blue);
+  color: white;
+}
+
+/* ARIA Live Regions */
+[aria-live] {
+  position: relative;
+}
+
+/* Disabled Elements - Clear visual indication */
+[disabled],
+[aria-disabled="true"] {
+  opacity: 0.6;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* Required Fields Indicator */
+[aria-required="true"]::after,
+.required::after {
+  content: " *";
+  color: #dc2626;
+  font-weight: bold;
+}
+
+/* Error Messages */
+[role="alert"],
+.error-message {
+  color: #dc2626;
+  font-weight: 500;
+  padding: 8px 12px;
+  background: #fee2e2;
+  border-left: 4px solid #dc2626;
+  border-radius: 4px;
+  margin-top: 4px;
+}
+
+/* Success Messages */
+[role="status"].success,
+.success-message {
+  color: #16a34a;
+  font-weight: 500;
+  padding: 8px 12px;
+  background: #dcfce7;
+  border-left: 4px solid #16a34a;
+  border-radius: 4px;
+  margin-top: 4px;
+}
+
+/* Loading States */
+[aria-busy="true"] {
+  position: relative;
+  pointer-events: none;
+  opacity: 0.7;
+}
+
+[aria-busy="true"]::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 20px;
+  height: 20px;
+  margin: -10px 0 0 -10px;
+  border: 2px solid var(--primary-blue);
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

@@ -29,19 +29,24 @@ export default function Navigation({ activeTab, onTabChange }) {
   const activeTabData = tabs.find(tab => tab.id === activeTab)
 
   return (
-    <nav className="bg-white shadow-md sticky top-20 z-40">
+    <nav className="bg-white shadow-md sticky top-20 z-40" role="navigation" aria-label="Hauptnavigation">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3">
         {/* Desktop Navigation */}
-        <div className="hidden md:flex flex-wrap gap-2">
+        <div className="hidden md:flex flex-wrap gap-2" role="tablist">
           {tabs.map(tab => {
             const Icon = tab.Icon
+            const isActive = activeTab === tab.id
             return (
               <button
                 key={tab.id}
                 onClick={() => onTabChange(tab.id)}
-                className={`nav-btn ${activeTab === tab.id ? 'active' : ''}`}
+                className={`nav-btn ${isActive ? 'active' : ''}`}
+                role="tab"
+                aria-selected={isActive}
+                aria-current={isActive ? 'page' : undefined}
+                aria-label={`${tab.label} Modul ${isActive ? '(aktiv)' : ''}`}
               >
-                <Icon className="inline-block w-4 h-4 mr-1" />
+                <Icon className="inline-block w-4 h-4 mr-1" aria-hidden="true" />
                 {tab.label}
               </button>
             )
@@ -61,7 +66,9 @@ export default function Navigation({ activeTab, onTabChange }) {
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               className="p-2 rounded-lg hover:bg-gray-100 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-blue"
-              aria-label="Menu"
+              aria-label="Navigationsmenü"
+              aria-expanded={isMobileMenuOpen}
+              aria-controls="mobile-navigation-menu"
             >
               <div className="w-6 h-5 flex flex-col justify-between">
                 <span
@@ -85,18 +92,25 @@ export default function Navigation({ activeTab, onTabChange }) {
 
           {/* Mobile Menu Dropdown */}
           <div
+            id="mobile-navigation-menu"
             className={`overflow-hidden transition-all duration-300 ${
               isMobileMenuOpen ? 'max-h-96 mt-3' : 'max-h-0'
             }`}
+            role="menu"
+            aria-hidden={!isMobileMenuOpen}
           >
             <div className="flex flex-col gap-2 pb-2">
               {tabs.map(tab => {
                 const Icon = tab.Icon
+                const isActive = activeTab === tab.id
                 return (
                   <button
                     key={tab.id}
                     onClick={() => handleTabClick(tab.id)}
-                    className={`nav-btn text-left ${activeTab === tab.id ? 'active' : ''}`}
+                    className={`nav-btn text-left ${isActive ? 'active' : ''}`}
+                    role="menuitem"
+                    aria-current={isActive ? 'page' : undefined}
+                    aria-label={`${tab.label} Modul ${isActive ? '(aktiv)' : ''}`}
                   >
                     <Icon className="inline-block w-4 h-4 mr-2" />
                     {tab.label}
