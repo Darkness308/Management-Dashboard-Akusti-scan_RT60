@@ -16,7 +16,7 @@
     "react-chartjs-2": "^5.2.0",
     "xlsx": "^0.18.5",
     "jspdf": "^3.0.4",
-    "jspdf-autotable": "^3.8.2",
+    "jspdf-autotable": "^4.0.0",
     "docx": "^8.5.0",
     "html2canvas": "^1.4.1",
     "zustand": "^4.5.0",
