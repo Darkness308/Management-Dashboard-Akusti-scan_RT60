@@ -13,7 +13,7 @@ export default function InnovationModule() {
 
   return (
     <section className="space-y-6">
-      <h2 className="text-4xl font-bold section-header">🚀 Innovation Mapping</h2>
+      <h2 className="text-4xl font-bold section-header">Innovation Mapping</h2>
       <p className="text-gray-600">Analyse der Cross-Sektor-Synergien & zukünftigen Wachstumsfelder</p>
 
       <div className="bg-white rounded-xl shadow-lg p-6">

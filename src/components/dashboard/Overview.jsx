@@ -48,14 +48,14 @@ export default function Overview({ onModuleClick }) {
       {/* Quick Stats Charts */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="bg-white rounded-xl shadow-lg p-6">
-          <h3 className="text-xl font-bold mb-4 text-gray-800">📈 Marktwachstum</h3>
+          <h3 className="text-xl font-bold mb-4 text-gray-800">Marktwachstum</h3>
           <LineChart
             labels={marketGrowthData.labels}
             datasets={marketGrowthData.datasets}
           />
         </div>
         <div className="bg-white rounded-xl shadow-lg p-6">
-          <h3 className="text-xl font-bold mb-4 text-gray-800">🎯 Zielgruppen</h3>
+          <h3 className="text-xl font-bold mb-4 text-gray-800">Zielgruppen</h3>
           <DoughnutChart
             labels={targetGroupData.labels}
             data={targetGroupData.data}

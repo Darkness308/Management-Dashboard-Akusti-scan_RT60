@@ -17,7 +17,7 @@ export default function BusinessModule() {
 
   return (
     <section className="space-y-6">
-      <h2 className="text-4xl font-bold section-header">💼 Business Strategie</h2>
+      <h2 className="text-4xl font-bold section-header">Business Strategie</h2>
 
       {/* Pricing & Competition */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
