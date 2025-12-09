@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { FolderOpen } from 'lucide-react'
 import {
   parseCSV,
   parseExcel,
@@ -107,7 +108,7 @@ export default function DataModule() {
 
   return (
     <section className="space-y-6">
-      <h2 className="text-4xl font-bold section-header">📂 Datenintegration & Analyse</h2>
+      <h2 className="text-4xl font-bold section-header">Datenintegration & Analyse</h2>
 
       {/* File Upload */}
       <div className="bg-white rounded-xl shadow-lg p-6">
@@ -126,7 +127,7 @@ export default function DataModule() {
             disabled={isLoading}
           />
           <label htmlFor="fileInput" className="cursor-pointer">
-            <div className="text-6xl mb-4">📁</div>
+            <FolderOpen className="w-24 h-24 mx-auto mb-4 text-purple-600" />
             <p className="text-lg font-semibold text-gray-700 mb-2">
               {isLoading ? 'Wird verarbeitet...' : 'Datei hochladen oder hierher ziehen'}
             </p>

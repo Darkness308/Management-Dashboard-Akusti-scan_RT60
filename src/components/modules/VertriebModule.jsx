@@ -24,7 +24,7 @@ export default function VertriebModule() {
 
   return (
     <section className="space-y-6">
-      <h2 className="text-4xl font-bold section-header">📈 Vertrieb & Zielgruppen</h2>
+      <h2 className="text-4xl font-bold section-header">Vertrieb & Zielgruppen</h2>
 
       {/* Target Groups & Channels */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

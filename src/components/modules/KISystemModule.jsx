@@ -15,7 +15,7 @@ export default function KISystemModule() {
 
   return (
     <section className="space-y-6">
-      <h2 className="text-4xl font-bold section-header">🤖 KI-System & Techniken</h2>
+      <h2 className="text-4xl font-bold section-header">KI-System & Techniken</h2>
 
       {/* Stats Overview */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

@@ -11,19 +11,15 @@
   },
   "dependencies": {
     "chart.js": "^4.4.1",
-dependabot/npm_and_yarn/npm_and_yarn-5cd8dbe2dd
-    "react-chartjs-2": "^5.2.0",
-    "xlsx": "^0.18.5",
+    "docx": "^8.5.0",
+    "exceljs": "^4.4.0",
+    "html2canvas": "^1.4.1",
     "jspdf": "^3.0.4",
     "jspdf-autotable": "^4.0.0",
-    "docx": "^8.5.0",
-    "html2canvas": "^1.4.1",
-    "jspdf-autotable": "^3.8.2",
     "lucide-react": "^0.344.0",
     "react": "^18.3.1",
     "react-chartjs-2": "^5.2.0",
     "react-dom": "^18.3.1",
-    "xlsx": "^0.18.5",
     "zustand": "^4.5.0"
   },
   "devDependencies": {

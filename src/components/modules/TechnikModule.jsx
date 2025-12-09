@@ -1,4 +1,5 @@
 import { technikData, getRequiredHardware, getRequiredSoftware } from '@data/technikData'
+import { Monitor, Wrench } from 'lucide-react'
 
 export default function TechnikModule() {
   const requiredHw = getRequiredHardware()
@@ -6,7 +7,7 @@ export default function TechnikModule() {
 
   return (
     <section className="space-y-6">
-      <h2 className="text-4xl font-bold section-header">⚙️ Technik & Normen</h2>
+      <h2 className="text-4xl font-bold section-header">Technik & Normen</h2>
 
       {/* Technical Requirements */}
       <div className="bg-white rounded-xl shadow-lg p-6">
@@ -15,7 +16,7 @@ export default function TechnikModule() {
           {/* Hardware */}
           <div>
             <h4 className="font-semibold mb-3 text-gray-700 flex items-center">
-              <span className="text-2xl mr-2">💻</span>
+              <Monitor className="w-6 h-6 mr-2" />
               Hardware
             </h4>
             <ul className="space-y-2">
@@ -36,7 +37,7 @@ export default function TechnikModule() {
           {/* Software */}
           <div>
             <h4 className="font-semibold mb-3 text-gray-700 flex items-center">
-              <span className="text-2xl mr-2">🔧</span>
+              <Wrench className="w-6 h-6 mr-2" />
               Software
             </h4>
             <ul className="space-y-2">

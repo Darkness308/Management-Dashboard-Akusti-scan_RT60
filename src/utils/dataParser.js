@@ -1,5 +1,5 @@
 // Data Parser - Excel/CSV Upload & Parsing
-import * as XLSX from 'xlsx'
+import ExcelJS from 'exceljs'
 
 /**
  * Parse CSV file
@@ -36,33 +36,34 @@ export const parseCSV = (file) => {
  * @param {File} file - Excel file to parse
  * @returns {Promise<{headers: Array, rows: Array}>}
  */
-export const parseExcel = (file) => {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader()
-
-    reader.onload = (event) => {
-      try {
-        const data = new Uint8Array(event.target.result)
-        const workbook = XLSX.read(data, { type: 'array' })
-        const sheetName = workbook.SheetNames[0]
-        const sheet = workbook.Sheets[sheetName]
-        const json = XLSX.utils.sheet_to_json(sheet, { header: 1 })
-
-        const headers = json[0]
-        const rows = json.slice(1)
-
-        resolve({ headers, rows })
-      } catch (error) {
-        reject(new Error('Excel parsing failed: ' + error.message))
-      }
+export const parseExcel = async (file) => {
+  try {
+    const buffer = await file.arrayBuffer()
+    const workbook = new ExcelJS.Workbook()
+    await workbook.xlsx.load(buffer)
+    
+    // Get first worksheet
+    const worksheet = workbook.worksheets[0]
+    if (!worksheet) {
+      throw new Error('No worksheet found in Excel file')
     }
-
-    reader.onerror = () => {
-      reject(new Error('File reading failed'))
+    
+    const rows = []
+    worksheet.eachRow((row, rowNumber) => {
+      rows.push(row.values.slice(1)) // Skip the first undefined element
+    })
+    
+    if (rows.length === 0) {
+      throw new Error('Excel file is empty')
     }
-
-    reader.readAsArrayBuffer(file)
-  })
+    
+    const headers = rows[0]
+    const dataRows = rows.slice(1)
+    
+    return { headers, rows: dataRows }
+  } catch (error) {
+    throw new Error('Excel parsing failed: ' + error.message)
+  }
 }
 
 /**
