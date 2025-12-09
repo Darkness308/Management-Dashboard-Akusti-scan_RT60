@@ -9,6 +9,7 @@ import {
   clearStorage
 } from '@utils/dataParser'
 import BarChart from '../charts/BarChart'
+import { FolderOpen, FileSpreadsheet, Lightbulb, AlertCircle } from 'lucide-react'
 
 export default function DataModule() {
   const [uploadedData, setUploadedData] = useState(null)
@@ -37,10 +38,10 @@ export default function DataModule() {
 
       if (fileName.endsWith('.csv')) {
         data = await parseCSV(file)
-        setStatusMessage(`✅ CSV-Datei "${file.name}" erfolgreich eingelesen`)
+        setStatusMessage(`CSV-Datei "${file.name}" erfolgreich eingelesen`)
       } else if (fileName.endsWith('.xlsx') || fileName.endsWith('.xls')) {
         data = await parseExcel(file)
-        setStatusMessage(`✅ Excel-Datei "${file.name}" erfolgreich eingelesen`)
+        setStatusMessage(`Excel-Datei "${file.name}" erfolgreich eingelesen`)
       } else {
         throw new Error('Dateiformat nicht unterstützt. Bitte CSV oder Excel hochladen.')
       }
@@ -48,7 +49,7 @@ export default function DataModule() {
       setUploadedData(data)
       saveToStorage('uploadData', data)
     } catch (error) {
-      setStatusMessage(`❌ Fehler: ${error.message}`)
+      setStatusMessage(`Fehler: ${error.message}`)
       console.error('File upload error:', error)
     } finally {
       setIsLoading(false)
@@ -107,7 +108,10 @@ export default function DataModule() {
 
   return (
     <section className="space-y-6">
-      <h2 className="text-4xl font-bold section-header">📂 Datenintegration & Analyse</h2>
+      <h2 className="text-4xl font-bold section-header flex items-center gap-3">
+        <FolderOpen size={36} />
+        Datenintegration & Analyse
+      </h2>
 
       {/* File Upload */}
       <div className="bg-white rounded-xl shadow-lg p-6">
@@ -126,7 +130,7 @@ export default function DataModule() {
             disabled={isLoading}
           />
           <label htmlFor="fileInput" className="cursor-pointer">
-            <div className="text-6xl mb-4">📁</div>
+            <FileSpreadsheet size={64} className="mx-auto mb-4 text-purple-600" />
             <p className="text-lg font-semibold text-gray-700 mb-2">
               {isLoading ? 'Wird verarbeitet...' : 'Datei hochladen oder hierher ziehen'}
             </p>
@@ -152,9 +156,12 @@ export default function DataModule() {
         </div>
 
         {statusMessage && (
-          <p className={`text-sm mt-4 ${statusMessage.startsWith('✅') ? 'text-green-600' : statusMessage.startsWith('❌') ? 'text-red-600' : 'text-gray-600'}`}>
+          <div className={`text-sm mt-4 p-3 rounded-lg flex items-center gap-2 ${statusMessage.includes('erfolgreich') ? 'bg-green-50 text-green-800' : statusMessage.includes('Fehler') ? 'bg-red-50 text-red-800' : 'bg-gray-50 text-gray-800'}`}>
+            {statusMessage.includes('Fehler') ? (
+              <AlertCircle size={18} />
+            ) : null}
             {statusMessage}
-          </p>
+          </div>
         )}
       </div>
 
@@ -211,7 +218,10 @@ export default function DataModule() {
       {/* Upload Instructions */}
       {!uploadedData && (
         <div className="bg-blue-50 rounded-xl p-6">
-          <h3 className="text-lg font-bold mb-3 text-blue-900">💡 Anleitung</h3>
+          <h3 className="text-lg font-bold mb-3 text-blue-900 flex items-center gap-2">
+            <Lightbulb size={20} />
+            Anleitung
+          </h3>
           <ul className="space-y-2 text-sm text-blue-800">
             <li>• Unterstützte Formate: Excel (.xlsx, .xls) und CSV</li>
             <li>• Die erste Zeile sollte Spaltenüberschriften enthalten</li>

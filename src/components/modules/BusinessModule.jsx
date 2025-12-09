@@ -1,5 +1,6 @@
 import { businessData, compareCompetitors } from '@data/businessData'
 import BarChart from '../charts/BarChart'
+import { Briefcase, Lightbulb, Check, X } from 'lucide-react'
 
 export default function BusinessModule() {
   const comparison = compareCompetitors()
@@ -17,7 +18,10 @@ export default function BusinessModule() {
 
   return (
     <section className="space-y-6">
-      <h2 className="text-4xl font-bold section-header">💼 Business Strategie</h2>
+      <h2 className="text-4xl font-bold section-header flex items-center gap-3">
+        <Briefcase size={36} />
+        Business Strategie
+      </h2>
 
       {/* Pricing & Competition */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -29,8 +33,9 @@ export default function BusinessModule() {
           />
 
           <div className="mt-4 p-4 bg-green-50 rounded-lg">
-            <p className="text-sm font-semibold text-green-800">
-              💡 Preisvorteil: {comparison.advantage}% günstiger als Durchschnitt
+            <p className="text-sm font-semibold text-green-800 flex items-center gap-2">
+              <Lightbulb size={18} />
+              Preisvorteil: {comparison.advantage}% günstiger als Durchschnitt
             </p>
             <p className="text-xs text-green-600 mt-1">
               Unser Preis: {comparison.ourPrice}€ | Wettbewerber Ø: {Math.round(comparison.avgCompetitorPrice)}€
@@ -56,7 +61,13 @@ export default function BusinessModule() {
                     <td className="px-3 py-2 font-semibold text-green-600">
                       {comp.price} {comp.currency}
                     </td>
-                    <td className="px-3 py-2">{comp.hasAI ? '✅' : '❌'}</td>
+                    <td className="px-3 py-2">
+                      {comp.hasAI ? (
+                        <Check size={16} className="text-green-600" />
+                      ) : (
+                        <X size={16} className="text-red-600" />
+                      )}
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -103,7 +114,7 @@ export default function BusinessModule() {
               <ul className="text-sm text-left space-y-2">
                 {tier.features.map((feature, fIdx) => (
                   <li key={fIdx} className="flex items-start">
-                    <span className="text-green-600 mr-2">✅</span>
+                    <Check size={16} className="text-green-600 mr-2 mt-0.5" />
                     <span>{feature}</span>
                   </li>
                 ))}

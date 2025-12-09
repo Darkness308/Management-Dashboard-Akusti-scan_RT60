@@ -1,4 +1,5 @@
 import { technikData, getRequiredHardware, getRequiredSoftware } from '@data/technikData'
+import { Settings, Wrench, Check } from 'lucide-react'
 
 export default function TechnikModule() {
   const requiredHw = getRequiredHardware()
@@ -6,7 +7,10 @@ export default function TechnikModule() {
 
   return (
     <section className="space-y-6">
-      <h2 className="text-4xl font-bold section-header">⚙️ Technik & Normen</h2>
+      <h2 className="text-4xl font-bold section-header flex items-center gap-3">
+        <Settings size={36} />
+        Technik & Normen
+      </h2>
 
       {/* Technical Requirements */}
       <div className="bg-white rounded-xl shadow-lg p-6">
@@ -35,8 +39,8 @@ export default function TechnikModule() {
 
           {/* Software */}
           <div>
-            <h4 className="font-semibold mb-3 text-gray-700 flex items-center">
-              <span className="text-2xl mr-2">🔧</span>
+            <h4 className="font-semibold mb-3 text-gray-700 flex items-center gap-2">
+              <Wrench size={20} />
               Software
             </h4>
             <ul className="space-y-2">
@@ -92,7 +96,10 @@ export default function TechnikModule() {
         <h3 className="text-xl font-bold mb-4 text-gray-800">Compliance-Status</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="p-4 bg-green-50 rounded-lg border-l-4 border-green-500">
-            <h4 className="font-semibold text-green-800 mb-2">✅ Hardware-Anforderungen</h4>
+            <h4 className="font-semibold text-green-800 mb-2 flex items-center gap-2">
+              <Check size={18} />
+              Hardware-Anforderungen
+            </h4>
             <p className="text-sm text-green-700">{requiredHw.length} Komponenten erforderlich</p>
             <ul className="mt-2 text-xs text-green-600 space-y-1">
               {requiredHw.map((hw, idx) => (
@@ -102,7 +109,10 @@ export default function TechnikModule() {
           </div>
 
           <div className="p-4 bg-green-50 rounded-lg border-l-4 border-green-500">
-            <h4 className="font-semibold text-green-800 mb-2">✅ Software-Anforderungen</h4>
+            <h4 className="font-semibold text-green-800 mb-2 flex items-center gap-2">
+              <Check size={18} />
+              Software-Anforderungen
+            </h4>
             <p className="text-sm text-green-700">{requiredSw.length} Komponenten erforderlich</p>
             <ul className="mt-2 text-xs text-green-600 space-y-1">
               {requiredSw.map((sw, idx) => (
