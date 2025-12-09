@@ -1,4 +1,5 @@
 import { exportJSON, exportMarkdown } from '@utils/exportUtils'
+import { BarChart3, Download } from 'lucide-react'
 
 export default function Header({ onExport }) {
   const handleExport = () => {
@@ -21,7 +22,7 @@ export default function Header({ onExport }) {
         <div className="flex flex-wrap justify-between items-center">
           <div className="flex items-center space-x-4">
             <div className="w-12 h-12 bg-white rounded-lg flex items-center justify-center">
-              <span className="text-2xl">📊</span>
+              <BarChart3 className="text-purple-700" size={28} />
             </div>
             <div>
               <h1 className="text-2xl font-bold text-white">Management Dashboard</h1>
@@ -31,9 +32,10 @@ export default function Header({ onExport }) {
           <div className="mt-4 md:mt-0">
             <button
               onClick={handleExport}
-              className="bg-white text-purple-700 px-4 py-2 rounded-lg shadow hover:bg-purple-50 transition"
+              className="bg-white text-purple-700 px-4 py-2 rounded-lg shadow hover:bg-purple-50 transition flex items-center gap-2"
             >
-              📥 Export
+              <Download size={20} />
+              Export
             </button>
           </div>
         </div>

@@ -2,19 +2,19 @@
 
 Konsolidiertes Management Dashboard für Akusti-Scan RT60 mit React, TailwindCSS und Chart.js.
 
-## 🚀 Features
+## Features
 
-- **📊 Dashboard Übersicht** - KPIs, Marktwachstum, Zielgruppen
-- **🚀 Innovation Mapping** - Cross-Sektor-Synergien & Wachstumsfelder
-- **🌍 Marktanalyse** - TAM/SAM/SOM Berechnungen & Prognosen
-- **💼 Business Strategie** - Preisstrategie & Wettbewerbsanalyse
-- **🤖 KI-System** - 20 KI-Techniken, Workflows & Templates
-- **⚙️ Technik & Normen** - DIN, ISO, VDI Standards
-- **📈 Vertrieb** - Zielgruppen-Segmentierung & Kanäle
-- **📂 Datenintegration** - Excel/CSV Upload & Analyse
-- **📊 Analytics** - Performance-Tracking & Metriken
+- **Dashboard Übersicht** - KPIs, Marktwachstum, Zielgruppen
+- **Innovation Mapping** - Cross-Sektor-Synergien & Wachstumsfelder
+- **Marktanalyse** - TAM/SAM/SOM Berechnungen & Prognosen
+- **Business Strategie** - Preisstrategie & Wettbewerbsanalyse
+- **KI-System** - 20 KI-Techniken, Workflows & Templates
+- **Technik & Normen** - DIN, ISO, VDI Standards
+- **Vertrieb** - Zielgruppen-Segmentierung & Kanäle
+- **Datenintegration** - Excel/CSV Upload & Analyse
+- **Analytics** - Performance-Tracking & Metriken
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 - **Framework**: React 18.3
 - **Build Tool**: Vite 5.2
@@ -23,7 +23,7 @@ Konsolidiertes Management Dashboard für Akusti-Scan RT60 mit React, TailwindCSS
 - **Data**: SheetJS (XLSX) 0.18
 - **Language**: JavaScript (ES6+)
 
-## 📦 Installation
+## Installation
 
 ### Voraussetzungen
 
@@ -46,7 +46,7 @@ npm run dev
 
 Der Dev-Server läuft auf `http://localhost:3000` und öffnet sich automatisch im Browser.
 
-## 📜 Verfügbare Scripts
+## Verfügbare Scripts
 
 | Script | Beschreibung |
 |--------|--------------|
@@ -55,7 +55,7 @@ Der Dev-Server läuft auf `http://localhost:3000` und öffnet sich automatisch i
 | `npm run preview` | Vorschau des Production Builds |
 | `npm run lint` | Führt ESLint aus |
 
-## 📁 Projektstruktur
+## Projektstruktur
 
 ```
 Management-Dashboard-Akusti-scan_RT60/
@@ -106,7 +106,7 @@ Management-Dashboard-Akusti-scan_RT60/
 └── README.md                # Diese Datei
 ```
 
-## 🎨 Design System
+## Design System
 
 Das Projekt verwendet ein konsistentes Design-System basierend auf TailwindCSS:
 
@@ -118,7 +118,7 @@ Das Projekt verwendet ein konsistentes Design-System basierend auf TailwindCSS:
 
 Details: [docs/design-system.md](./docs/design-system.md)
 
-## 🤖 Agent-System
+## Agent-System
 
 Das Dashboard nutzt ein Agent-basiertes Architektur-Modell:
 
@@ -130,7 +130,7 @@ Das Dashboard nutzt ein Agent-basiertes Architektur-Modell:
 
 Details: [docs/agents.md](./docs/agents.md)
 
-## 🚢 Deployment
+## Deployment
 
 ### Production Build
 
@@ -175,7 +175,7 @@ npm run build
 **4. Statisches Hosting**
 - Einfach `/dist` Ordner auf beliebigen Webserver hochladen
 
-## 📊 Datenintegration
+## Datenintegration
 
 ### Excel/CSV Upload
 
@@ -208,7 +208,7 @@ exportMarkdown(data)
 exportExcel(data, 'dashboard_export.xlsx')
 ```
 
-## 🔧 Entwicklung
+## Entwicklung
 
 ### Code Style
 
@@ -229,7 +229,7 @@ import { marketData } from '@data/marketData'
 import { parseCSV } from '@utils/dataParser'
 ```
 
-## 🐛 Troubleshooting
+## Troubleshooting
 
 ### Build Fehler
 
@@ -256,7 +256,7 @@ npm run dev -- --port 3001
 - Lazy-Loading für Module aktivieren
 - React.memo() für Chart-Komponenten
 
-## 📚 Ressourcen
+## Ressourcen
 
 - **React Docs**: https://react.dev
 - **Vite Docs**: https://vitejs.dev
@@ -264,7 +264,7 @@ npm run dev -- --port 3001
 - **Chart.js**: https://www.chartjs.org
 - **SheetJS**: https://sheetjs.com
 
-## 🤝 Contributing
+## Contributing
 
 Beiträge sind willkommen! Bitte:
 

@@ -5,28 +5,28 @@ export const kpiData = {
     value: 63841,
     label: 'TAM Marktgröße',
     description: 'Unternehmen DACH',
-    icon: '🎯',
+    icon: 'Target',
     color: 'blue'
   },
   sam: {
     value: 19152,
     label: 'SAM (30%)',
     description: 'Adressierbare Kunden',
-    icon: '📊',
+    icon: 'BarChart3',
     color: 'purple'
   },
   som: {
     value: 958,
     label: 'SOM (5%)',
     description: 'Realistische Kunden',
-    icon: '✅',
+    icon: 'Check',
     color: 'green'
   },
   revenue: {
     value: '1,4M €',
     label: 'Umsatzpotenzial',
     description: 'bei 1.500€/Jahr',
-    icon: '💰',
+    icon: 'DollarSign',
     color: 'yellow'
   }
 }

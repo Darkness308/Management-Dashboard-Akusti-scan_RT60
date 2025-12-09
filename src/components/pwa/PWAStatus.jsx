@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import usePWA from '@/hooks/usePWA'
+import { RefreshCw } from 'lucide-react'
 
 /**
  * PWA Status Component
@@ -64,7 +65,7 @@ export default function PWAStatus() {
       {showUpdate && (
         <div className="fixed top-20 left-1/2 -translate-x-1/2 z-50 bg-blue-600 text-white px-6 py-4 rounded-lg shadow-lg max-w-md">
           <div className="flex items-start gap-3">
-            <span className="text-2xl">🔄</span>
+            <RefreshCw size={24} className="mt-0.5" />
             <div className="flex-1">
               <h4 className="font-bold mb-1">Update verfügbar</h4>
               <p className="text-sm opacity-90 mb-3">
