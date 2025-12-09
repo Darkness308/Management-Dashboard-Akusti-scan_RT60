@@ -156,7 +156,7 @@ export default function DataModule() {
         </div>
 
         {statusMessage && (
-          <div className={`text-sm mt-4 p-3 rounded-lg flex items-center gap-2 ${statusMessage.includes('erfolgreich') ? 'bg-green-50 text-green-800' : statusMessage.includes('Fehler') ? 'bg-red-50 text-red-800' : 'bg-gray-50 text-gray-800'}`}>
+          <div className={`text-sm mt-4 p-3 rounded-lg flex items-center gap-2 ${getStatusMessageClass(statusMessage)}`}>
             {statusMessage.includes('Fehler') ? (
               <AlertCircle size={18} />
             ) : null}
