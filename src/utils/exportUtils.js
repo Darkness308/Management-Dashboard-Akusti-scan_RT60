@@ -1,5 +1,5 @@
 // Export Utilities - JSON, Markdown, Excel, PDF, Word, TXT Export
-import * as XLSX from 'xlsx'
+import ExcelJS from 'exceljs'
 import jsPDF from 'jspdf'
 import 'jspdf-autotable'
 import { Document, Packer, Paragraph, TextRun, HeadingLevel, Table, TableCell, TableRow } from 'docx'
@@ -73,7 +73,7 @@ export const exportMarkdown = (data) => {
   md += '- **Framework**: React 18 + Vite\n'
   md += '- **Styling**: TailwindCSS\n'
   md += '- **Charts**: Chart.js\n'
-  md += '- **Data**: SheetJS (XLSX)\n'
+  md += '- **Data**: ExcelJS\n'
 
   downloadFile('dashboard_export.md', md, 'text/markdown')
   return true
@@ -82,36 +82,72 @@ export const exportMarkdown = (data) => {
 /**
  * Export data as Excel
  */
-export const exportExcel = (data, filename = 'dashboard_export.xlsx') => {
+export const exportExcel = async (data, filename = 'dashboard_export.xlsx') => {
   try {
     // Create workbook
-    const wb = XLSX.utils.book_new()
+    const workbook = new ExcelJS.Workbook()
+    workbook.creator = 'Management Dashboard'
+    workbook.created = new Date()
 
     // Overview sheet
-    const overviewData = [
-      ['Metrik', 'Wert'],
-      ['TAM', data.tam || 63841],
-      ['SAM', data.sam || 19152],
-      ['SOM', data.som || 958],
-      ['Umsatzpotenzial', data.revenue || 1437000]
+    const overviewSheet = workbook.addWorksheet('Übersicht')
+    overviewSheet.columns = [
+      { header: 'Metrik', key: 'metric', width: 40 },
+      { header: 'Wert', key: 'value', width: 20 }
     ]
-    const wsOverview = XLSX.utils.aoa_to_sheet(overviewData)
-    XLSX.utils.book_append_sheet(wb, wsOverview, 'Übersicht')
+    
+    overviewSheet.addRows([
+      { metric: 'TAM', value: data.tam || 63841 },
+      { metric: 'SAM', value: data.sam || 19152 },
+      { metric: 'SOM', value: data.som || 958 },
+      { metric: 'Umsatzpotenzial', value: data.revenue || 1437000 }
+    ])
+    
+    // Style the header row
+    overviewSheet.getRow(1).font = { bold: true }
+    overviewSheet.getRow(1).fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: 'FF667eea' }
+    }
+    overviewSheet.getRow(1).font = { bold: true, color: { argb: 'FFFFFFFF' } }
 
     // Market Growth sheet
-    if (data.marketGrowth) {
-      const wsMarket = XLSX.utils.json_to_sheet(data.marketGrowth)
-      XLSX.utils.book_append_sheet(wb, wsMarket, 'Marktwachstum')
+    if (data.marketGrowth && Array.isArray(data.marketGrowth)) {
+      const marketSheet = workbook.addWorksheet('Marktwachstum')
+      if (data.marketGrowth.length > 0) {
+        const headers = Object.keys(data.marketGrowth[0])
+        marketSheet.columns = headers.map(h => ({ header: h, key: h, width: 15 }))
+        marketSheet.addRows(data.marketGrowth)
+        marketSheet.getRow(1).font = { bold: true }
+      }
     }
 
     // Target Groups sheet
-    if (data.targetGroups) {
-      const wsTargets = XLSX.utils.json_to_sheet(data.targetGroups)
-      XLSX.utils.book_append_sheet(wb, wsTargets, 'Zielgruppen')
+    if (data.targetGroups && Array.isArray(data.targetGroups)) {
+      const targetSheet = workbook.addWorksheet('Zielgruppen')
+      if (data.targetGroups.length > 0) {
+        const headers = Object.keys(data.targetGroups[0])
+        targetSheet.columns = headers.map(h => ({ header: h, key: h, width: 20 }))
+        targetSheet.addRows(data.targetGroups)
+        targetSheet.getRow(1).font = { bold: true }
+      }
     }
 
     // Write file
-    XLSX.writeFile(wb, filename)
+    const buffer = await workbook.xlsx.writeBuffer()
+    const blob = new Blob([buffer], { 
+      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' 
+    })
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.href = url
+    link.download = filename
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    setTimeout(() => URL.revokeObjectURL(url), 100)
+    
     return true
   } catch (error) {
     console.error('Excel export failed:', error)
