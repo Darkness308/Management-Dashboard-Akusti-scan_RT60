@@ -178,6 +178,6 @@ For security concerns, contact:
 
 ---
 
-**Last Updated**: January 2024  
+**Last Updated**: January 2026  
 **Version**: 1.1.0  
 **Maintained by**: Darkness308
