@@ -2,7 +2,7 @@
 
 ## Security Updates
 
-### January 2024 - Comprehensive Security Enhancements
+### January 2026 - Comprehensive Security Enhancements
 
 **New Security Features:**
 - ✅ Input validation for file uploads (size, type, row count)
