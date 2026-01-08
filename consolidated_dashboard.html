@@ -34,10 +34,67 @@
             background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
         }
         .section-header {
+            color: #667eea; /* Fallback color for browsers that don't support background-clip */
             background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+        }
+        /* Toast notification styles */
+        .toast-container {
+            position: fixed;
+            top: 100px;
+            right: 20px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .toast {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 16px 24px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-width: 300px;
+            animation: slideIn 0.3s ease-out;
+            opacity: 0.95;
+        }
+        .toast.success {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        }
+        .toast-icon {
+            font-size: 24px;
+        }
+        .toast-message {
+            flex: 1;
+            font-weight: 500;
+        }
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 0.95;
+            }
+        }
+        @keyframes slideOut {
+            from {
+                transform: translateX(0);
+                opacity: 0.95;
+            }
+            to {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+        }
+        .toast.hiding {
+            animation: slideOut 0.3s ease-in;
         }
     </style>
 </head>
@@ -166,27 +223,27 @@
             <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
                 <h3 class="text-2xl font-bold mb-4 text-gray-800">📋 Verfügbare Module</h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    <div class="p-4 border-2 border-gray-200 rounded-lg hover:border-purple-400 cursor-pointer transition" onclick="switchTab('innovation')">
+                    <div class="module-card p-4 border-2 border-gray-200 rounded-lg hover:border-purple-400 cursor-pointer transition" data-tab="innovation">
                         <h4 class="font-bold text-lg mb-2">🚀 Innovation Mapping</h4>
                         <p class="text-sm text-gray-600">Cross-Sektor-Synergien & Wachstumsfelder</p>
                     </div>
-                    <div class="p-4 border-2 border-gray-200 rounded-lg hover:border-purple-400 cursor-pointer transition" onclick="switchTab('market')">
+                    <div class="module-card p-4 border-2 border-gray-200 rounded-lg hover:border-purple-400 cursor-pointer transition" data-tab="market">
                         <h4 class="font-bold text-lg mb-2">🌍 Marktanalyse</h4>
                         <p class="text-sm text-gray-600">Wachstumstrends & Zielgruppen</p>
                     </div>
-                    <div class="p-4 border-2 border-gray-200 rounded-lg hover:border-purple-400 cursor-pointer transition" onclick="switchTab('business')">
+                    <div class="module-card p-4 border-2 border-gray-200 rounded-lg hover:border-purple-400 cursor-pointer transition" data-tab="business">
                         <h4 class="font-bold text-lg mb-2">💼 Business Strategie</h4>
                         <p class="text-sm text-gray-600">Preisstrategie & Wettbewerb</p>
                     </div>
-                    <div class="p-4 border-2 border-gray-200 rounded-lg hover:border-purple-400 cursor-pointer transition" onclick="switchTab('ki-system')">
+                    <div class="module-card p-4 border-2 border-gray-200 rounded-lg hover:border-purple-400 cursor-pointer transition" data-tab="ki-system">
                         <h4 class="font-bold text-lg mb-2">🤖 KI-System</h4>
                         <p class="text-sm text-gray-600">20 Techniken, Workflows & Templates</p>
                     </div>
-                    <div class="p-4 border-2 border-gray-200 rounded-lg hover:border-purple-400 cursor-pointer transition" onclick="switchTab('technik')">
+                    <div class="module-card p-4 border-2 border-gray-200 rounded-lg hover:border-purple-400 cursor-pointer transition" data-tab="technik">
                         <h4 class="font-bold text-lg mb-2">⚙️ Technik & Normen</h4>
                         <p class="text-sm text-gray-600">Standards & Anforderungen</p>
                     </div>
-                    <div class="p-4 border-2 border-gray-200 rounded-lg hover:border-purple-400 cursor-pointer transition" onclick="switchTab('data')">
+                    <div class="module-card p-4 border-2 border-gray-200 rounded-lg hover:border-purple-400 cursor-pointer transition" data-tab="data">
                         <h4 class="font-bold text-lg mb-2">📂 Datenintegration</h4>
                         <p class="text-sm text-gray-600">Upload & Analyse von Excel/CSV</p>
                     </div>
@@ -581,7 +638,7 @@
                         <div class="text-6xl mb-4">📁</div>
                         <p class="text-lg font-semibold text-gray-700 mb-2">Datei hochladen</p>
                         <p class="text-sm text-gray-500">Excel (.xlsx, .xls) oder CSV-Dateien</p>
-                        <button onclick="document.getElementById('fileInput').click()" class="mt-4 bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700 transition">
+                        <button id="fileSelectBtn" class="mt-4 bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700 transition">
                             Datei auswählen
                         </button>
                     </label>
@@ -731,6 +788,18 @@
             btn.addEventListener('click', () => {
                 switchTab(btn.dataset.tab);
             });
+        });
+
+        // Event listeners for module cards
+        document.querySelectorAll('.module-card').forEach(card => {
+            card.addEventListener('click', () => {
+                switchTab(card.dataset.tab);
+            });
+        });
+
+        // Event listener for file select button
+        document.getElementById('fileSelectBtn').addEventListener('click', () => {
+            document.getElementById('fileInput').click();
         });
 
         // Initialize Charts
@@ -923,6 +992,16 @@
             fileInput.addEventListener('change', (e) => {
                 const file = e.target.files[0];
                 if (!file) return;
+                
+                // File size validation (max 10MB)
+                const maxSize = 10 * 1024 * 1024; // 10MB in bytes
+                if (file.size > maxSize) {
+                    statusMessage.textContent = `Datei zu groß (${(file.size / 1024 / 1024).toFixed(2)} MB). Maximale Dateigröße: 10 MB.`;
+                    statusMessage.style.color = '#e53e3e'; // Red color for error
+                    fileInput.value = ''; // Clear the file input
+                    return;
+                }
+                
                 const name = file.name.toLowerCase();
                 if (name.endsWith('.csv')) {
                     parseCSV(file);
@@ -930,6 +1009,7 @@
                     parseExcel(file);
                 } else {
                     statusMessage.textContent = 'Dateiformat nicht unterstützt. Bitte CSV oder Excel hochladen.';
+                    statusMessage.style.color = '#e53e3e'; // Red color for error
                 }
             });
 
@@ -938,11 +1018,52 @@
                 reader.onload = function(event) {
                     const text = event.target.result;
                     const lines = text.trim().split(/\r?\n/);
-                    const headers = lines[0].split(',').map(h => h.trim());
-                    const rows = lines.slice(1).map(line => line.split(',').map(c => c.trim()));
+                    
+                    // Helper function to parse a CSV line respecting quoted values
+                    function parseCSVLine(line) {
+                        const result = [];
+                        let current = '';
+                        let inQuotes = false;
+                        let isQuoted = false;
+                        
+                        for (let i = 0; i < line.length; i++) {
+                            const char = line[i];
+                            const nextChar = line[i + 1];
+                            
+                            // Check if this quote starts a quoted field (only if at field start)
+                            if (char === '"' && !inQuotes && current === '') {
+                                inQuotes = true;
+                                isQuoted = true;
+                                // current is already empty at field start
+                            } else if (char === '"' && inQuotes) {
+                                if (nextChar === '"') {
+                                    // Escaped quote
+                                    current += '"';
+                                    i++; // Skip next quote
+                                } else {
+                                    // Closing quote
+                                    inQuotes = false;
+                                }
+                            } else if (char === ',' && !inQuotes) {
+                                // Field delimiter
+                                result.push(isQuoted ? current : current.trim());
+                                current = '';
+                                isQuoted = false;
+                            } else {
+                                current += char;
+                            }
+                        }
+                        // Add the last field
+                        result.push(isQuoted ? current : current.trim());
+                        return result;
+                    }
+                    
+                    const headers = parseCSVLine(lines[0]);
+                    const rows = lines.slice(1).map(line => parseCSVLine(line));
                     saveData(headers, rows);
                     renderTableAndChart(headers, rows);
                     statusMessage.textContent = 'CSV-Datei erfolgreich eingelesen.';
+                    statusMessage.style.color = ''; // Reset color for success
                 };
                 reader.readAsText(file);
             }
@@ -960,6 +1081,7 @@
                     saveData(headers, rows);
                     renderTableAndChart(headers, rows);
                     statusMessage.textContent = 'Excel-Datei erfolgreich eingelesen.';
+                    statusMessage.style.color = ''; // Reset color for success
                 };
                 reader.readAsArrayBuffer(file);
             }
@@ -1077,6 +1199,44 @@
                 }
             });
 
+            // Toast notification function
+            function showToast(message, type = 'success') {
+                const container = document.getElementById('toast-container');
+                if (!container) return;
+
+                const toast = document.createElement('div');
+                toast.className = `toast ${type}`;
+
+                // Choose icon based on toast type
+                let icon;
+                switch (type) {
+                    case 'error':
+                        icon = '⚠️';
+                        break;
+                    case 'info':
+                        icon = 'ℹ️';
+                        break;
+                    case 'success':
+                    default:
+                        icon = '✓';
+                        break;
+                }
+
+                toast.innerHTML = `
+                    <span class="toast-icon">${icon}</span>
+                    <span class="toast-message">${message}</span>
+                `;
+
+                container.appendChild(toast);
+
+                // Auto-remove after 3 seconds (plus small buffer for any animations)
+                setTimeout(() => {
+                    if (toast.parentNode) {
+                        toast.parentNode.removeChild(toast);
+                    }
+                }, 3300);
+            }
+
             function exportJSON() {
                 const data = {
                     overview: {
@@ -1088,7 +1248,7 @@
                     timestamp: new Date().toISOString()
                 };
                 downloadFile('dashboard_export.json', JSON.stringify(data, null, 2));
-                alert('JSON Export erstellt');
+                showToast('JSON Export erstellt');
             }
 
             function exportMarkdown() {
@@ -1109,7 +1269,7 @@
                 md += '- Datenintegration\n';
                 md += '- Analytics\n';
                 downloadFile('dashboard_export.md', md);
-                alert('Markdown Export erstellt');
+                showToast('Markdown Export erstellt');
             }
 
             function downloadFile(filename, content) {
@@ -1127,5 +1287,8 @@
             }
         });
     </script>
+
+    <!-- Toast Notification Container -->
+    <div id="toast-container" class="toast-container"></div>
 </body>
 </html>
