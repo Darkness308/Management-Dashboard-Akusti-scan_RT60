@@ -98,7 +98,9 @@ export const getPerformanceMetrics = () => {
     firstPaint: paint.find(p => p.name === 'first-paint')?.startTime || 0,
     firstContentfulPaint: paint.find(p => p.name === 'first-contentful-paint')?.startTime || 0,
     
-    // Memory (if available)
+    // Memory (Chrome-only, non-standard API)
+    // Note: performance.memory is only available in Chrome/Chromium browsers
+    // and requires the --enable-precise-memory-info flag
     memory: performance.memory ? {
       usedJSHeapSize: performance.memory.usedJSHeapSize,
       totalJSHeapSize: performance.memory.totalJSHeapSize,

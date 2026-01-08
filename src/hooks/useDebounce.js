@@ -1,4 +1,4 @@
-import { useEffect, useCallback, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 /**
  * Debounce function
@@ -54,15 +54,19 @@ export function throttle(func, limit = 300) {
  */
 export function useDebounce(callback, delay = 300) {
   const callbackRef = useRef(callback)
+  const debouncedFnRef = useRef(null)
   
   useEffect(() => {
     callbackRef.current = callback
   }, [callback])
   
-  return useCallback((...args) => {
-    const debouncedFn = debounce((...innerArgs) => callbackRef.current(...innerArgs), delay)
-    return debouncedFn(...args)
-  }, [delay])
+  // Create debounced function only once per delay value
+  if (!debouncedFnRef.current || debouncedFnRef.current.delay !== delay) {
+    debouncedFnRef.current = debounce((...args) => callbackRef.current(...args), delay)
+    debouncedFnRef.current.delay = delay
+  }
+  
+  return debouncedFnRef.current
 }
 
 /**
@@ -74,15 +78,19 @@ export function useDebounce(callback, delay = 300) {
  */
 export function useThrottle(callback, limit = 300) {
   const callbackRef = useRef(callback)
+  const throttledFnRef = useRef(null)
   
   useEffect(() => {
     callbackRef.current = callback
   }, [callback])
   
-  return useCallback((...args) => {
-    const throttledFn = throttle((...innerArgs) => callbackRef.current(...innerArgs), limit)
-    return throttledFn(...args)
-  }, [limit])
+  // Create throttled function only once per limit value
+  if (!throttledFnRef.current || throttledFnRef.current.limit !== limit) {
+    throttledFnRef.current = throttle((...args) => callbackRef.current(...args), limit)
+    throttledFnRef.current.limit = limit
+  }
+  
+  return throttledFnRef.current
 }
 
 /**

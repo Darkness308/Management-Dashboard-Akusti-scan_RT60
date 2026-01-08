@@ -7,7 +7,11 @@ const useToastStore = create((set, get) => ({
   toasts: [],
   
   addToast: (toast) => {
-    const id = Date.now() + Math.random()
+    // Use crypto.randomUUID if available, otherwise fallback to timestamp + random
+    const id = typeof crypto !== 'undefined' && crypto.randomUUID 
+      ? crypto.randomUUID() 
+      : `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
+    
     const newToast = {
       id,
       type: 'info', // info, success, warning, error
