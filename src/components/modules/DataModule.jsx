@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react'
-import { FolderOpen } from 'lucide-react'
 import {
   parseCSV,
   parseExcel,
@@ -84,6 +83,16 @@ export default function DataModule() {
       }
       await handleFileUpload(syntheticEvent)
     }
+  }
+
+  const getStatusMessageClass = (message) => {
+    if (message.includes('Fehler')) {
+      return 'bg-red-50 text-red-800 border border-red-200'
+    }
+    if (message.includes('erfolgreich')) {
+      return 'bg-green-50 text-green-800 border border-green-200'
+    }
+    return 'bg-gray-50 text-gray-800 border border-gray-200'
   }
 
   // Prepare chart data if we have uploaded data
