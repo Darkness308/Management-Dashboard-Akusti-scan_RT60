@@ -22,9 +22,10 @@ class ErrorBoundary extends Component {
   }
 
   componentDidCatch(error, errorInfo) {
-    // Log error details for debugging
-    console.error('ErrorBoundary caught an error:', error, errorInfo)
-    
+    // Log error details for debugging (only in development)
+    if (import.meta?.env?.DEV) {
+      console.error('ErrorBoundary caught an error:', error, errorInfo)
+    }
     this.setState({
       error,
       errorInfo
