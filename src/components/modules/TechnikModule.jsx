@@ -19,7 +19,7 @@ export default function TechnikModule() {
           {/* Hardware */}
           <div>
             <h4 className="font-semibold mb-3 text-gray-700 flex items-center">
-              <span className="text-2xl mr-2">💻</span>
+              <Monitor className="w-6 h-6 mr-2" />
               Hardware
             </h4>
             <ul className="space-y-2">

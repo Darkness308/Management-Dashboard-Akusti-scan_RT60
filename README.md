@@ -274,17 +274,17 @@ Beiträge sind willkommen! Bitte:
 4. Branch pushen (`git push origin feature/AmazingFeature`)
 5. Pull Request erstellen
 
-## 📄 Lizenz
+## Lizenz
 
 MIT License - siehe [LICENSE](./LICENSE) für Details
 
-## 👤 Autor
+## Autor
 
 **Darkness308**
 
 - GitHub: [@Darkness308](https://github.com/Darkness308)
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
 - Raumakustik-Projekt Team
 - React & Vite Communities
