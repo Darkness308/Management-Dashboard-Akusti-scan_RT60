@@ -101,10 +101,16 @@ export const getPerformanceMetrics = () => {
     // Memory (Chrome-only, non-standard API)
     // Note: performance.memory is only available in Chrome/Chromium browsers
     // and requires the --enable-precise-memory-info flag
-    memory: performance.memory ? {
-      usedJSHeapSize: performance.memory.usedJSHeapSize,
-      totalJSHeapSize: performance.memory.totalJSHeapSize,
-      limit: performance.memory.jsHeapSizeLimit
+    memory: (performance && typeof performance.memory === 'object') ? {
+      usedJSHeapSize: typeof performance.memory.usedJSHeapSize === 'number'
+        ? performance.memory.usedJSHeapSize
+        : null,
+      totalJSHeapSize: typeof performance.memory.totalJSHeapSize === 'number'
+        ? performance.memory.totalJSHeapSize
+        : null,
+      limit: typeof performance.memory.jsHeapSizeLimit === 'number'
+        ? performance.memory.jsHeapSizeLimit
+        : null
     } : null
   }
 }
