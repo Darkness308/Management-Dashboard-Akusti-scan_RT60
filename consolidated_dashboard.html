@@ -1031,10 +1031,10 @@
                             const nextChar = line[i + 1];
                             
                             // Check if this quote starts a quoted field (only if at field start)
-                            if (char === '"' && !inQuotes && current.trim() === '') {
+                            if (char === '"' && !inQuotes && current === '') {
                                 inQuotes = true;
                                 isQuoted = true;
-                                current = ''; // Discard leading whitespace before quote
+                                // current is already empty at field start
                             } else if (char === '"' && inQuotes) {
                                 if (nextChar === '"') {
                                     // Escaped quote
