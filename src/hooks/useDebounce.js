@@ -98,20 +98,23 @@ export function useThrottle(callback, limit = 300) {
  * 
  * @param {Function} callback - Function to call on resize
  * @param {number} delay - Delay in milliseconds (default: 300)
+ * @param {boolean} callOnMount - Whether to invoke the callback once on mount (default: true)
  */
-export function useDebouncedResize(callback, delay = 300) {
+export function useDebouncedResize(callback, delay = 300, callOnMount = true) {
   const debouncedCallback = useDebounce(callback, delay)
   
   useEffect(() => {
     window.addEventListener('resize', debouncedCallback)
     
-    // Call once on mount
-    debouncedCallback()
+    // Optionally call once on mount
+    if (callOnMount) {
+      debouncedCallback()
+    }
     
     return () => {
       window.removeEventListener('resize', debouncedCallback)
     }
-  }, [debouncedCallback])
+  }, [debouncedCallback, callOnMount])
 }
 
 /**
