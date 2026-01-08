@@ -1,6 +1,7 @@
 import { vertriebData, optimizeChannelMix } from '@data/vertriebData'
 import DoughnutChart from '../charts/DoughnutChart'
 import BarChart from '../charts/BarChart'
+import { TrendingUp } from 'lucide-react'
 
 export default function VertriebModule() {
   const optimizedChannels = optimizeChannelMix()
@@ -24,7 +25,10 @@ export default function VertriebModule() {
 
   return (
     <section className="space-y-6">
-      <h2 className="text-4xl font-bold section-header">Vertrieb & Zielgruppen</h2>
+      <h2 className="text-4xl font-bold section-header flex items-center gap-3">
+        <TrendingUp size={36} />
+        Vertrieb & Zielgruppen
+      </h2>
 
       {/* Target Groups & Channels */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

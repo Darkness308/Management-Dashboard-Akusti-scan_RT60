@@ -22,7 +22,7 @@ export default function Header({ onExport }) {
         <div className="flex flex-wrap justify-between items-center">
           <div className="flex items-center space-x-4">
             <div className="w-12 h-12 bg-white rounded-lg flex items-center justify-center">
-              <BarChart3 className="w-7 h-7 text-purple-700" />
+              <BarChart3 className="text-purple-700" size={28} />
             </div>
             <div>
               <h1 className="text-2xl font-bold text-white">Management Dashboard</h1>
@@ -34,7 +34,7 @@ export default function Header({ onExport }) {
               onClick={handleExport}
               className="bg-white text-purple-700 px-4 py-2 rounded-lg shadow hover:bg-purple-50 transition flex items-center gap-2"
             >
-              <Download className="w-4 h-4" />
+              <Download size={20} />
               Export
             </button>
           </div>
