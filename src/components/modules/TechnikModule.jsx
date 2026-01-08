@@ -1,5 +1,5 @@
 import { technikData, getRequiredHardware, getRequiredSoftware } from '@data/technikData'
-import { Settings, Wrench, Check } from 'lucide-react'
+import { Settings, Wrench, Check, Monitor } from 'lucide-react'
 
 export default function TechnikModule() {
   const requiredHw = getRequiredHardware()
