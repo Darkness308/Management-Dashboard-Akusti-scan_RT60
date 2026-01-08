@@ -130,8 +130,8 @@ We actively monitor and update dependencies to address security vulnerabilities:
 
 ## Security Audit
 
-**Last security audit**: January 2024  
-**Next scheduled audit**: April 2024
+**Last security audit**: January 2026  
+**Next scheduled audit**: April 2026
 
 **Audit Tools Used:**
 - npm audit
