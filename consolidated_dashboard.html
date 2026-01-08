@@ -1203,28 +1203,38 @@
             function showToast(message, type = 'success') {
                 const container = document.getElementById('toast-container');
                 if (!container) return;
-                
+
                 const toast = document.createElement('div');
                 toast.className = `toast ${type}`;
-                toast.innerHTML = `<span class="toast-icon">${icon}</span>`;
-                const messageSpan = document.createElement('span');
-                messageSpan.className = 'toast-message';
-                messageSpan.textContent = message;
-                toast.appendChild(messageSpan);
+
+                // Choose icon based on toast type
+                let icon;
+                switch (type) {
+                    case 'error':
+                        icon = '⚠️';
+                        break;
+                    case 'info':
+                        icon = 'ℹ️';
+                        break;
+                    case 'success':
+                    default:
+                        icon = '✓';
+                        break;
+                }
+
+                toast.innerHTML = `
+                    <span class="toast-icon">${icon}</span>
                     <span class="toast-message">${message}</span>
                 `;
-                
+
                 container.appendChild(toast);
-                
-                // Auto-remove after 3 seconds
+
+                // Auto-remove after 3 seconds (plus small buffer for any animations)
                 setTimeout(() => {
-                        if (toast.parentNode === container) {
-                            container.removeChild(toast);
-                        }
-                    setTimeout(() => {
-                        toast.remove();
-                    }, 300); // Match animation duration
-                }, 3000);
+                    if (toast.parentNode) {
+                        toast.parentNode.removeChild(toast);
+                    }
+                }, 3300);
             }
 
             function exportJSON() {
