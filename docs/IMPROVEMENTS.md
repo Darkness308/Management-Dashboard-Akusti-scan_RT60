@@ -253,7 +253,7 @@ async function processData() {
 
 ## 📝 Changelog
 
-### v1.1.0 - Technical Improvements (2024-01)
+### v1.1.0 - Technical Improvements (2026-01)
 - Fixed all ESLint errors
 - Added error boundaries
 - Implemented toast notification system
