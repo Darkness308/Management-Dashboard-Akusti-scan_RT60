@@ -48,9 +48,9 @@ export const sanitizeValue = (value) => {
   const stringValue = String(value)
   
   // Use DOMPurify to sanitize HTML content
-  return DOMPurify.sanitize(stringValue, { 
-    ALLOWED_TAGS: [],
-    ALLOWED_ATTR: [] 
+  return DOMPurify.sanitize(stringValue, {
+    // Strip all HTML tags while allowing DOMPurify's default safe attributes
+    ALLOWED_TAGS: []
   })
 }
 
