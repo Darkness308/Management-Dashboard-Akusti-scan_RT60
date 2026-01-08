@@ -5,6 +5,7 @@ import Footer from './components/layout/Footer'
 import Overview from './components/dashboard/Overview'
 import PWAInstallPrompt from './components/pwa/PWAInstallPrompt'
 import PWAStatus from './components/pwa/PWAStatus'
+import ToastContainer from './components/common/ToastContainer'
 import { initializeAgentSystem, orchestrator } from './agents'
 
 // Lazy load modules for better performance and code splitting
@@ -143,6 +144,9 @@ function App() {
       </main>
 
       <Footer />
+
+      {/* Toast Notifications */}
+      <ToastContainer />
 
       {/* PWA Components */}
       <PWAStatus />

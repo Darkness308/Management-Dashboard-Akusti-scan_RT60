@@ -109,7 +109,7 @@ const useDashboardStore = create(
     }),
     {
       name: 'dashboard-store',
-      enabled: process.env.NODE_ENV === 'development'
+      enabled: import.meta.env.DEV
     }
   )
 )

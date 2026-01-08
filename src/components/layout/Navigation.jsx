@@ -3,7 +3,6 @@ import { moduleIcons } from '@/config/icons.config'
 
 export default function Navigation({ activeTab, onTabChange }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
-  const [isMobile, setIsMobile] = useState(false)
 
   const tabs = [
     { id: 'overview', label: 'Übersicht', Icon: moduleIcons.overview },
@@ -16,18 +15,6 @@ export default function Navigation({ activeTab, onTabChange }) {
     { id: 'data', label: 'Daten', Icon: moduleIcons.data },
     { id: 'analytics', label: 'Analytics', Icon: moduleIcons.analytics }
   ]
-
-  // Detect mobile viewport
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768)
-    }
-
-    checkMobile()
-    window.addEventListener('resize', checkMobile)
-
-    return () => window.removeEventListener('resize', checkMobile)
-  }, [])
 
   // Close mobile menu when tab changes
   useEffect(() => {

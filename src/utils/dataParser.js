@@ -1,5 +1,58 @@
 // Data Parser - Excel/CSV Upload & Parsing
 import ExcelJS from 'exceljs'
+import DOMPurify from 'dompurify'
+
+/**
+ * File validation constants
+ */
+const MAX_FILE_SIZE = 10 * 1024 * 1024 // 10MB
+const ALLOWED_EXTENSIONS = ['.csv', '.xlsx', '.xls']
+const MAX_ROWS = 10000 // Maximum rows to prevent memory issues
+
+/**
+ * Validate file before processing
+ * @param {File} file - File to validate
+ * @throws {Error} If validation fails
+ */
+export const validateFile = (file) => {
+  if (!file) {
+    throw new Error('Keine Datei ausgewählt')
+  }
+
+  // Check file size
+  if (file.size > MAX_FILE_SIZE) {
+    throw new Error(`Datei ist zu groß. Maximum: ${MAX_FILE_SIZE / 1024 / 1024}MB`)
+  }
+
+  // Check file extension
+  const fileName = file.name.toLowerCase()
+  const hasValidExtension = ALLOWED_EXTENSIONS.some(ext => fileName.endsWith(ext))
+  
+  if (!hasValidExtension) {
+    throw new Error(`Ungültiges Dateiformat. Erlaubt: ${ALLOWED_EXTENSIONS.join(', ')}`)
+  }
+
+  return true
+}
+
+/**
+ * Sanitize cell value to prevent XSS
+ * @param {*} value - Cell value to sanitize
+ * @returns {string} Sanitized value
+ */
+export const sanitizeValue = (value) => {
+  if (value === null || value === undefined) {
+    return ''
+  }
+  
+  const stringValue = String(value)
+  
+  // Use DOMPurify to sanitize HTML content
+  return DOMPurify.sanitize(stringValue, { 
+    ALLOWED_TAGS: [],
+    ALLOWED_ATTR: [] 
+  })
+}
 
 /**
  * Parse CSV file
@@ -8,14 +61,29 @@ import ExcelJS from 'exceljs'
  */
 export const parseCSV = (file) => {
   return new Promise((resolve, reject) => {
+    // Validate file first
+    try {
+      validateFile(file)
+    } catch (error) {
+      reject(error)
+      return
+    }
+
     const reader = new FileReader()
 
     reader.onload = (event) => {
       try {
         const text = event.target.result
         const lines = text.trim().split(/\r?\n/)
-        const headers = lines[0].split(',').map(h => h.trim())
-        const rows = lines.slice(1).map(line => line.split(',').map(c => c.trim()))
+        
+        if (lines.length > MAX_ROWS) {
+          throw new Error(`Zu viele Zeilen. Maximum: ${MAX_ROWS}`)
+        }
+
+        const headers = lines[0].split(',').map(h => sanitizeValue(h.trim()))
+        const rows = lines.slice(1).map(line => 
+          line.split(',').map(c => sanitizeValue(c.trim()))
+        )
 
         resolve({ headers, rows })
       } catch (error) {
@@ -38,6 +106,9 @@ export const parseCSV = (file) => {
  */
 export const parseExcel = async (file) => {
   try {
+    // Validate file first
+    validateFile(file)
+
     const buffer = await file.arrayBuffer()
     const workbook = new ExcelJS.Workbook()
     await workbook.xlsx.load(buffer)
@@ -49,16 +120,23 @@ export const parseExcel = async (file) => {
     }
     
     const rows = []
-    worksheet.eachRow((row, rowNumber) => {
+    worksheet.eachRow((row) => {
       rows.push(row.values.slice(1)) // Skip the first undefined element
     })
     
     if (rows.length === 0) {
       throw new Error('Excel file is empty')
     }
+
+    if (rows.length > MAX_ROWS) {
+      throw new Error(`Zu viele Zeilen. Maximum: ${MAX_ROWS}`)
+    }
     
-    const headers = rows[0]
-    const dataRows = rows.slice(1)
+    // Sanitize all cell values
+    const headers = rows[0].map(h => sanitizeValue(h))
+    const dataRows = rows.slice(1).map(row => 
+      row.map(cell => sanitizeValue(cell))
+    )
     
     return { headers, rows: dataRows }
   } catch (error) {
