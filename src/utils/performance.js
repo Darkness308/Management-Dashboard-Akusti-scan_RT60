@@ -87,16 +87,36 @@ export const getPerformanceMetrics = () => {
 
   const navigation = performance.getEntriesByType('navigation')[0]
   const paint = performance.getEntriesByType('paint')
+
+  const domContentLoaded = navigation &&
+    navigation.domContentLoadedEventEnd != null &&
+    navigation.domContentLoadedEventStart != null
+    ? navigation.domContentLoadedEventEnd - navigation.domContentLoadedEventStart
+    : null
+
+  const loadComplete = navigation &&
+    navigation.loadEventEnd != null &&
+    navigation.loadEventStart != null
+    ? navigation.loadEventEnd - navigation.loadEventStart
+    : null
+
+  const domInteractive = navigation?.domInteractive ?? null
+
+  const firstPaintEntry = paint.find(p => p.name === 'first-paint')
+  const firstPaint = firstPaintEntry ? firstPaintEntry.startTime : null
+
+  const firstContentfulPaintEntry = paint.find(p => p.name === 'first-contentful-paint')
+  const firstContentfulPaint = firstContentfulPaintEntry ? firstContentfulPaintEntry.startTime : null
   
   return {
     // Navigation timing
-    domContentLoaded: navigation?.domContentLoadedEventEnd - navigation?.domContentLoadedEventStart || 0,
-    loadComplete: navigation?.loadEventEnd - navigation?.loadEventStart || 0,
-    domInteractive: navigation?.domInteractive || 0,
+    domContentLoaded,
+    loadComplete,
+    domInteractive,
     
     // Paint timing
-    firstPaint: paint.find(p => p.name === 'first-paint')?.startTime || 0,
-    firstContentfulPaint: paint.find(p => p.name === 'first-contentful-paint')?.startTime || 0,
+    firstPaint,
+    firstContentfulPaint,
     
     // Memory (Chrome-only, non-standard API)
     // Note: performance.memory is only available in Chrome/Chromium browsers
