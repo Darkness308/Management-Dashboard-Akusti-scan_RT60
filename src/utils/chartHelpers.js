@@ -174,7 +174,7 @@ export const colorPalette = {
 /**
  * Generate gradient datasets
  */
-export const generateGradientDataset = (label, data, color1 = '#667eea', color2 = '#764ba2') => {
+export const generateGradientDataset = (label, data, color1 = '#667eea') => {
   return {
     label,
     data,
