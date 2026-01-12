@@ -26,7 +26,7 @@ Added placeholder PNG files for all required icons and screenshots in the `publi
 
 ## Files Added
 All files are located in `public/` directory:
-- 9 icon PNG files (various sizes from 72x72 to 512x512 pixels)
+- 9 icon PNG files named for standard PWA sizes (72x72 through 512x512 pixels), currently implemented as 1x1 pixel placeholders
 - 2 screenshot PNG files (wide and mobile)
 
 ## Testing Performed
