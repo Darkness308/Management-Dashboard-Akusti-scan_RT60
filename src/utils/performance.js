@@ -2,6 +2,7 @@
  * Performance Monitoring Utilities
  * Provides tools to measure and log performance metrics
  */
+import { logger } from './logger'
 
 /**
  * Measure performance of a function
@@ -17,18 +18,14 @@ export const measurePerformance = async (label, fn) => {
     const endTime = performance.now()
     const duration = endTime - startTime
     
-    if (import.meta.env.DEV) {
-      console.log(`⏱️ [Performance] ${label}: ${duration.toFixed(2)}ms`)
-    }
+    logger.debug(`⏱️ [Performance] ${label}: ${duration.toFixed(2)}ms`)
     
     return result
   } catch (error) {
     const endTime = performance.now()
     const duration = endTime - startTime
     
-    if (import.meta.env.DEV) {
-      console.error(`❌ [Performance] ${label} failed after ${duration.toFixed(2)}ms`, error)
-    }
+    logger.error(`❌ [Performance] ${label} failed after ${duration.toFixed(2)}ms`, error)
     
     throw error
   }
@@ -60,16 +57,12 @@ export const measure = (name, startMark, endMark) => {
       if (entries.length > 0) {
         const duration = entries[entries.length - 1].duration
         
-        if (import.meta.env.DEV) {
-          console.log(`⏱️ [Performance] ${name}: ${duration.toFixed(2)}ms`)
-        }
+        logger.debug(`⏱️ [Performance] ${name}: ${duration.toFixed(2)}ms`)
         
         return duration
       }
     } catch (error) {
-      if (import.meta.env.DEV) {
-        console.warn(`⚠️ [Performance] Could not measure ${name}:`, error.message)
-      }
+      logger.warn(`⚠️ [Performance] Could not measure ${name}:`, error.message)
     }
   }
   
@@ -89,14 +82,14 @@ export const getPerformanceMetrics = () => {
   const paint = performance.getEntriesByType('paint')
 
   const domContentLoaded = navigation &&
-    navigation.domContentLoadedEventEnd != null &&
-    navigation.domContentLoadedEventStart != null
+    navigation.domContentLoadedEventEnd !== null &&
+    navigation.domContentLoadedEventStart !== null
     ? navigation.domContentLoadedEventEnd - navigation.domContentLoadedEventStart
     : null
 
   const loadComplete = navigation &&
-    navigation.loadEventEnd != null &&
-    navigation.loadEventStart != null
+    navigation.loadEventEnd !== null &&
+    navigation.loadEventStart !== null
     ? navigation.loadEventEnd - navigation.loadEventStart
     : null
 
@@ -144,25 +137,25 @@ export const logPerformanceMetrics = () => {
   const metrics = getPerformanceMetrics()
   
   if (!metrics) {
-    console.log('📊 [Performance] Metrics not available')
+    logger.info('📊 [Performance] Metrics not available')
     return
   }
   
-  console.group('📊 Performance Metrics')
-  console.log(`DOM Content Loaded: ${metrics.domContentLoaded.toFixed(2)}ms`)
-  console.log(`Load Complete: ${metrics.loadComplete.toFixed(2)}ms`)
-  console.log(`DOM Interactive: ${metrics.domInteractive.toFixed(2)}ms`)
-  console.log(`First Paint: ${metrics.firstPaint.toFixed(2)}ms`)
-  console.log(`First Contentful Paint: ${metrics.firstContentfulPaint.toFixed(2)}ms`)
+  logger.group('📊 Performance Metrics')
+  logger.info(`DOM Content Loaded: ${metrics.domContentLoaded?.toFixed(2)}ms`)
+  logger.info(`Load Complete: ${metrics.loadComplete?.toFixed(2)}ms`)
+  logger.info(`DOM Interactive: ${metrics.domInteractive?.toFixed(2)}ms`)
+  logger.info(`First Paint: ${metrics.firstPaint?.toFixed(2)}ms`)
+  logger.info(`First Contentful Paint: ${metrics.firstContentfulPaint?.toFixed(2)}ms`)
   
-  if (metrics.memory) {
+  if (metrics.memory && metrics.memory.usedJSHeapSize) {
     const usedMB = (metrics.memory.usedJSHeapSize / 1024 / 1024).toFixed(2)
     const totalMB = (metrics.memory.totalJSHeapSize / 1024 / 1024).toFixed(2)
     const limitMB = (metrics.memory.limit / 1024 / 1024).toFixed(2)
-    console.log(`Memory Used: ${usedMB}MB / ${totalMB}MB (Limit: ${limitMB}MB)`)
+    logger.info(`Memory Used: ${usedMB}MB / ${totalMB}MB (Limit: ${limitMB}MB)`)
   }
   
-  console.groupEnd()
+  logger.groupEnd()
 }
 
 /**

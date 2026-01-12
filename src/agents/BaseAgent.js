@@ -1,4 +1,5 @@
 import { eventBus } from '@utils/eventBus'
+import { logger } from '@utils/logger'
 
 /**
  * Base Agent Class
@@ -17,11 +18,11 @@ export class BaseAgent {
    */
   async init() {
     if (this.initialized) {
-      console.warn(`[${this.name}] Already initialized`)
+      logger.warn(`[${this.name}] Already initialized`)
       return
     }
 
-    console.log(`[${this.name}] Initializing...`)
+    logger.info(`[${this.name}] Initializing...`)
     this.initialized = true
     this.emit('agent:initialized', { agent: this.name })
   }
@@ -30,7 +31,7 @@ export class BaseAgent {
    * Cleanup the agent
    */
   destroy() {
-    console.log(`[${this.name}] Destroying...`)
+    logger.info(`[${this.name}] Destroying...`)
     this.listeners.forEach(unsubscribe => unsubscribe())
     this.listeners = []
     this.initialized = false
@@ -71,7 +72,7 @@ export class BaseAgent {
    * @param {*} data - Optional data
    */
   log(message, data) {
-    console.log(`[${this.name}] ${message}`, data || '')
+    logger.log(this.name, message, data || '')
   }
 
   /**
@@ -80,7 +81,7 @@ export class BaseAgent {
    * @param {Error} error - Error object
    */
   error(message, error) {
-    console.error(`[${this.name}] ERROR: ${message}`, error)
+    logger.error(`[${this.name}] ${message}`, error)
     this.emit('error:occurred', {
       agent: this.name,
       message,
