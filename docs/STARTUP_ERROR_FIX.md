@@ -41,7 +41,7 @@ All files are located in `public/` directory:
 For production deployment, replace the placeholder PNG files with:
 1. **Branded app icons** in each required size (72x72 through 512x512)
 2. **Actual screenshots** showing the dashboard interface
-3. Consider using a maskable icon for better PWA integration
+3. If you want to use maskable icons for better PWA integration, design proper maskable icons (with a safe zone and centered content) and only then add `purpose: "any maskable"` in `manifest.json`. Do **not** mark the current 1x1 placeholder icons as maskable.
 
 ## References
 - PWA Manifest: `public/manifest.json`
