@@ -8,6 +8,7 @@ import {
   loadFromStorage,
   clearStorage
 } from '@utils/dataParser'
+import { logger } from '@utils/logger'
 import BarChart from '../charts/BarChart'
 import { FolderOpen, FileSpreadsheet, Lightbulb, AlertCircle } from 'lucide-react'
 
@@ -50,7 +51,7 @@ export default function DataModule() {
       saveToStorage('uploadData', data)
     } catch (error) {
       setStatusMessage(`Fehler: ${error.message}`)
-      console.error('File upload error:', error)
+      logger.error('File upload error:', error)
     } finally {
       setIsLoading(false)
       // Reset input

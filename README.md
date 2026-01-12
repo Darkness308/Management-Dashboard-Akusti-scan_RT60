@@ -231,7 +231,9 @@ import { parseCSV } from '@utils/dataParser'
 
 ## Troubleshooting
 
-### Build Fehler
+For detailed troubleshooting, see [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md)
+
+### Quick Fixes
 
 **Problem**: `Module not found` Fehler
 
@@ -247,6 +249,41 @@ npm install
 # Anderen Port verwenden
 npm run dev -- --port 3001
 ```
+
+**Problem**: Build schlägt fehl
+
+```bash
+# Cache leeren und neu bauen
+rm -rf node_modules/.vite dist
+npm install
+npm run build
+```
+
+## Documentation
+
+- 📖 [Debugging Guide](docs/DEBUGGING.md) - Comprehensive debugging instructions
+- 🔧 [Troubleshooting](docs/TROUBLESHOOTING.md) - Common issues and solutions
+- 🏗️ [Architecture](docs/agents.md) - Agent-based architecture documentation
+- 🎨 [Design System](docs/design-system.md) - UI components and styling guidelines
+
+## Logging System
+
+The application uses a centralized logger utility that automatically handles development vs production logging:
+
+```javascript
+import { logger } from '@utils/logger'
+
+// Different log levels
+logger.debug('Debug information')  // Only in development
+logger.info('General info')
+logger.warn('Warning message')
+logger.error('Error occurred')     // Always logged
+
+// Structured logging
+logger.log('ComponentName', 'Action', { data })
+```
+
+⚠️ **Never use `console.log()` directly** - always use the logger utility!
 
 ### Performance
 

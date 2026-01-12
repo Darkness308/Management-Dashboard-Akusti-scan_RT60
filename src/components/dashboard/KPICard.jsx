@@ -1,4 +1,6 @@
 import { Target, BarChart3, Check, DollarSign } from 'lucide-react'
+import PropTypes from 'prop-types'
+import { kpiColorPropType, iconNamePropType } from '@utils/propTypes'
 
 const iconMap = {
   Target,
@@ -34,4 +36,12 @@ export default function KPICard({ value, label, description, icon, color = 'blue
       </div>
     </div>
   )
+}
+
+KPICard.propTypes = {
+  value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+  label: PropTypes.string.isRequired,
+  description: PropTypes.string,
+  icon: iconNamePropType,
+  color: kpiColorPropType
 }

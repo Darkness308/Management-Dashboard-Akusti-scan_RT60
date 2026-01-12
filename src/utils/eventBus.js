@@ -2,6 +2,8 @@
  * Event-Bus System for Agent Communication
  * Allows decoupled communication between agents
  */
+import { logger } from './logger'
+
 class EventBus {
   constructor() {
     this.events = {}
@@ -15,7 +17,7 @@ class EventBus {
    */
   emit(eventName, data) {
     if (this.debug) {
-      console.log(`[EventBus] Emitting: ${eventName}`, data)
+      logger.debug(`[EventBus] Emitting: ${eventName}`, data)
     }
 
     if (this.events[eventName]) {
@@ -23,7 +25,7 @@ class EventBus {
         try {
           callback(data)
         } catch (error) {
-          console.error(`[EventBus] Error in listener for ${eventName}:`, error)
+          logger.error(`[EventBus] Error in listener for ${eventName}:`, error)
         }
       })
     }
@@ -42,7 +44,7 @@ class EventBus {
     this.events[eventName].push(callback)
 
     if (this.debug) {
-      console.log(`[EventBus] Registered listener for: ${eventName}`)
+      logger.debug(`[EventBus] Registered listener for: ${eventName}`)
     }
 
     // Return unsubscribe function
@@ -59,7 +61,7 @@ class EventBus {
       this.events[eventName] = this.events[eventName].filter(cb => cb !== callback)
 
       if (this.debug) {
-        console.log(`[EventBus] Removed listener for: ${eventName}`)
+        logger.debug(`[EventBus] Removed listener for: ${eventName}`)
       }
     }
   }
@@ -85,12 +87,12 @@ class EventBus {
     if (eventName) {
       delete this.events[eventName]
       if (this.debug) {
-        console.log(`[EventBus] Cleared all listeners for: ${eventName}`)
+        logger.debug(`[EventBus] Cleared all listeners for: ${eventName}`)
       }
     } else {
       this.events = {}
       if (this.debug) {
-        console.log('[EventBus] Cleared all listeners')
+        logger.debug('[EventBus] Cleared all listeners')
       }
     }
   }

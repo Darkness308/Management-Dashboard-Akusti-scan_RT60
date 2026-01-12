@@ -12,6 +12,7 @@ import {
   Filler
 } from 'chart.js'
 import { defaultChartOptions } from '@utils/chartHelpers'
+import { chartPropTypes } from '@utils/propTypes'
 
 // Register Chart.js components
 ChartJS.register(
@@ -64,6 +65,8 @@ function LineChart({ labels, datasets, options = {}, className = '' }) {
     </div>
   )
 }
+
+LineChart.propTypes = chartPropTypes
 
 // Export memoized component to prevent re-renders when props don't change
 export default memo(LineChart)
