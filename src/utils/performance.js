@@ -129,6 +129,23 @@ export const getPerformanceMetrics = () => {
 }
 
 /**
+ * Validate and format memory metrics
+ * @param {Object} memory - Memory object from performance API
+ * @returns {Object|null} Formatted memory metrics
+ */
+const formatMemoryMetrics = (memory) => {
+  if (!memory || !memory.usedJSHeapSize) {
+    return null
+  }
+  
+  return {
+    usedMB: (memory.usedJSHeapSize / 1024 / 1024).toFixed(2),
+    totalMB: (memory.totalJSHeapSize / 1024 / 1024).toFixed(2),
+    limitMB: (memory.limit / 1024 / 1024).toFixed(2)
+  }
+}
+
+/**
  * Log performance metrics to console (development only)
  */
 export const logPerformanceMetrics = () => {
@@ -148,11 +165,9 @@ export const logPerformanceMetrics = () => {
   logger.info(`First Paint: ${metrics.firstPaint?.toFixed(2)}ms`)
   logger.info(`First Contentful Paint: ${metrics.firstContentfulPaint?.toFixed(2)}ms`)
   
-  if (metrics.memory && metrics.memory.usedJSHeapSize) {
-    const usedMB = (metrics.memory.usedJSHeapSize / 1024 / 1024).toFixed(2)
-    const totalMB = (metrics.memory.totalJSHeapSize / 1024 / 1024).toFixed(2)
-    const limitMB = (metrics.memory.limit / 1024 / 1024).toFixed(2)
-    logger.info(`Memory Used: ${usedMB}MB / ${totalMB}MB (Limit: ${limitMB}MB)`)
+  const memoryMetrics = formatMemoryMetrics(metrics.memory)
+  if (memoryMetrics) {
+    logger.info(`Memory Used: ${memoryMetrics.usedMB}MB / ${memoryMetrics.totalMB}MB (Limit: ${memoryMetrics.limitMB}MB)`)
   }
   
   logger.groupEnd()

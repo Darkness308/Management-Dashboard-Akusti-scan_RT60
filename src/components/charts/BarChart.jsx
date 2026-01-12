@@ -1,5 +1,4 @@
 import { memo, useMemo } from 'react'
-import PropTypes from 'prop-types'
 import { Bar } from 'react-chartjs-2'
 import {
   Chart as ChartJS,
@@ -11,6 +10,7 @@ import {
   Legend
 } from 'chart.js'
 import { defaultChartOptions } from '@utils/chartHelpers'
+import { chartPropTypes } from '@utils/propTypes'
 
 // Register Chart.js components
 ChartJS.register(
@@ -59,25 +59,7 @@ function BarChart({ labels, datasets, options = {}, className = '' }) {
   )
 }
 
-BarChart.propTypes = {
-  labels: PropTypes.arrayOf(PropTypes.string).isRequired,
-  datasets: PropTypes.arrayOf(PropTypes.shape({
-    label: PropTypes.string,
-    data: PropTypes.arrayOf(PropTypes.number).isRequired,
-    backgroundColor: PropTypes.oneOfType([
-      PropTypes.string,
-      PropTypes.arrayOf(PropTypes.string)
-    ]),
-    borderColor: PropTypes.oneOfType([
-      PropTypes.string,
-      PropTypes.arrayOf(PropTypes.string)
-    ]),
-    borderWidth: PropTypes.number,
-    borderRadius: PropTypes.number
-  })).isRequired,
-  options: PropTypes.object,
-  className: PropTypes.string
-}
+BarChart.propTypes = chartPropTypes
 
 // Export memoized component to prevent re-renders when props don't change
 export default memo(BarChart)

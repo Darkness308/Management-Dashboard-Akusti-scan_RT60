@@ -1,5 +1,4 @@
 import { memo, useMemo } from 'react'
-import PropTypes from 'prop-types'
 import { Line } from 'react-chartjs-2'
 import {
   Chart as ChartJS,
@@ -13,6 +12,7 @@ import {
   Filler
 } from 'chart.js'
 import { defaultChartOptions } from '@utils/chartHelpers'
+import { chartPropTypes } from '@utils/propTypes'
 
 // Register Chart.js components
 ChartJS.register(
@@ -66,22 +66,7 @@ function LineChart({ labels, datasets, options = {}, className = '' }) {
   )
 }
 
-LineChart.propTypes = {
-  labels: PropTypes.arrayOf(PropTypes.string).isRequired,
-  datasets: PropTypes.arrayOf(PropTypes.shape({
-    label: PropTypes.string,
-    data: PropTypes.arrayOf(PropTypes.number).isRequired,
-    borderColor: PropTypes.string,
-    backgroundColor: PropTypes.string,
-    tension: PropTypes.number,
-    fill: PropTypes.bool,
-    borderWidth: PropTypes.number,
-    pointRadius: PropTypes.number,
-    pointHoverRadius: PropTypes.number
-  })).isRequired,
-  options: PropTypes.object,
-  className: PropTypes.string
-}
+LineChart.propTypes = chartPropTypes
 
 // Export memoized component to prevent re-renders when props don't change
 export default memo(LineChart)
