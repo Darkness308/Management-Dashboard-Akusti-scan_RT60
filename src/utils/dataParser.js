@@ -1,6 +1,7 @@
 // Data Parser - Excel/CSV Upload & Parsing
 import ExcelJS from 'exceljs'
 import DOMPurify from 'dompurify'
+import { logger } from './logger'
 
 /**
  * File validation constants
@@ -59,16 +60,11 @@ export const sanitizeValue = (value) => {
  * @param {File} file - CSV file to parse
  * @returns {Promise<{headers: Array, rows: Array}>}
  */
-export const parseCSV = (file) => {
-  return new Promise((resolve, reject) => {
-    // Validate file first
-    try {
-      validateFile(file)
-    } catch (error) {
-      reject(error)
-      return
-    }
+export const parseCSV = async (file) => {
+  // Validate file first
+  validateFile(file)
 
+  return new Promise((resolve, reject) => {
     const reader = new FileReader()
 
     reader.onload = (event) => {
@@ -239,7 +235,7 @@ export const saveToStorage = (key, data) => {
     localStorage.setItem(key, JSON.stringify(data))
     return true
   } catch (error) {
-    console.error('Storage save failed:', error)
+    logger.error('Storage save failed:', error)
     return false
   }
 }
@@ -254,7 +250,7 @@ export const loadFromStorage = (key) => {
     const data = localStorage.getItem(key)
     return data ? JSON.parse(data) : null
   } catch (error) {
-    console.error('Storage load failed:', error)
+    logger.error('Storage load failed:', error)
     return null
   }
 }
@@ -268,7 +264,7 @@ export const clearStorage = (key) => {
     localStorage.removeItem(key)
     return true
   } catch (error) {
-    console.error('Storage clear failed:', error)
+    logger.error('Storage clear failed:', error)
     return false
   }
 }

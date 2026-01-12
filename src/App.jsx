@@ -7,6 +7,7 @@ import PWAInstallPrompt from './components/pwa/PWAInstallPrompt'
 import PWAStatus from './components/pwa/PWAStatus'
 import ToastContainer from './components/common/ToastContainer'
 import { initializeAgentSystem, orchestrator } from './agents'
+import { logger } from './utils/logger'
 
 // Lazy load modules for better performance and code splitting
 const InnovationModule = lazy(() => import('./components/modules/InnovationModule'))
@@ -28,9 +29,9 @@ function App() {
       try {
         await initializeAgentSystem()
         setAgentSystemReady(true)
-        console.log('[App] Agent system initialized successfully')
+        logger.info('[App] Agent system initialized successfully')
       } catch (error) {
-        console.error('[App] Failed to initialize agent system:', error)
+        logger.error('[App] Failed to initialize agent system:', error)
       }
     }
 

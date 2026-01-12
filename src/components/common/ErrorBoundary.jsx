@@ -1,5 +1,6 @@
 import { Component } from 'react'
 import { AlertCircle, RefreshCw } from 'lucide-react'
+import { logger } from '@utils/logger'
 
 /**
  * Error Boundary Component
@@ -22,10 +23,10 @@ class ErrorBoundary extends Component {
   }
 
   componentDidCatch(error, errorInfo) {
-    // Log error details for debugging (only in development)
-    if (import.meta?.env?.DEV) {
-      console.error('ErrorBoundary caught an error:', error, errorInfo)
-    }
+    // Log error details for debugging
+    logger.error('ErrorBoundary caught an error:', error)
+    logger.debug('Error info:', errorInfo)
+    
     this.setState({
       error,
       errorInfo

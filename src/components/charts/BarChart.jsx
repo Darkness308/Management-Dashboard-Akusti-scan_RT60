@@ -10,6 +10,7 @@ import {
   Legend
 } from 'chart.js'
 import { defaultChartOptions } from '@utils/chartHelpers'
+import { chartPropTypes } from '@utils/propTypes'
 
 // Register Chart.js components
 ChartJS.register(
@@ -57,6 +58,8 @@ function BarChart({ labels, datasets, options = {}, className = '' }) {
     </div>
   )
 }
+
+BarChart.propTypes = chartPropTypes
 
 // Export memoized component to prevent re-renders when props don't change
 export default memo(BarChart)
